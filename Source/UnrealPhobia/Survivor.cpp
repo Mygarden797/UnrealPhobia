@@ -9,6 +9,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Blueprint/UserWidget.h"
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -65,6 +67,16 @@ void ASurvivor::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	if (IsLocallyControlled() && CrosshairWidgetClass)
+	{
+		CrosshairWidget =CreateWidget<UUserWidget>(GetWorld(), CrosshairWidgetClass);
+		if (CrosshairWidget) 
+		{
+			CrosshairWidget->AddToViewport();
+		}
+	}
+
 }
 
 

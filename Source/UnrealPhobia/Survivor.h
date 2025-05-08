@@ -23,6 +23,13 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UUserWidget> CrosshairWidgetClass;
+	UPROPERTY()
+	class UUserWidget* CrosshairWidget;
+
+	
+
 private:
 
 	void MoveForward(const FInputActionValue& Value);
