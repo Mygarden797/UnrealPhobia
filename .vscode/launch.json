@@ -4,7 +4,7 @@
 		{
 			"name": "Launch UnrealPhobia (Debug)",
 			"request": "launch",
-			"program": "C:\\Unreal Project_udemy\\UnrealPhobia\\Binaries\\Win64\\UnrealGame-Win64-Debug.exe",
+			"program": "C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\Binaries\\Win64\\UnrealGame-Win64-Debug.exe",
 			"preLaunchTask": "UnrealPhobia Win64 Debug Build",
 			"args": [
 			],
@@ -20,7 +20,7 @@
 		{
 			"name": "Launch UnrealPhobia (DebugGame)",
 			"request": "launch",
-			"program": "C:\\Unreal Project_udemy\\UnrealPhobia\\Binaries\\Win64\\UnrealGame-Win64-DebugGame.exe",
+			"program": "C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\Binaries\\Win64\\UnrealGame-Win64-DebugGame.exe",
 			"preLaunchTask": "UnrealPhobia Win64 DebugGame Build",
 			"args": [
 			],
@@ -36,7 +36,7 @@
 		{
 			"name": "Launch UnrealPhobia (Development)",
 			"request": "launch",
-			"program": "C:\\Unreal Project_udemy\\UnrealPhobia\\Binaries\\Win64\\UnrealGame.exe",
+			"program": "C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\Binaries\\Win64\\UnrealGame.exe",
 			"preLaunchTask": "UnrealPhobia Win64 Development Build",
 			"args": [
 			],
@@ -52,7 +52,7 @@
 		{
 			"name": "Launch UnrealPhobia (Test)",
 			"request": "launch",
-			"program": "C:\\Unreal Project_udemy\\UnrealPhobia\\Binaries\\Win64\\UnrealGame-Win64-Test.exe",
+			"program": "C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\Binaries\\Win64\\UnrealGame-Win64-Test.exe",
 			"preLaunchTask": "UnrealPhobia Win64 Test Build",
 			"args": [
 			],
@@ -68,7 +68,7 @@
 		{
 			"name": "Launch UnrealPhobia (Shipping)",
 			"request": "launch",
-			"program": "C:\\Unreal Project_udemy\\UnrealPhobia\\Binaries\\Win64\\UnrealGame-Win64-Shipping.exe",
+			"program": "C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\Binaries\\Win64\\UnrealGame-Win64-Shipping.exe",
 			"preLaunchTask": "UnrealPhobia Win64 Shipping Build",
 			"args": [
 			],
@@ -87,7 +87,7 @@
 			"program": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Binaries\\Win64\\UnrealEditor-Win64-Debug.exe",
 			"preLaunchTask": "UnrealPhobiaEditor Win64 Debug Build",
 			"args": [
-				"C:\\Unreal Project_udemy\\UnrealPhobia\\UnrealPhobia.uproject"
+				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject"
 			],
 			"cwd": "C:\\Program Files\\Epic Games\\UE_5.2",
 			"stopAtEntry": false,
@@ -104,7 +104,7 @@
 			"program": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Binaries\\Win64\\UnrealEditor-Win64-DebugGame.exe",
 			"preLaunchTask": "UnrealPhobiaEditor Win64 DebugGame Build",
 			"args": [
-				"C:\\Unreal Project_udemy\\UnrealPhobia\\UnrealPhobia.uproject"
+				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject"
 			],
 			"cwd": "C:\\Program Files\\Epic Games\\UE_5.2",
 			"stopAtEntry": false,
@@ -121,7 +121,7 @@
 			"program": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
 			"preLaunchTask": "UnrealPhobiaEditor Win64 Development Build",
 			"args": [
-				"C:\\Unreal Project_udemy\\UnrealPhobia\\UnrealPhobia.uproject"
+				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject"
 			],
 			"cwd": "C:\\Program Files\\Epic Games\\UE_5.2",
 			"stopAtEntry": false,
@@ -140,7 +140,7 @@
 			"args": [
 				"-projectfiles",
 				"-vscode",
-				"-project=C:\\Unreal Project_udemy\\UnrealPhobia\\UnrealPhobia.uproject",
+				"-project=C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-game",
 				"-engine"
 			],

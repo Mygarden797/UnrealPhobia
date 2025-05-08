@@ -1,5 +1,5 @@
 /FI "C:\Program Files\Epic Games\UE_5.2\Engine\Intermediate\Build\Win64\x64\UnrealEditor\Development\GeometryCollectionEngine\Definitions.GeometryCollectionEngine.h" 
-/FI "C:\Unreal Project_udemy\UnrealPhobia\Intermediate\Build\Win64\x64\UnrealPhobiaEditor\Development\UnrealEd\SharedPCH.UnrealEd.ShadowErrors.h" 
+/FI "C:\Users\liam8014\OneDrive\UE_Projects\UP\UnrealPhobia\Intermediate\Build\Win64\x64\UnrealPhobiaEditor\Development\UnrealEd\SharedPCH.UnrealEd.ShadowErrors.h" 
 /I "C:\Program Files\Epic Games\UE_5.2\Engine\Source" 
 /I "C:\Program Files\Epic Games\UE_5.2\Engine\Source\Runtime\Experimental\GeometryCollectionEngine\Private" 
 /I "C:\Program Files\Epic Games\UE_5.2\Engine\Intermediate\Build\Win64\UnrealEditor\Inc\MeshConversion\UHT" 
