@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -18,7 +16,6 @@ class UNREALPHOBIA_API ASurvivor : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ASurvivor(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -28,23 +25,21 @@ public:
 	UPROPERTY()
 	class UUserWidget* CrosshairWidget;
 
-	
-
 private:
 
+	// Move Front and Back using 1D Vector, Keyboard
 	void MoveForward(const FInputActionValue& Value);
+	// Move Right and Left using 1D Vector, Keyboard
 	void MoveRight(const FInputActionValue& Value);
-
+	// Move Camera using 2D Vector, Mouse
 	void Look(const FInputActionValue& Value);
 
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	float CameraRotationSpeed = 50.f;
 
-	// Enhanced Input Component
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> DefaultMappingContext;
 

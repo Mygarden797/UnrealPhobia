@@ -1,5 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #include "Survivor.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -12,54 +10,40 @@
 #include "Blueprint/UserWidget.h"
 
 
-
-//////////////////////////////////////////////////////////////////////////
-// ASurvivor
+/*
+	- Name				: ASurvivor
+	- Description		: Player Character
+	- Date					: 2022/05/18, Hangyeol
+	- to do					: Fix Camera Clipping when Character nearyby 'right' wall 
+*/
 
 ASurvivor::ASurvivor(const FObjectInitializer& ObjectInitializer)
-	:Super(ObjectInitializer.SetDefaultSubobjectClass<UCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
-	// Set size for collision capsule
+	// Character Collision Size
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-
-	// Don't rotate when the controller rotates. Let that just affect the camera.
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationRoll = false;
-
-	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = false; // Character moves in the direction of input...	
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
+	
+	GetCharacterMovement()->bOrientRotationToMovement = false;					// Rotate Character depend on the Controller
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); 
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
-
-	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
-	// instead of recompiling to adjust them
-	GetCharacterMovement()->AirControl = 0.35f;
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
-	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
-	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
-	// Create a camera boom (pulls in towards the player if there is a collision)
+
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+	CameraBoom->TargetArmLength = 400.0f;
+	// CameraBoom->bUsePawnControlRotation = true; 
 
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
-
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); 
+	// FollowCamera->bUsePawnControlRotation = false; 
 }
 
 void ASurvivor::BeginPlay()
 {
-	// Call the base class  
 	Super::BeginPlay();
 
-	//Add Input Mapping Context
+	// Load Key Binding
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -67,7 +51,12 @@ void ASurvivor::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to Mapping Keys"));
+	}
 
+	// Load Crosshair
 	if (IsLocallyControlled() && CrosshairWidgetClass)
 	{
 		CrosshairWidget =CreateWidget<UUserWidget>(GetWorld(), CrosshairWidgetClass);
@@ -76,14 +65,13 @@ void ASurvivor::BeginPlay()
 			CrosshairWidget->AddToViewport();
 		}
 	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load Crosshair!!"));
+	}
 
 }
 
-
-////////////////
-/*** Character Move Settings ***/
-
-/** Called to bind functionality to input**/
 void ASurvivor::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -95,10 +83,13 @@ void ASurvivor::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 		EIC->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASurvivor::Look);
 	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to Bind Input!!"));
+	}
 
 }
 
-/** Movement of Forward and Backword**/
 void ASurvivor::MoveForward(const FInputActionValue& Value)
 {
 	const float AxisValue = Value.Get<float>();
@@ -110,12 +101,16 @@ void ASurvivor::MoveForward(const FInputActionValue& Value)
 
 		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Move Forward"));
 	}
+	else 
+	{
+		UE_LOG(LogTemp, Error, TEXT("No Controller or AxisValue is 0 in MoveForward!!"));
+	}
 }
 
-/** Movement of RIght and Left **/
 void ASurvivor::MoveRight(const FInputActionValue& Value)
 {
 	const float AxisValue = Value.Get<float>();
+
 	if (Controller && AxisValue != 0.0f)
 	{
 		const FRotator YawRotation(0, Controller->GetControlRotation().Yaw, 0);
@@ -124,11 +119,14 @@ void ASurvivor::MoveRight(const FInputActionValue& Value)
 
 		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Move Right"));
 	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("No Controller or AxisValue is 0 in MoveRight!!"));
+	}
 }
 
 void ASurvivor::Look(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
@@ -136,5 +134,9 @@ void ASurvivor::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y*-1);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("No Controller in Look!!"));
 	}
 }
