@@ -8,13 +8,14 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Blueprint/UserWidget.h"
+// #include "SpringArmComponent.h"
 
 
 /*
 	- Name				: ASurvivor
 	- Description		: Player Character
 	- Date					: 2022/05/18, Hangyeol
-	- to do					: Fix Camera Clipping when Character nearyby 'right' wall 
+	- Fixed				: Fix Camera Clipping when Character nearyby 'right' wall 
 */
 
 ASurvivor::ASurvivor(const FObjectInitializer& ObjectInitializer)
@@ -28,14 +29,16 @@ ASurvivor::ASurvivor(const FObjectInitializer& ObjectInitializer)
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 
 
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 400.0f;
-	// CameraBoom->bUsePawnControlRotation = true; 
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArm->SetupAttachment(RootComponent);
+	SpringArm->TargetArmLength = 90.0f;
+	SpringArm->SocketOffset = FVector(10.f, 45.f, 0.f);
+	SpringArm->ProbeSize = 12.f;
+	// SpringArm->bUsePawnControlRotation = true; 
 
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); 
+	FollowCamera->SetupAttachment(SpringArm, USpringArmComponent::SocketName); 
 	// FollowCamera->bUsePawnControlRotation = false; 
 }
 
