@@ -9,13 +9,13 @@
 				"UnrealPhobia",
 				"Win64",
 				"Debug",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -26,7 +26,7 @@
 				"UnrealPhobia",
 				"Win64",
 				"Debug",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
@@ -35,7 +35,7 @@
 			],
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -46,13 +46,13 @@
 				"UnrealPhobia",
 				"Win64",
 				"Debug",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -63,13 +63,13 @@
 				"UnrealPhobia",
 				"Win64",
 				"DebugGame",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -80,7 +80,7 @@
 				"UnrealPhobia",
 				"Win64",
 				"DebugGame",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
@@ -89,7 +89,7 @@
 			],
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -100,13 +100,13 @@
 				"UnrealPhobia",
 				"Win64",
 				"DebugGame",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -117,13 +117,13 @@
 				"UnrealPhobia",
 				"Win64",
 				"Development",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -134,7 +134,7 @@
 				"UnrealPhobia",
 				"Win64",
 				"Development",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
@@ -143,7 +143,7 @@
 			],
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -154,13 +154,13 @@
 				"UnrealPhobia",
 				"Win64",
 				"Development",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -171,13 +171,13 @@
 				"UnrealPhobia",
 				"Win64",
 				"Test",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -188,7 +188,7 @@
 				"UnrealPhobia",
 				"Win64",
 				"Test",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
@@ -197,7 +197,7 @@
 			],
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -208,13 +208,13 @@
 				"UnrealPhobia",
 				"Win64",
 				"Test",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -225,13 +225,13 @@
 				"UnrealPhobia",
 				"Win64",
 				"Shipping",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -242,7 +242,7 @@
 				"UnrealPhobia",
 				"Win64",
 				"Shipping",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
@@ -251,7 +251,7 @@
 			],
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -262,13 +262,13 @@
 				"UnrealPhobia",
 				"Win64",
 				"Shipping",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -279,13 +279,13 @@
 				"UnrealPhobiaEditor",
 				"Win64",
 				"Debug",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -296,7 +296,7 @@
 				"UnrealPhobiaEditor",
 				"Win64",
 				"Debug",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
@@ -305,7 +305,7 @@
 			],
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -316,13 +316,13 @@
 				"UnrealPhobiaEditor",
 				"Win64",
 				"Debug",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -333,13 +333,13 @@
 				"UnrealPhobiaEditor",
 				"Win64",
 				"DebugGame",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -350,7 +350,7 @@
 				"UnrealPhobiaEditor",
 				"Win64",
 				"DebugGame",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
@@ -359,7 +359,7 @@
 			],
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -370,13 +370,13 @@
 				"UnrealPhobiaEditor",
 				"Win64",
 				"DebugGame",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -387,13 +387,13 @@
 				"UnrealPhobiaEditor",
 				"Win64",
 				"Development",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -404,7 +404,7 @@
 				"UnrealPhobiaEditor",
 				"Win64",
 				"Development",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
@@ -413,7 +413,7 @@
 			],
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		},
 		{
@@ -424,13 +424,13 @@
 				"UnrealPhobiaEditor",
 				"Win64",
 				"Development",
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-waitmutex"
 			],
 			"problemMatcher": "$msCompile",
 			"type": "shell",
 			"options": {
-				"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"cwd": "D:\\UE_5.2"
 			}
 		}
 	]

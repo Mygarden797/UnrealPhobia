@@ -4,149 +4,149 @@
 		{
 			"name": "Launch UnrealPhobia (Debug)",
 			"request": "launch",
-			"program": "C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\Binaries\\Win64\\UnrealGame-Win64-Debug.exe",
+			"program": "D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\Binaries\\Win64\\UnrealGame-Win64-Debug.exe",
 			"preLaunchTask": "UnrealPhobia Win64 Debug Build",
 			"args": [
 			],
-			"cwd": "C:\\Program Files\\Epic Games\\UE_5.2",
+			"cwd": "D:\\UE_5.2",
 			"stopAtEntry": false,
 			"console": "externalTerminal",
 			"type": "cppvsdbg",
-			"visualizerFile": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis",
+			"visualizerFile": "D:\\UE_5.2\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis",
 			"sourceFileMap": {
-				"D:\\build\\++UE5\\Sync": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"D:\\build\\++UE5\\Sync": "D:\\UE_5.2"
 			}
 		},
 		{
 			"name": "Launch UnrealPhobia (DebugGame)",
 			"request": "launch",
-			"program": "C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\Binaries\\Win64\\UnrealGame-Win64-DebugGame.exe",
+			"program": "D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\Binaries\\Win64\\UnrealGame-Win64-DebugGame.exe",
 			"preLaunchTask": "UnrealPhobia Win64 DebugGame Build",
 			"args": [
 			],
-			"cwd": "C:\\Program Files\\Epic Games\\UE_5.2",
+			"cwd": "D:\\UE_5.2",
 			"stopAtEntry": false,
 			"console": "externalTerminal",
 			"type": "cppvsdbg",
-			"visualizerFile": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis",
+			"visualizerFile": "D:\\UE_5.2\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis",
 			"sourceFileMap": {
-				"D:\\build\\++UE5\\Sync": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"D:\\build\\++UE5\\Sync": "D:\\UE_5.2"
 			}
 		},
 		{
 			"name": "Launch UnrealPhobia (Development)",
 			"request": "launch",
-			"program": "C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\Binaries\\Win64\\UnrealGame.exe",
+			"program": "D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\Binaries\\Win64\\UnrealGame.exe",
 			"preLaunchTask": "UnrealPhobia Win64 Development Build",
 			"args": [
 			],
-			"cwd": "C:\\Program Files\\Epic Games\\UE_5.2",
+			"cwd": "D:\\UE_5.2",
 			"stopAtEntry": false,
 			"console": "externalTerminal",
 			"type": "cppvsdbg",
-			"visualizerFile": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis",
+			"visualizerFile": "D:\\UE_5.2\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis",
 			"sourceFileMap": {
-				"D:\\build\\++UE5\\Sync": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"D:\\build\\++UE5\\Sync": "D:\\UE_5.2"
 			}
 		},
 		{
 			"name": "Launch UnrealPhobia (Test)",
 			"request": "launch",
-			"program": "C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\Binaries\\Win64\\UnrealGame-Win64-Test.exe",
+			"program": "D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\Binaries\\Win64\\UnrealGame-Win64-Test.exe",
 			"preLaunchTask": "UnrealPhobia Win64 Test Build",
 			"args": [
 			],
-			"cwd": "C:\\Program Files\\Epic Games\\UE_5.2",
+			"cwd": "D:\\UE_5.2",
 			"stopAtEntry": false,
 			"console": "externalTerminal",
 			"type": "cppvsdbg",
-			"visualizerFile": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis",
+			"visualizerFile": "D:\\UE_5.2\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis",
 			"sourceFileMap": {
-				"D:\\build\\++UE5\\Sync": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"D:\\build\\++UE5\\Sync": "D:\\UE_5.2"
 			}
 		},
 		{
 			"name": "Launch UnrealPhobia (Shipping)",
 			"request": "launch",
-			"program": "C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\Binaries\\Win64\\UnrealGame-Win64-Shipping.exe",
+			"program": "D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\Binaries\\Win64\\UnrealGame-Win64-Shipping.exe",
 			"preLaunchTask": "UnrealPhobia Win64 Shipping Build",
 			"args": [
 			],
-			"cwd": "C:\\Program Files\\Epic Games\\UE_5.2",
+			"cwd": "D:\\UE_5.2",
 			"stopAtEntry": false,
 			"console": "externalTerminal",
 			"type": "cppvsdbg",
-			"visualizerFile": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis",
+			"visualizerFile": "D:\\UE_5.2\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis",
 			"sourceFileMap": {
-				"D:\\build\\++UE5\\Sync": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"D:\\build\\++UE5\\Sync": "D:\\UE_5.2"
 			}
 		},
 		{
 			"name": "Launch UnrealPhobiaEditor (Debug)",
 			"request": "launch",
-			"program": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Binaries\\Win64\\UnrealEditor-Win64-Debug.exe",
+			"program": "D:\\UE_5.2\\Engine\\Binaries\\Win64\\UnrealEditor-Win64-Debug.exe",
 			"preLaunchTask": "UnrealPhobiaEditor Win64 Debug Build",
 			"args": [
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject"
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject"
 			],
-			"cwd": "C:\\Program Files\\Epic Games\\UE_5.2",
+			"cwd": "D:\\UE_5.2",
 			"stopAtEntry": false,
 			"console": "externalTerminal",
 			"type": "cppvsdbg",
-			"visualizerFile": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis",
+			"visualizerFile": "D:\\UE_5.2\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis",
 			"sourceFileMap": {
-				"D:\\build\\++UE5\\Sync": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"D:\\build\\++UE5\\Sync": "D:\\UE_5.2"
 			}
 		},
 		{
 			"name": "Launch UnrealPhobiaEditor (DebugGame)",
 			"request": "launch",
-			"program": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Binaries\\Win64\\UnrealEditor-Win64-DebugGame.exe",
+			"program": "D:\\UE_5.2\\Engine\\Binaries\\Win64\\UnrealEditor-Win64-DebugGame.exe",
 			"preLaunchTask": "UnrealPhobiaEditor Win64 DebugGame Build",
 			"args": [
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject"
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject"
 			],
-			"cwd": "C:\\Program Files\\Epic Games\\UE_5.2",
+			"cwd": "D:\\UE_5.2",
 			"stopAtEntry": false,
 			"console": "externalTerminal",
 			"type": "cppvsdbg",
-			"visualizerFile": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis",
+			"visualizerFile": "D:\\UE_5.2\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis",
 			"sourceFileMap": {
-				"D:\\build\\++UE5\\Sync": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"D:\\build\\++UE5\\Sync": "D:\\UE_5.2"
 			}
 		},
 		{
 			"name": "Launch UnrealPhobiaEditor (Development)",
 			"request": "launch",
-			"program": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
+			"program": "D:\\UE_5.2\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
 			"preLaunchTask": "UnrealPhobiaEditor Win64 Development Build",
 			"args": [
-				"C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject"
+				"D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject"
 			],
-			"cwd": "C:\\Program Files\\Epic Games\\UE_5.2",
+			"cwd": "D:\\UE_5.2",
 			"stopAtEntry": false,
 			"console": "externalTerminal",
 			"type": "cppvsdbg",
-			"visualizerFile": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis",
+			"visualizerFile": "D:\\UE_5.2\\Engine\\Extras\\VisualStudioDebugging\\Unreal.natvis",
 			"sourceFileMap": {
-				"D:\\build\\++UE5\\Sync": "C:\\Program Files\\Epic Games\\UE_5.2"
+				"D:\\build\\++UE5\\Sync": "D:\\UE_5.2"
 			}
 		},
 		{
 			"name": "Generate Project Files",
 			"type": "coreclr",
 			"request": "launch",
-			"program": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Build\\BatchFiles\\RunUBT.bat",
+			"program": "D:\\UE_5.2\\Engine\\Build\\BatchFiles\\RunUBT.bat",
 			"args": [
 				"-projectfiles",
 				"-vscode",
-				"-project=C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
+				"-project=D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\UnrealPhobia.uproject",
 				"-game",
 				"-engine"
 			],
 			"console": "externalTerminal",
 			"stopAtEntry": false,
-			"cwd": "C:\\Program Files\\Epic Games\\UE_5.2"
+			"cwd": "D:\\UE_5.2"
 		}
 	]
 }

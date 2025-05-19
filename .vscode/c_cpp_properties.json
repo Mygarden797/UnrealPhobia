@@ -2,24 +2,24 @@
     "configurations": [
         {
             "name": "UnrealPhobiaEditor Editor Win64 Development (UnrealPhobia)",
-            "compilerPath": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\bin\\Hostx64\\x64\\cl.exe",
+            "compilerPath": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.34.31933\\bin\\Hostx64\\x64\\cl.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "msvc-x64",
             "configurationProvider": "epic.ue",
             "compileCommands": [
-                "C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia.json"
+                "D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia.json"
             ]
         },
         {
             "name": "Win32",
-            "compilerPath": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.43.34808\\bin\\Hostx64\\x64\\cl.exe",
+            "compilerPath": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.34.31933\\bin\\Hostx64\\x64\\cl.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "msvc-x64",
             "configurationProvider": "epic.ue",
             "compileCommands": [
-                "C:\\Users\\liam8014\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\.vscode\\compileCommands_Default.json"
+                "D:\\OneDrive\\UE_Projects\\UP\\UnrealPhobia\\.vscode\\compileCommands_Default.json"
             ]
         }
     ],
