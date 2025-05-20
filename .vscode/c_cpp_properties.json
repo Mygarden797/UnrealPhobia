@@ -8,7 +8,7 @@
             "intelliSenseMode": "msvc-x64",
             "configurationProvider": "epic.ue",
             "compileCommands": [
-                "C:\\Unreal Project_udemy\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia.json"
+                "C:\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia.json"
             ]
         },
         {
@@ -19,7 +19,7 @@
             "intelliSenseMode": "msvc-x64",
             "configurationProvider": "epic.ue",
             "compileCommands": [
-                "C:\\Unreal Project_udemy\\UnrealPhobia\\.vscode\\compileCommands_Default.json"
+                "C:\\UnrealPhobia\\.vscode\\compileCommands_Default.json"
             ]
         }
     ],

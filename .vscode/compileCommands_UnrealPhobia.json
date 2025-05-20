@@ -1,57 +1,81 @@
 [
 	{
-		"file": "C:\\Unreal Project_udemy\\UnrealPhobia\\Source\\UnrealPhobia\\UnrealPhobia.Build.cs",
+		"file": "C:\\UnrealPhobia\\Source\\UnrealPhobia\\Creature\\AI\\Task\\BTT_SetState.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\bin\\Hostx64\\x64\\cl.exe",
-			"@C:\\Unreal Project_udemy\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
+			"@C:\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
 		],
 		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "C:\\Unreal Project_udemy\\UnrealPhobia\\Source\\UnrealPhobia\\UnrealPhobia.cpp",
+		"file": "C:\\UnrealPhobia\\Source\\UnrealPhobia\\Creature\\AI\\Task\\BTT_SetState.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\bin\\Hostx64\\x64\\cl.exe",
-			"@C:\\Unreal Project_udemy\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
+			"@C:\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
 		],
 		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "C:\\Unreal Project_udemy\\UnrealPhobia\\Source\\UnrealPhobia\\UnrealPhobia.h",
+		"file": "C:\\UnrealPhobia\\Source\\UnrealPhobia\\Creature\\CreatureBase.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\bin\\Hostx64\\x64\\cl.exe",
-			"@C:\\Unreal Project_udemy\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
+			"@C:\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
 		],
 		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "C:\\Unreal Project_udemy\\UnrealPhobia\\Source\\UnrealPhobia\\UnrealPhobiaCharacter.cpp",
+		"file": "C:\\UnrealPhobia\\Source\\UnrealPhobia\\Creature\\CreatureBase.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\bin\\Hostx64\\x64\\cl.exe",
-			"@C:\\Unreal Project_udemy\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
+			"@C:\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
 		],
 		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "C:\\Unreal Project_udemy\\UnrealPhobia\\Source\\UnrealPhobia\\UnrealPhobiaCharacter.h",
+		"file": "C:\\UnrealPhobia\\Source\\UnrealPhobia\\Creature\\CreatureController.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\bin\\Hostx64\\x64\\cl.exe",
-			"@C:\\Unreal Project_udemy\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
+			"@C:\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
 		],
 		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "C:\\Unreal Project_udemy\\UnrealPhobia\\Source\\UnrealPhobia\\UnrealPhobiaGameMode.cpp",
+		"file": "C:\\UnrealPhobia\\Source\\UnrealPhobia\\Creature\\CreatureController.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\bin\\Hostx64\\x64\\cl.exe",
-			"@C:\\Unreal Project_udemy\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
+			"@C:\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
 		],
 		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "C:\\Unreal Project_udemy\\UnrealPhobia\\Source\\UnrealPhobia\\UnrealPhobiaGameMode.h",
+		"file": "C:\\UnrealPhobia\\Source\\UnrealPhobia\\Creature\\CreatureState.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\bin\\Hostx64\\x64\\cl.exe",
-			"@C:\\Unreal Project_udemy\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
+			"@C:\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
+	},
+	{
+		"file": "C:\\UnrealPhobia\\Source\\UnrealPhobia\\UnrealPhobia.Build.cs",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
+	},
+	{
+		"file": "C:\\UnrealPhobia\\Source\\UnrealPhobia\\UnrealPhobia.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
+	},
+	{
+		"file": "C:\\UnrealPhobia\\Source\\UnrealPhobia\\UnrealPhobia.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\UnrealPhobia\\.vscode\\compileCommands_UnrealPhobia\\UnrealPhobia.261.rsp"
 		],
 		"directory": "C:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	}
