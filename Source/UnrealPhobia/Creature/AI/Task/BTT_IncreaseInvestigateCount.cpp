@@ -1,8 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "Creature/AI/Task/BTT_IncreaseInvestigateCount.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Creature/CreatureController.h"
-#include "Creature/AI/Task/BTT_IncreaseInvestigateCount.h"
+
 
 
 

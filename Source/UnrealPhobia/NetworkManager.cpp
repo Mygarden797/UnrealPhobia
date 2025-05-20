@@ -34,7 +34,7 @@ void UNetworkManager::ConnectToGameServer()
         GameServerSession = MakeShared<PacketSession>(Socket);
         GameServerSession->Run();
 
-        // TEMP : Lobby¿¡¼­ Ä³¸¯ÅÍ ¼±ÅÃÃ¢ µî
+        // TEMP : Lobbyï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¢ ï¿½ï¿½
         {
             Protocol::C_LOGIN Pkt;
             SendBufferRef SendBuffer = ClientPacketHandler::MakeSendBuffer(Pkt);
@@ -82,7 +82,7 @@ void UNetworkManager::HandleSpawn(const Protocol::PlayerInfo& PlayerInfo, bool I
     if (World == nullptr)
         return;
 
-    // Áßº¹ Ã³¸® Ã¼Å©
+    // ï¿½ßºï¿½ Ã³ï¿½ï¿½ Ã¼Å©
     const uint64 ObjectId = PlayerInfo.object_id();
     if (Players.Find(ObjectId) != nullptr)
         return;
