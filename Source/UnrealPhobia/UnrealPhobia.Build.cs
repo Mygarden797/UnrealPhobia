@@ -8,7 +8,7 @@ public class UnrealPhobia : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput", "Sockets", "Networking","AIModule","GameplayTasks","NavigationSystem" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput", "Sockets", "Networking","AIModule","GameplayTasks","NavigationSystem","UMG" });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "ProtobufCore" });
 
