@@ -16,6 +16,7 @@ ATrigger::ATrigger()
 	);
 }
 
+// 트리거 종류 설정 및 메시 재적용
 void ATrigger::SetTriggerName(ETriggerName Name)
 {
 	TriggerName = Name;
