@@ -26,6 +26,27 @@ public:
 	class UUserWidget* CrosshairWidget;
 
 private:
+		
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float MaxStamina = 400.f;
+	UPROPERTY(VisibleAnywhere, Category = "Stamina")
+	float CurrentStamina = 400.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float StaminaLossRate = 20.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float StaminaRegenRate = 10.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+
+
+	FTimerHandle StaminaTimerHandle;
+	bool bIsLossingStamina = false;
+	bool bIsSprinting = false;
+	void StartSprint();
+	void StopSprint();
+	void Sprint(const FInputActionValue& Value);
+	void LossStamina();
+	void RegenStamina();
+
 
 	// Move Front and Back using 1D Vector, Keyboard
 	void MoveForward(const FInputActionValue& Value);
@@ -33,6 +54,8 @@ private:
 	void MoveRight(const FInputActionValue& Value);
 	// Move Camera using 2D Vector, Mouse
 	void Look(const FInputActionValue& Value);
+
+
 
 
 protected:
@@ -51,7 +74,7 @@ protected:
 	TObjectPtr<UInputAction> MoveRightAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<UInputAction> JumpAction;
+	TObjectPtr<UInputAction> SprintAction;
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera");
