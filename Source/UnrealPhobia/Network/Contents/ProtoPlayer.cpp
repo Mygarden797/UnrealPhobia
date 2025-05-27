@@ -35,8 +35,8 @@ AProtoPlayer::AProtoPlayer()
 
     GetCharacterMovement()->bRunPhysicsWithNoController = true;
 
-    PlayerInfo = new Protocol::PlayerInfo();
-    DestInfo = new Protocol::PlayerInfo();
+    PlayerInfo = new Protocol::PosInfo();
+    DestInfo = new Protocol::PosInfo();
 }
 
 AProtoPlayer::~AProtoPlayer()
@@ -117,7 +117,7 @@ void AProtoPlayer::SetMoveState(Protocol::MoveState State)
     // TODO
 }
 
-void AProtoPlayer::SetPlayerInfo(const Protocol::PlayerInfo& Info)
+void AProtoPlayer::SetPlayerInfo(const Protocol::PosInfo& Info)
 {
     if (PlayerInfo->object_id() != 0)
     {
@@ -130,7 +130,7 @@ void AProtoPlayer::SetPlayerInfo(const Protocol::PlayerInfo& Info)
     SetActorLocation(Location);
 }
 
-void AProtoPlayer::SetDestInfo(const Protocol::PlayerInfo& Info)
+void AProtoPlayer::SetDestInfo(const Protocol::PosInfo& Info)
 {
     if (PlayerInfo->object_id() != 0)
     {

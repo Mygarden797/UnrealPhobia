@@ -20,7 +20,7 @@ bool Handle_S_LOGIN(PacketSessionRef& session, Protocol::S_LOGIN& pkt)
 
     for (int32 i = 0; i < pkt.players_size(); i++)
     {
-        const Protocol::PlayerInfo& Player = pkt.players(i);
+        const Protocol::ObjectInfo& Player = pkt.players(i);
     }
 
     // 로비에서 캐릭터 선택해서 인덱스 전송.
@@ -86,5 +86,21 @@ bool Handle_S_CHAT(PacketSessionRef& session, Protocol::S_CHAT& pkt)
     auto Msg = pkt.msg();
 
 
+    return true;
+}
+
+bool Handle_S_TIMER(PacketSessionRef& session, Protocol::S_TIMER& pkt)
+{
+    if (auto* GameInstance = Cast<UNetworkManager>(GWorld->GetGameInstance()))
+    {
+        GameInstance->HandleTimer(pkt);
+    }
+
+    return true;
+}
+
+bool Handle_S_TRIGGER(PacketSessionRef& session, Protocol::S_TRIGGER& pkt)
+{
+    //아직
     return true;
 }
