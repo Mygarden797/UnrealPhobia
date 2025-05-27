@@ -8,27 +8,18 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Blueprint/UserWidget.h"
-// #include "SpringArmComponent.h"
-
-
-/*
-	- Name				: ASurvivor
-	- Description		: Player Character
-	- Date					: 2022/05/26, Hangyeol
-	- Fixed					: Fix Sprint and Regen Stamina same time	
-*/
 
 ASurvivor::ASurvivor(const FObjectInitializer& ObjectInitializer)
 {
-	// Character Collision Size
+	// 캐릭터 충돌 크기
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	
-	GetCharacterMovement()->bOrientRotationToMovement = false;					// Rotate Character depend on the Controller
+	GetCharacterMovement()->bOrientRotationToMovement = false;					// 컨트롤러 기준으로 캐릭터 회전
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); 
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 	CurrentStamina = MaxStamina;
-	//UE_LOG(LogTemp, Error, TEXT("CurrentStamina, Init: %f"), CurrentStamina);
+	// UE_LOG(LogTemp, Error, TEXT("CurrentStamina, Init: %f"), CurrentStamina);
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
@@ -37,7 +28,7 @@ ASurvivor::ASurvivor(const FObjectInitializer& ObjectInitializer)
 	SpringArm->ProbeSize = 12.f;
 	// SpringArm->bUsePawnControlRotation = true; 
 
-	// Create a follow camera
+	// SpringArm 컴포넌트 생성
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(SpringArm, USpringArmComponent::SocketName); 
 	// FollowCamera->bUsePawnControlRotation = false; 
@@ -50,12 +41,9 @@ void ASurvivor::BeginPlay()
 	Super::BeginPlay();
 
 	CurrentStamina = MaxStamina;
-	UE_LOG(LogTemp, Error, TEXT("CurrentStamina, Init: %f"), CurrentStamina);
-	UE_LOG(LogTemp, Error, TEXT("CurrentStamina, Init: %f"), CurrentStamina);
-	UE_LOG(LogTemp, Error, TEXT("CurrentStamina, Init: %f"), CurrentStamina);
+	// UE_LOG(LogTemp, Error, TEXT("CurrentStamina, Init: %f"), CurrentStamina);
 
-
-	// Load Key Binding
+	// 키 바인딩 가져오기
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -65,10 +53,10 @@ void ASurvivor::BeginPlay()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to Mapping Keys"));
+		// UE_LOG(LogTemp, Error, TEXT("Failed to Mapping Keys"));
 	}
 
-	// Load Crosshair
+	// 조준선 가져오기
 	if (IsLocallyControlled() && CrosshairWidgetClass)
 	{
 		CrosshairWidget =CreateWidget<UUserWidget>(GetWorld(), CrosshairWidgetClass);
@@ -79,7 +67,7 @@ void ASurvivor::BeginPlay()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to load Crosshair!!"));
+		// UE_LOG(LogTemp, Error, TEXT("Failed to load Crosshair!!"));
 	}
 
 }
@@ -92,16 +80,16 @@ void ASurvivor::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	{
 		EIC->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ASurvivor::MoveForward);
 		EIC->BindAction(MoveRightAction, ETriggerEvent::Triggered, this, &ASurvivor::MoveRight);
-
 		EIC->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASurvivor::Look);
+
+		
 		EIC->BindAction(SprintAction, ETriggerEvent::Started, this, &ASurvivor::Sprint);
 		EIC->BindAction(SprintAction, ETriggerEvent::Completed, this, & ASurvivor::Sprint);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to Bind Input!!"));
+		// UE_LOG(LogTemp, Error, TEXT("Failed to Bind Input!!"));
 	}
-
 }
 
 void ASurvivor::MoveForward(const FInputActionValue& Value)
@@ -117,7 +105,7 @@ void ASurvivor::MoveForward(const FInputActionValue& Value)
 	}
 	else 
 	{
-		UE_LOG(LogTemp, Error, TEXT("No Controller or AxisValue is 0 in MoveForward!!"));
+		// UE_LOG(LogTemp, Error, TEXT("No Controller or AxisValue is 0 in MoveForward!!"));
 	}
 }
 
@@ -135,7 +123,7 @@ void ASurvivor::MoveRight(const FInputActionValue& Value)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("No Controller or AxisValue is 0 in MoveRight!!"));
+		// UE_LOG(LogTemp, Error, TEXT("No Controller or AxisValue is 0 in MoveRight!!"));
 	}
 }
 
@@ -151,13 +139,13 @@ void ASurvivor::Look(const FInputActionValue& Value)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("No Controller in Look!!"));
+		// UE_LOG(LogTemp, Error, TEXT("No Controller in Look!!"));
 	}
 }
 
 void ASurvivor::Sprint(const FInputActionValue& Value)
 {
-	const bool DoSprint = Value.Get<bool>();
+	const bool DoSprint = Value.Get<bool>();			// LShift를 누르고 있을 때 true
 
 	if (DoSprint && CurrentStamina > 0.f)
 	{
@@ -171,24 +159,25 @@ void ASurvivor::Sprint(const FInputActionValue& Value)
 
 void ASurvivor::StartSprint()
 {
-	if (bIsSprinting || CurrentStamina <= 0.f)
+	if (bIsSprinting || CurrentStamina <= 0.f)			// 달리기 중이거나 스테미너 없으면 리턴
 		return;
+
 	bIsSprinting = true;
 	GetCharacterMovement()->MaxWalkSpeed = 900.f;
 	bIsLossingStamina = true;
 
-	if (!GetWorldTimerManager().IsTimerActive(StaminaLossHandle))
+	if (!GetWorldTimerManager().IsTimerActive(FStaminaLossHandle))
 	{
-			GetWorldTimerManager().ClearTimer(StaminaLossHandle);
+			GetWorldTimerManager().ClearTimer(FStaminaLossHandle);
 			GetWorldTimerManager().SetTimer(
-			StaminaLossHandle,
+			FStaminaLossHandle,
 			this,
 			&ASurvivor::LossStamina,
 			0.1f,
 			true
 		);
 	}
-	UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Start: %f"), CurrentStamina);
+	// UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Start: %f"), CurrentStamina);
 }
 
 void ASurvivor::StopSprint()
@@ -197,35 +186,40 @@ void ASurvivor::StopSprint()
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 
 	bIsLossingStamina = false;
-	GetWorldTimerManager().ClearTimer(StaminaLossHandle);
+	GetWorldTimerManager().ClearTimer(FStaminaLossHandle);
 
 	if (CurrentStamina < MaxStamina)
 	{
-		GetWorldTimerManager().SetTimer(StaminaRegenHandle, this, &ASurvivor::RegenStamina, 1.0f, true);	
+		GetWorldTimerManager().SetTimer(
+			FStaminaRegenHandle, 
+			this, 
+			&ASurvivor::RegenStamina, 
+			1.0f, 
+			true);	
 	}
-	UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Stop: %f"), CurrentStamina);
+	// UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Stop: %f"), CurrentStamina);
 }
 
 void ASurvivor::LossStamina()
 {
 	if (!bIsLossingStamina || GetVelocity().SizeSquared() <= 0.0f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("LossStamina: !bIsLossingStamina is False"));
+		// UE_LOG(LogTemp, Warning, TEXT("LossStamina: !bIsLossingStamina is False"));
 		return;
 	}
 
 	const float Delta = StaminaLossRate * 0.1f;
 	if (CurrentStamina <= Delta)
 	{
-		CurrentStamina = 0.f;
-		UE_LOG(LogTemp, Display, TEXT("LossStamina() - Sprint 종료, Stamina: %.2f"), CurrentStamina);
+		CurrentStamina = 0.0f;
+		// UE_LOG(LogTemp, Display, TEXT("LossStamina() - Sprint 종료, Stamina: %.2f"), CurrentStamina);
 		StopSprint(); 
 	}
 
 	else
 	{
 		CurrentStamina -= Delta;
-		UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Loss: %f"), CurrentStamina);
+		// UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Loss: %f"), CurrentStamina);
 	}
 }
 
@@ -233,12 +227,13 @@ void ASurvivor::RegenStamina()
 {
 	if (bIsSprinting || CurrentStamina >= MaxStamina)
 	{
-		GetWorldTimerManager().ClearTimer(StaminaRegenHandle);
+		GetWorldTimerManager().ClearTimer(FStaminaRegenHandle);
 		return;
 	}
-	else {
+	else 
+	{
 		CurrentStamina += StaminaRegenRate * 0.1f;
-		UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Regen: %f"), CurrentStamina);
+		// UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Regen: %f"), CurrentStamina);
 		CurrentStamina = FMath::Min(CurrentStamina, MaxStamina);
 	}
 }

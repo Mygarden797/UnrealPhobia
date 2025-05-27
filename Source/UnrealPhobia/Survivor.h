@@ -10,6 +10,13 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 
+/*
+	- Name				: ASurvivor
+	- Description		: Player Character
+	- Date					: 2022/05/26, Hangyeol
+	- Fixed					: 스프린트 중에 스테미너가 회복되는 현상
+*/
+
 UCLASS(Blueprintable)
 class UNREALPHOBIA_API ASurvivor : public ACharacter
 {
@@ -25,40 +32,24 @@ public:
 	UPROPERTY()
 	class UUserWidget* CrosshairWidget;
 
-private:
-		
-	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
-	float MaxStamina = 100.f;
-	UPROPERTY(VisibleAnywhere, Category = "Stamina")
-	float CurrentStamina = 100.f;
-	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
-	float StaminaLossRate = 20.f;
-	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
-	float StaminaRegenRate = 10.f;
-	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
-
-
-	FTimerHandle StaminaLossHandle;
-	FTimerHandle StaminaRegenHandle;
-
-
-	bool bIsLossingStamina = false;
-	bool bIsSprinting = false;
-	void StartSprint();
-	void StopSprint();
-	void Sprint(const FInputActionValue& Value);
-	void LossStamina();
-	void RegenStamina();
-
-
-	// Move Front and Back using 1D Vector, Keyboard
+	// 캐릭터 앞뒤 이동, 1D Vector
 	void MoveForward(const FInputActionValue& Value);
-	// Move Right and Left using 1D Vector, Keyboard
+	// 캐릭터 좌우 이동, 1D Vector
 	void MoveRight(const FInputActionValue& Value);
-	// Move Camera using 2D Vector, Mouse
+	// 카메라 이동, 2D Vector
 	void Look(const FInputActionValue& Value);
 
+	// Sprint Handler 
+	void Sprint(const FInputActionValue& Value);
+	// LShift를 누르고 있을 때 달린다.
+	void StartSprint();
+	// LShift를 누르지 않을 때 달리기를 멈춘다.
+	void StopSprint();
 
+	// 캐릭터가 달리는 중 스테미너가 감소한다.
+	void LossStamina();
+	// 캐릭터가 달리지 않으면 스테미너를 회복한다.
+	void RegenStamina();
 
 
 protected:
@@ -77,8 +68,10 @@ protected:
 	TObjectPtr<UInputAction> MoveRightAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<UInputAction> SprintAction;
+	TObjectPtr<UInputAction> LookAction;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> SprintAction;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera");
 	TObjectPtr<USpringArmComponent> SpringArm;
@@ -86,10 +79,21 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
 
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<UInputAction> LookAction;
-
 	FRotator TargetCameraRotation;
 
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float MaxStamina = 100.f;
+	UPROPERTY(VisibleAnywhere, Category = "Stamina")
+	float CurrentStamina = 100.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float StaminaLossRate = 20.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float StaminaRegenRate = 10.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+
+	FTimerHandle FStaminaLossHandle;
+	FTimerHandle FStaminaRegenHandle;
+	bool bIsLossingStamina = false;
+	bool bIsSprinting = false;
 };
