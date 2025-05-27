@@ -47,17 +47,92 @@ PROTOBUF_NAMESPACE_OPEN
 PROTOBUF_NAMESPACE_CLOSE
 namespace Protocol {
 
+enum ObjectType : int {
+  OBJECT_TYPE_NONE = 0,
+  OBJECT_TYPE_ACTOR = 1,
+  OBJECT_TYPE_TRIGGER = 2,
+  ObjectType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  ObjectType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool ObjectType_IsValid(int value);
+constexpr ObjectType ObjectType_MIN = OBJECT_TYPE_NONE;
+constexpr ObjectType ObjectType_MAX = OBJECT_TYPE_TRIGGER;
+constexpr int ObjectType_ARRAYSIZE = ObjectType_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ObjectType_descriptor();
+template<typename T>
+inline const std::string& ObjectType_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ObjectType>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function ObjectType_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    ObjectType_descriptor(), enum_t_value);
+}
+inline bool ObjectType_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ObjectType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ObjectType>(
+    ObjectType_descriptor(), name, value);
+}
+enum ActorType : int {
+  Actor_TYPE_NONE = 0,
+  Actor_TYPE_PLAYER = 1,
+  Actor_TYPE_MONSTER = 2,
+  ActorType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  ActorType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool ActorType_IsValid(int value);
+constexpr ActorType ActorType_MIN = Actor_TYPE_NONE;
+constexpr ActorType ActorType_MAX = Actor_TYPE_MONSTER;
+constexpr int ActorType_ARRAYSIZE = ActorType_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ActorType_descriptor();
+template<typename T>
+inline const std::string& ActorType_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ActorType>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function ActorType_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    ActorType_descriptor(), enum_t_value);
+}
+inline bool ActorType_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ActorType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ActorType>(
+    ActorType_descriptor(), name, value);
+}
+enum TriggerType : int {
+  TRIGGER_TYPE_NONE = 0,
+  TRIGGER_TYPE_TORCHLIGHT = 1,
+  TriggerType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  TriggerType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool TriggerType_IsValid(int value);
+constexpr TriggerType TriggerType_MIN = TRIGGER_TYPE_NONE;
+constexpr TriggerType TriggerType_MAX = TRIGGER_TYPE_TORCHLIGHT;
+constexpr int TriggerType_ARRAYSIZE = TriggerType_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* TriggerType_descriptor();
+template<typename T>
+inline const std::string& TriggerType_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, TriggerType>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function TriggerType_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    TriggerType_descriptor(), enum_t_value);
+}
+inline bool TriggerType_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, TriggerType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<TriggerType>(
+    TriggerType_descriptor(), name, value);
+}
 enum PlayerType : int {
   PLAYER_TYPE_NONE = 0,
-  PLAYER_TYPE_KNIGHT = 1,
-  PLAYER_TYPE_MAGE = 2,
-  PLAYER_TYPE_ARCHER = 3,
+  PLAYER_TYPE_PLAYER = 1,
   PlayerType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   PlayerType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool PlayerType_IsValid(int value);
 constexpr PlayerType PlayerType_MIN = PLAYER_TYPE_NONE;
-constexpr PlayerType PlayerType_MAX = PLAYER_TYPE_ARCHER;
+constexpr PlayerType PlayerType_MAX = PLAYER_TYPE_PLAYER;
 constexpr int PlayerType_ARRAYSIZE = PlayerType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* PlayerType_descriptor();
@@ -79,12 +154,13 @@ enum MoveState : int {
   MOVE_STATE_IDLE = 1,
   MOVE_STATE_RUN = 2,
   MOVE_STATE_JUMP = 3,
+  MOVE_STATE_TRIGGER = 4,
   MoveState_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   MoveState_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool MoveState_IsValid(int value);
 constexpr MoveState MoveState_MIN = MOVE_STATE_NONE;
-constexpr MoveState MoveState_MAX = MOVE_STATE_JUMP;
+constexpr MoveState MoveState_MAX = MOVE_STATE_TRIGGER;
 constexpr int MoveState_ARRAYSIZE = MoveState_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MoveState_descriptor();
@@ -123,6 +199,21 @@ inline bool MoveState_Parse(
 
 PROTOBUF_NAMESPACE_OPEN
 
+template <> struct is_proto_enum< ::Protocol::ObjectType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::ObjectType>() {
+  return ::Protocol::ObjectType_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::ActorType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::ActorType>() {
+  return ::Protocol::ActorType_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::TriggerType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::TriggerType>() {
+  return ::Protocol::TriggerType_descriptor();
+}
 template <> struct is_proto_enum< ::Protocol::PlayerType> : ::std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::PlayerType>() {
