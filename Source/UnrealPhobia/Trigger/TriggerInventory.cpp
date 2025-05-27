@@ -3,11 +3,8 @@
 #include "TriggerInventory.h"
 #include "Engine/World.h"
 
-// Sets default values for this component's properties
 UTriggerInventory::UTriggerInventory()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 	UE_LOG(LogTemp, Log, TEXT("UTriggerInventory Created"));
 	Inventory.Init(ETriggerName::None, MaxInventorySize);
@@ -20,10 +17,9 @@ UTriggerInventory::UTriggerInventory()
 	{
 		UE_LOG(LogTemp, Display, TEXT("Failed To Set CameraComponent"));
 	}
-
-	// ...
 }
 
+// 트리거 줍기/버리기 동작을 수행하기 위해 카메라 컴포넌트를 설정
 bool UTriggerInventory::SetCameraComponent()
 {
 	APawn *Pawn = Cast<APawn>(GetOwner());
@@ -40,13 +36,11 @@ bool UTriggerInventory::SetCameraComponent()
 		return false;
 }
 
-// Called when the game starts
 void UTriggerInventory::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-// Called every frame
 void UTriggerInventory::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -59,17 +53,19 @@ bool UTriggerInventory::Reach(FHitResult &OutHR) const
 	FVector Start, End;
 	Start = CamComp->GetComponentLocation();
 	End = Start + CamComp->GetForwardVector() * MaxReachDistance;
-	DrawDebugSphere(GetWorld(), End, ReachRadius, 10, FColor::Red, false, 3);
-	FCollisionShape Sphere = FCollisionShape::MakeSphere(ReachRadius); // FCollisionShape : 충돌 디버깅에 사용되는 형상
-	return GetWorld()->SweepSingleByChannel(						   // SweepSingleByChannel : 단일 충돌 검사를 수행하는 함수, 성공 여부를 Return
+	// DrawDebugSphere(GetWorld(), End, ReachRadius, 10, FColor::Red, false, 3);
+	FCollisionShape CollisionSphere = FCollisionShape::MakeSphere(ReachRadius); // 충돌에 사용되는 구체
+	return GetWorld()->SweepSingleByChannel(									// SweepSingleByChannel : 단일 충돌 검사를 수행하는 함수, 성공 여부를 Return
 		OutHR,
 		Start, End,
 		FQuat::Identity,
 		ECC_GameTraceChannel1,
-		Sphere);
+		CollisionSphere);
 }
+// 인벤토리 사이즈를 확인하여 Reach로 받은 Trigger를 인벤토리에 추가
 void UTriggerInventory::PickUp()
 {
+	// Reach의 결과를 저장
 	FHitResult HR;
 	if (Reach(HR))
 	{
@@ -82,16 +78,18 @@ void UTriggerInventory::PickUp()
 			AActor *HitActor = HR.GetActor();
 			if (!HitActor)
 				return;
+
 			ATrigger *HitTrigger = Cast<ATrigger>(HitActor);
 			int32 ValidIndex = Inventory.Find(ETriggerName::None);
-			if (ValidIndex != -1)
+			if (ValidIndex != -1) // None이 있는지 확인
 				Inventory[ValidIndex] = HitTrigger->TriggerName;
+
 			UE_LOG(LogTemp, Log, TEXT("You got %s! [%d/%d]"), *HitActor->GetName(), ++CurrentInventorySize, MaxInventorySize);
 			HitActor->Destroy();
 		}
 	}
 }
-
+// 인벤토리 사이즈를 확인하여 Reach로 받은 Trigger를 인벤토리에 추가
 void UTriggerInventory::DropOff()
 {
 	USkeletalMeshComponent *SkeletalMeshComp = GetOwner()->FindComponentByClass<USkeletalMeshComponent>();
