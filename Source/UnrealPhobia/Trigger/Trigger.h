@@ -12,8 +12,8 @@
 UENUM(BlueprintType)
 enum class ETriggerName : uint8
 {
-	Grey UMETA(DisplayName = "트리거 타입 : Grey"),
 	Ghost UMETA(DisplayName = "트리거 타입 : Ghost"),
+	Grey UMETA(DisplayName = "트리거 타입 : Grey"),
 	None UMETA(DisplayName = "지정된 트리거 타입이 없음"),
 };
 

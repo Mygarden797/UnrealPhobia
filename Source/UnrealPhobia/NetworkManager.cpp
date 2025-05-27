@@ -73,7 +73,7 @@ void UNetworkManager::SendPacket(SendBufferRef SendBuffer)
     GameServerSession->SendPacket(SendBuffer);
 }
 
-void UNetworkManager::HandleSpawn(const Protocol::PlayerInfo& PlayerInfo, bool IsMine)
+void UNetworkManager::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool IsMine)
 {
     if (Socket == nullptr || GameServerSession == nullptr)
         return;
@@ -83,11 +83,11 @@ void UNetworkManager::HandleSpawn(const Protocol::PlayerInfo& PlayerInfo, bool I
         return;
 
     // �ߺ� ó�� üũ
-    const uint64 ObjectId = PlayerInfo.object_id();
+    const uint64 ObjectId = ObjectInfo.object_id();
     if (Players.Find(ObjectId) != nullptr)
         return;
 
-    FVector SpawnLocation(PlayerInfo.x(), PlayerInfo.y(), PlayerInfo.z());
+    FVector SpawnLocation(ObjectInfo.pos_info().x(), ObjectInfo.pos_info().y(), ObjectInfo.pos_info().z());
 
     if (IsMine)
     {
@@ -96,15 +96,15 @@ void UNetworkManager::HandleSpawn(const Protocol::PlayerInfo& PlayerInfo, bool I
         if (Player == nullptr)
             return;
 
-        Player->SetPlayerInfo(PlayerInfo);
+        Player->SetPlayerInfo(ObjectInfo.pos_info());
         MyPlayer = Player;
-        Players.Add(PlayerInfo.object_id(), Player);
+        Players.Add(ObjectInfo.object_id(), Player);
     }
     else
     {
         AProtoPlayer* Player = Cast<AProtoPlayer>(World->SpawnActor(OtherPlayerClass, &SpawnLocation));
-        Player->SetPlayerInfo(PlayerInfo);
-        Players.Add(PlayerInfo.object_id(), Player);
+        Player->SetPlayerInfo(ObjectInfo.pos_info());
+        Players.Add(ObjectInfo.object_id(), Player);
     }
 }
 
@@ -165,8 +165,15 @@ void UNetworkManager::HandleMove(const Protocol::S_MOVE& MovePkt)
     if (Player->IsMyPlayer())
         return;
 
-    const Protocol::PlayerInfo& Info = MovePkt.info();
+    const Protocol::PosInfo& Info = MovePkt.info();
     //Player->SetPlayerInfo(Info);
     Player->SetDestInfo(Info);
+}
+
+//Ÿ�̸� ����
+void UNetworkManager::HandleTimer(const Protocol::S_TIMER& TimerPkt)
+{
+    const uint64 Timer = TimerPkt.timer();
+    UE_LOG(LogTemp, Log, TEXT("Timer : %llu"), Timer);
 }
 

@@ -5,6 +5,7 @@
 
 #include "Creature/CreatureBase.h"
 #include "Creature/CreatureController.h"
+#include "Creature/PatrolManager.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "NavigationSystem.h"
 
@@ -39,18 +40,23 @@ EBTNodeResult::Type UBTT_FindNextLocation::ExecuteTask(UBehaviorTreeComponent& O
     UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
     RETURN_IF_NULL2(Blackboard,EBTNodeResult::Failed)
 
-    int32 PatrolPointsNum = Creature->PatrolPoints.Num();
+    APatrolManager* PatrolManager = APatrolManager::GetInstance(GetWorld());
+    RETURN_IF_NULL2(PatrolManager,EBTNodeResult::Failed)
+
+    int32 PatrolPointsNum = PatrolManager->GetPatrolPointsNum();
+    UE_LOG(LogTemp, Display, TEXT("PatrolPoints is %d"),PatrolPointsNum);
     /* 순찰 할 포인트들이 존재할 경우*/
     if(PatrolPointsNum != 0)
     {
         int32 Index = Blackboard->GetValueAsInt(PatrolIndexKey.SelectedKeyName);
         Index = Index % PatrolPointsNum; // 초기값이나 다른 쓰레기값 방지
 
-        AActor* NextPatrolPoint = Creature->PatrolPoints[Index];
+        RETURN_IF_NULL2(PatrolManager->PatrolPoints[Index],EBTNodeResult::Failed)
+        AActor* NextPatrolPoint = PatrolManager->PatrolPoints[Index];
         RETURN_IF_NULL2(NextPatrolPoint,EBTNodeResult::Failed)
 
         Blackboard->SetValueAsVector(PatrolLocationKey.SelectedKeyName, NextPatrolPoint->GetActorLocation());
-        Blackboard->SetValueAsInt(PatrolIndexKey.SelectedKeyName, (Index + 1) % PatrolPointsNum);
+        Blackboard->SetValueAsInt(PatrolIndexKey.SelectedKeyName, Index % PatrolPointsNum);
 
         return EBTNodeResult::Succeeded;
 

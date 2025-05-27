@@ -63,6 +63,9 @@ class UNREALPHOBIA_API ACreatureController : public AAIController
 
 		bool GetbIsDetected() {return bIsDetected;}
 
+		virtual void PostInitializeComponents() override;
+		virtual void BeginPlay() override;
+
 	private:
 		UFUNCTION()
 		void OnTargetDetected(AActor* Actor, FAIStimulus Stimulus);

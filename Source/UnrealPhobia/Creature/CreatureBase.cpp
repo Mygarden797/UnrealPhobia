@@ -3,9 +3,10 @@
 
 #include "CreatureBase.h"
 #include "Creature/CreatureController.h"
+#include "Creature/Animation/CreatureAnimInstance.h"
 #include "Components/CapsuleComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
-
+#include "Kismet/GameplayStatics.h"
 // Sets default values
 ACreatureBase::ACreatureBase()
 {
@@ -18,6 +19,8 @@ ACreatureBase::ACreatureBase()
 	State = ECreatureState::Idle;
 }
 
+
+
 // Called when the game starts or when spawned
 void ACreatureBase::BeginPlay()
 {
@@ -25,6 +28,8 @@ void ACreatureBase::BeginPlay()
 	SetState(State);
 	
 }
+
+
 
 // Called every frame
 void ACreatureBase::Tick(float DeltaTime)
@@ -61,6 +66,26 @@ void ACreatureBase::SetState(ECreatureState NewState)
 	}
 	//델리게이트 함수 발동
 	OnCreatureStateChanged.Broadcast(OldState, NewState);
+
+}
+
+void ACreatureBase::Attack()
+{
+	UCreatureAnimInstance* CreatureAnimInstance = Cast<UCreatureAnimInstance>(GetMesh()->GetAnimInstance());
+	RETURN_IF_NULL(CreatureAnimInstance)
+	// UE_LOG(LogTemp, Display, TEXT("ACreatureBase is Activate"));
+	ACreatureController* CreatureController = Cast<ACreatureController>(GetController());
+	RETURN_IF_NULL(CreatureController)
+
+	UBlackboardComponent* Blackboard = CreatureController->GetBlackboardComponent();
+	RETURN_IF_NULL(Blackboard)
+
+	AActor* Target = Cast<AActor>(Blackboard->GetValueAsObject(ACreatureController::Target));
+	RETURN_IF_NULL(Target)
+
+	UGameplayStatics::ApplyDamage(Target,AttackDamage,CreatureController,this,UDamageType::StaticClass());
+	CreatureAnimInstance->PlayAttackMontage();
+
 
 }
 

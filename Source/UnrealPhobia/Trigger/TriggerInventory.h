@@ -9,6 +9,12 @@
 #include "Engine/World.h"
 #include "TriggerInventory.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTriggerEvent, ETriggerName, TriggerName);
+
+/*
+ - Name        : UTriggerInventory
+ - Description : 트리거 인벤토리를 관리하는 클래스, 인벤토리 상태를 확인하여 트리거 줍기/버리기를 수행
+*/
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class UNREALPHOBIA_API UTriggerInventory : public UActorComponent
 {
@@ -18,9 +24,12 @@ public:
 	// Sets default values for this component's properties
 	UTriggerInventory();
 
+	FOnTriggerEvent OnTriggerActicated;
+
 protected:
 	// Called when the game starts
-	virtual void BeginPlay() override;
+	virtual void
+	BeginPlay() override;
 
 public:
 	// Called every frame
@@ -35,13 +44,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SelectSlot(int32 Index);
 
+	int32 SelectedIndex = 0, MaxInventorySize = 2, CurrentInventorySize = 0;
+
 private:
 	TArray<ETriggerName> Inventory;
-	int32 SelectedIndex = 0, MaxInventorySize = 2, CurrentInventorySize = 0;
+
 	UCameraComponent *CamComp;
 
 	float MaxReachDistance = 400; // 최대 습득 사거리
-	float ReachRadius = 10;		  // 습득 반경
+	float ReachRadius = 20;		  // 습득 반경
 
 	bool Reach(FHitResult &OutHR) const; // 범위 내 트리거 오브젝트 확인 및 반환, 찾기 실패 시 널포인터 반환
 	bool SetCameraComponent();

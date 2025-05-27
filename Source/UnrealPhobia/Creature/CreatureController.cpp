@@ -5,6 +5,7 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Creature/PatrolManager.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AIPerceptionTypes.h"
@@ -68,14 +69,26 @@ void ACreatureController::OnPossess(APawn * PawnToPossess)
         CreatureSenseConfig->PeripheralVisionAngleDegrees = CreaturePeripheralVisionAngleDegrees;
         //시각 정보를 업데이트
         CreaturePerceptionComp->RequestStimuliListenerUpdate();
-
         if(RunBehaviorTree(BTAsset) == false)
         {
             UE_LOG(LogTemp,Error,TEXT("BehaviorTree is False."));
         }
 
 
+
     }
+}
+
+void ACreatureController::PostInitializeComponents()
+{
+        Super::PostInitializeComponents();
+
+}
+
+void ACreatureController::BeginPlay()
+{
+    Super::BeginPlay();
+
 }
 
 void ACreatureController::OnTargetDetected(AActor* Actor, FAIStimulus Stimulus)

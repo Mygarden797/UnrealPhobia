@@ -99,7 +99,7 @@ void AMyProtoPlayer::Tick(float DeltaTime)
 
         // 현재 위치 정보
         {
-            Protocol::PlayerInfo* Info = MovePkt.mutable_info();
+            Protocol::PosInfo* Info = MovePkt.mutable_info();
             Info->CopyFrom(*PlayerInfo);
             Info->set_yaw(DesiredYaw);
             Info->set_state(GetMoveState());
