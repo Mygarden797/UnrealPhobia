@@ -15,7 +15,7 @@
 	- Name				: ASurvivor
 	- Description		: Player Character
 	- Date					: 2022/05/26, Hangyeol
-	- Todo					: Fix Sprint and Regen Stamina same time	
+	- Fixed					: Fix Sprint and Regen Stamina same time	
 */
 
 ASurvivor::ASurvivor(const FObjectInitializer& ObjectInitializer)
@@ -173,16 +173,15 @@ void ASurvivor::StartSprint()
 {
 	if (bIsSprinting || CurrentStamina <= 0.f)
 		return;
-
 	bIsSprinting = true;
 	GetCharacterMovement()->MaxWalkSpeed = 900.f;
-
 	bIsLossingStamina = true;
-	if (!GetWorldTimerManager().IsTimerActive(StaminaTimerHandle))
+
+	if (!GetWorldTimerManager().IsTimerActive(StaminaLossHandle))
 	{
-			GetWorldTimerManager().ClearTimer(StaminaTimerHandle);
+			GetWorldTimerManager().ClearTimer(StaminaLossHandle);
 			GetWorldTimerManager().SetTimer(
-			StaminaTimerHandle,
+			StaminaLossHandle,
 			this,
 			&ASurvivor::LossStamina,
 			0.1f,
@@ -198,18 +197,18 @@ void ASurvivor::StopSprint()
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 
 	bIsLossingStamina = false;
-	GetWorldTimerManager().ClearTimer(StaminaTimerHandle);
-	if (CurrentStamina, MaxStamina)
+	GetWorldTimerManager().ClearTimer(StaminaLossHandle);
+
+	if (CurrentStamina < MaxStamina)
 	{
-		GetWorldTimerManager().SetTimer(StaminaTimerHandle, this, &ASurvivor::RegenStamina, 0.1f, true);
-		
+		GetWorldTimerManager().SetTimer(StaminaRegenHandle, this, &ASurvivor::RegenStamina, 1.0f, true);	
 	}
 	UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Stop: %f"), CurrentStamina);
 }
 
 void ASurvivor::LossStamina()
 {
-	if (!bIsLossingStamina)
+	if (!bIsLossingStamina || GetVelocity().SizeSquared() <= 0.0f)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("LossStamina: !bIsLossingStamina is False"));
 		return;
@@ -234,7 +233,7 @@ void ASurvivor::RegenStamina()
 {
 	if (bIsSprinting || CurrentStamina >= MaxStamina)
 	{
-		GetWorldTimerManager().ClearTimer(StaminaTimerHandle);
+		GetWorldTimerManager().ClearTimer(StaminaRegenHandle);
 		return;
 	}
 	else {

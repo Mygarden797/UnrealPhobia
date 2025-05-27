@@ -28,9 +28,9 @@ public:
 private:
 		
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
-	float MaxStamina = 400.f;
+	float MaxStamina = 100.f;
 	UPROPERTY(VisibleAnywhere, Category = "Stamina")
-	float CurrentStamina = 400.f;
+	float CurrentStamina = 100.f;
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
 	float StaminaLossRate = 20.f;
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
@@ -38,7 +38,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
 
 
-	FTimerHandle StaminaTimerHandle;
+	FTimerHandle StaminaLossHandle;
+	FTimerHandle StaminaRegenHandle;
+
+
 	bool bIsLossingStamina = false;
 	bool bIsSprinting = false;
 	void StartSprint();
