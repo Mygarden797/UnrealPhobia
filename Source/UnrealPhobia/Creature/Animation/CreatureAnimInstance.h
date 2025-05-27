@@ -16,8 +16,8 @@ class UNREALPHOBIA_API UCreatureAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 
 	public:
-		UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = Animation)
-		float Speed;
+		UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = Animation)
+		float Speed = 0;
 
 		UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = Animation)
 		ECreatureState CurrentCreatureState;
@@ -25,5 +25,14 @@ class UNREALPHOBIA_API UCreatureAnimInstance : public UAnimInstance
 		virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 		class APawn* Owner;
+
+		void PlayAttackMontage();
+
+	private:
+		UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = Animation,Meta = (AllowPrivateAccess = true))
+		UAnimMontage* AttackMontage;
+
+
+
 	
 };

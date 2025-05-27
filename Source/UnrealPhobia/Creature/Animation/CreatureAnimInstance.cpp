@@ -15,10 +15,13 @@ void UCreatureAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     {
         Owner = TryGetPawnOwner();
     }
+    
 
-    RETURN_IF_NULL(Owner);
     ACreatureBase* Creature = Cast<ACreatureBase>(Owner);
-    RETURN_IF_NULL(Creature)
+    if(!Creature)
+    {
+        return;
+    }
 
     //현재 폰의 속도 가져오기
     Speed = Creature->GetVelocity().Size();
@@ -28,4 +31,18 @@ void UCreatureAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
     
 
+}
+
+void UCreatureAnimInstance::PlayAttackMontage()
+{
+    if(!AttackMontage)
+    {
+        UE_LOG(LogTemp, Display, TEXT("AttackMontage is nullptr"));
+    }
+    
+    if(!Montage_IsPlaying(AttackMontage))
+    {
+        UE_LOG(LogTemp, Display, TEXT("AttackMontage is Activate"));
+        Montage_Play(AttackMontage);
+    }
 }

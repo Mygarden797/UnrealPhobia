@@ -43,4 +43,9 @@ public:
 	UPROPERTY(EditInstanceOnly,BlueprintReadWrite,Category="AI")
 	TArray<AActor*> PatrolPoints;
 
+	void Attack();
+
+private:
+	float AttackDamage = 10;
+
 };
