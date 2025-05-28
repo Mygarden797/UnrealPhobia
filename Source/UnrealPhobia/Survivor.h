@@ -51,6 +51,9 @@ public:
 	// 캐릭터가 달리지 않으면 스테미너를 회복한다.
 	void RegenStamina();
 
+	// 캐릭터가 웅크린다.
+	void SetCrouch(const FInputActionValue& value);
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -59,7 +62,7 @@ protected:
 
 	// Enhanced Input, IMC Default
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<UInputMappingContext> DefaultMappingContext;
+	TObjectPtr<UInputMappingContext> SurvivorMovingContext;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> MoveForwardAction;
@@ -73,11 +76,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> SprintAction;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> CrouchAction;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera");
 	TObjectPtr<USpringArmComponent> SpringArm;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
+
 
 	FRotator TargetCameraRotation;
 
@@ -94,6 +101,5 @@ private:
 
 	FTimerHandle FStaminaLossHandle;
 	FTimerHandle FStaminaRegenHandle;
-	bool bIsLossingStamina = false;
 	bool bIsSprinting = false;
 };

@@ -18,6 +18,8 @@ ASurvivor::ASurvivor(const FObjectInitializer& ObjectInitializer)
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); 
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
+	GetCharacterMovement()->MaxWalkSpeedCrouched = 200.f;
+	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	CurrentStamina = MaxStamina;
 	// UE_LOG(LogTemp, Error, TEXT("CurrentStamina, Init: %f"), CurrentStamina);
 
@@ -48,7 +50,7 @@ void ASurvivor::BeginPlay()
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			Subsystem->AddMappingContext(SurvivorMovingContext, 0);
 		}
 	}
 	else
@@ -84,7 +86,10 @@ void ASurvivor::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 		
 		EIC->BindAction(SprintAction, ETriggerEvent::Started, this, &ASurvivor::Sprint);
-		EIC->BindAction(SprintAction, ETriggerEvent::Completed, this, & ASurvivor::Sprint);
+		EIC->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASurvivor::Sprint);
+
+		EIC->BindAction(CrouchAction, ETriggerEvent::Started, this, &ASurvivor::SetCrouch);
+		EIC->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ASurvivor::SetCrouch);
 	}
 	else
 	{
@@ -164,7 +169,6 @@ void ASurvivor::StartSprint()
 
 	bIsSprinting = true;
 	GetCharacterMovement()->MaxWalkSpeed = 900.f;
-	bIsLossingStamina = true;
 
 	if (!GetWorldTimerManager().IsTimerActive(FStaminaLossHandle))
 	{
@@ -185,7 +189,7 @@ void ASurvivor::StopSprint()
 	bIsSprinting = false;
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 
-	bIsLossingStamina = false;
+	// bIsLossingStamina = false;
 	GetWorldTimerManager().ClearTimer(FStaminaLossHandle);
 
 	if (CurrentStamina < MaxStamina)
@@ -202,7 +206,7 @@ void ASurvivor::StopSprint()
 
 void ASurvivor::LossStamina()
 {
-	if (!bIsLossingStamina || GetVelocity().SizeSquared() <= 0.0f)
+	if (!bIsSprinting || GetVelocity().SizeSquared() <= 0.0f)
 	{
 		// UE_LOG(LogTemp, Warning, TEXT("LossStamina: !bIsLossingStamina is False"));
 		return;
@@ -235,5 +239,19 @@ void ASurvivor::RegenStamina()
 		CurrentStamina += StaminaRegenRate * 0.1f;
 		// UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Regen: %f"), CurrentStamina);
 		CurrentStamina = FMath::Min(CurrentStamina, MaxStamina);
+	}
+}
+
+void ASurvivor::SetCrouch(const FInputActionValue& value)
+{
+	const bool bPressed = value.Get<bool>();
+	if (bPressed)
+	{
+		Crouch();
+	}
+	else
+	{
+		UnCrouch();
+
 	}
 }
