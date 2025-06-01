@@ -69,23 +69,26 @@ void UTriggerInventory::PickUp()
 	FHitResult HR;
 	if (Reach(HR))
 	{
-		if (CurrentInventorySize >= MaxInventorySize)
+		// if (HR.GetActor()->IsA(Trigger::StaticClass()))
 		{
-			UE_LOG(LogTemp, Log, TEXT("Inventory is Full![%d/%d]"), Inventory.Num(), MaxInventorySize);
-		}
-		else
-		{
-			AActor *HitActor = HR.GetActor();
-			if (!HitActor)
-				return;
+			if (CurrentInventorySize >= MaxInventorySize)
+			{
+				UE_LOG(LogTemp, Log, TEXT("Inventory is Full![%d/%d]"), Inventory.Num(), MaxInventorySize);
+			}
+			else
+			{
+				AActor *HitActor = HR.GetActor();
+				if (!HitActor)
+					return;
 
-			ATrigger *HitTrigger = Cast<ATrigger>(HitActor);
-			int32 ValidIndex = Inventory.Find(ETriggerName::None);
-			if (ValidIndex != -1) // None이 있는지 확인
-				Inventory[ValidIndex] = HitTrigger->TriggerName;
+				ATrigger *HitTrigger = Cast<ATrigger>(HitActor);
+				int32 ValidIndex = Inventory.Find(ETriggerName::None);
+				if (ValidIndex != -1) // None이 있는지 확인
+					Inventory[ValidIndex] = HitTrigger->TriggerName;
 
-			UE_LOG(LogTemp, Log, TEXT("You got %s! [%d/%d]"), *HitActor->GetName(), ++CurrentInventorySize, MaxInventorySize);
-			HitActor->Destroy();
+				UE_LOG(LogTemp, Log, TEXT("You got %s! [%d/%d]"), *HitActor->GetName(), ++CurrentInventorySize, MaxInventorySize);
+				HitActor->Destroy();
+			}
 		}
 	}
 }
