@@ -17,11 +17,7 @@ class UNREALPHOBIA_API ATriggerSpawnPoint : public ATargetPoint
 public:
 	ATriggerSpawnPoint();
 
-	bool bCanSpawn = false;
+	bool bCanSpawn = true;
 
-	/*
-	추후에 플레이어와 스폰 포인트가 일치하는지 확인하는 로직 추가 예정
-	->다른 플레이어의 스폰 포인트와 구분하기 위해 사용됨
-	*/
-	int32 SpawnerId = 10;
+	int32 SpawnerId = 1;
 };

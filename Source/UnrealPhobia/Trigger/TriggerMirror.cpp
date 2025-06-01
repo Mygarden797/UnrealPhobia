@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
 #include "Trigger/TriggerMirror.h"
+#include "TriggerSpawnManager.h"
 
 // Sets default values
 ATriggerMirror::ATriggerMirror()
@@ -15,7 +15,7 @@ ATriggerMirror::ATriggerMirror()
 }
 void ATriggerMirror::SetupMirrorMesh()
 {
-	FString MeshPath = TEXT("/Script/Engine.StaticMesh'/Game/Trigger/StaticMesh/SM_Mirror.SM_Mirror");
+	FString MeshPath = TEXT("/Script/Engine.StaticMesh'/Game/Trigger/StaticMesh/SM_TriggerMirror.SM_TriggerMirror");
 	// 메쉬 경로에 해당하는 UStaticMesh 객체 로드
 
 	UStaticMesh *LoadedMesh = Cast<UStaticMesh>(StaticLoadObject(
@@ -49,4 +49,44 @@ void ATriggerMirror::BeginPlay()
 void ATriggerMirror::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+bool ATriggerMirror::ActivateTrigger(ETriggerName TriggerName)
+{
+	if (!bCanActivate)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Can not Activate Trigger"));
+		return false;
+	}
+	UE_LOG(LogTemp, Log, TEXT("Trigger Activated"));
+	StartCooldown();
+	APlayerController *PC = GetWorld()->GetFirstPlayerController();
+	if (PC)
+	{
+		ATriggerSpawnManager *TSM = Cast<ATriggerSpawnManager>(PC->PlayerState);
+
+		// Respawn trigger
+		if (TSM)
+		{
+			TSM->StartSpawn();
+		}
+	}
+	return true;
+}
+void ATriggerMirror::StartCooldown()
+{
+	bCanActivate = false;
+	UE_LOG(LogTemp, Log, TEXT("Start Cooldown"));
+	GetWorld()->GetTimerManager().SetTimer(
+		CooldownTimerHandle,		  // 타이머 핸들
+		this,						  // 호출 대상
+		&ATriggerMirror::EndCooldown, // 호출할 함수
+		ActivateCoolTime,			  // 지연 시간 (초)
+		false						  // 반복 여부
+	);
+}
+void ATriggerMirror::EndCooldown()
+{
+	bCanActivate = true;
+	UE_LOG(LogTemp, Log, TEXT("End Cooldown"));
 }

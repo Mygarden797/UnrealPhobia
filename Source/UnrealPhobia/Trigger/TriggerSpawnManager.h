@@ -21,18 +21,23 @@ public:
 	ATriggerSpawnManager();
 	bool UpdateAvailablePoints();
 
+	void StartSpawn();
+
 protected:
 	virtual void BeginPlay() override;
 
 	// 기본 트리거 개수
-	int32 DefaultTriggerCount = 5;
-	// 목표 트리거 개수
-	int32 TargetTriggerCount;
+	int32 DefaultTriggerCount = 12;
 	// 현재 트리거 개수
-	int32 CurrentTriggerCount;
+	int32 CurrentTriggerCount = DefaultTriggerCount;
+	FTimerHandle CooldownTimerHandle; // Timer Handle
 
+	bool bIsSpawning = false;
 	// 스폰 주기 (초)
-	float SpawnInterval;
+	float SpawnCooldown = 5.0f;
+
+	void StartCooldown();
+	void EndCooldown();
 
 	// 스폰 포인트 목록
 	TArray<ATriggerSpawnPoint *> SpawnPoints;

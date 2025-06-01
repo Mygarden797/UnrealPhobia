@@ -69,25 +69,41 @@ void UTriggerInventory::PickUp()
 	FHitResult HR;
 	if (Reach(HR))
 	{
-		// if (HR.GetActor()->IsA(Trigger::StaticClass()))
+		AActor *HitActor = HR.GetActor();
+		// Pick up Trigger
+		if (HitActor && HitActor->IsA(ATrigger::StaticClass()))
 		{
 			if (CurrentInventorySize >= MaxInventorySize)
 			{
 				UE_LOG(LogTemp, Log, TEXT("Inventory is Full![%d/%d]"), Inventory.Num(), MaxInventorySize);
+				return;
 			}
 			else
 			{
-				AActor *HitActor = HR.GetActor();
 				if (!HitActor)
 					return;
 
 				ATrigger *HitTrigger = Cast<ATrigger>(HitActor);
 				int32 ValidIndex = Inventory.Find(ETriggerName::None);
+
 				if (ValidIndex != -1) // None이 있는지 확인
 					Inventory[ValidIndex] = HitTrigger->TriggerName;
 
 				UE_LOG(LogTemp, Log, TEXT("You got %s! [%d/%d]"), *HitActor->GetName(), ++CurrentInventorySize, MaxInventorySize);
+				if (HitTrigger->TriggerSpawnPoint)
+					HitTrigger->TriggerSpawnPoint->bCanSpawn = true;
+
 				HitActor->Destroy();
+			}
+		}
+		// Activate Trigger
+		else if (Inventory[SelectedIndex] != ETriggerName::None && HitActor->IsA(ATriggerMirror::StaticClass()))
+		{
+			ATriggerMirror *HitMirror = Cast<ATriggerMirror>(HitActor);
+			if (HitMirror->ActivateTrigger(Inventory[SelectedIndex]))
+			{
+				Inventory[SelectedIndex] = ETriggerName::None;
+				CurrentInventorySize--;
 			}
 		}
 	}

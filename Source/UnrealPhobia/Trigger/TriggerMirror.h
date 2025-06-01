@@ -4,12 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Trigger.h"
 #include "TriggerMirror.generated.h"
 
 /*
  - Name        : ATriggerMirror
  - Description : Mirror Actor for activating Triggers
 */
+class ATriggerSpawnManager;
 UCLASS()
 class UNREALPHOBIA_API ATriggerMirror : public AActor
 {
@@ -20,12 +22,22 @@ public:
 	ATriggerMirror();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StaticMesh")
-	UStaticMeshComponent *BaseMeshComponent; // 기본 메시 컴포넌트
+	UStaticMeshComponent *BaseMeshComponent; // Default mesh component
+
+	bool ActivateTrigger(ETriggerName TriggerName); // Activate Trigger with starting Mirror cooldown, Return success or not
+	FTimerHandle CooldownTimerHandle;				// Timer Handle
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	void SetupMirrorMesh(); // 메시 설정
+
+	bool bCanActivate = true;
+	float ActivateCoolTime = 10.0f;
+
+	void SetupMirrorMesh();
+
+	void StartCooldown();
+	void EndCooldown();
 
 public:
 	// Called every frame
