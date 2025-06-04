@@ -21,7 +21,7 @@ class UNREALPHOBIA_API UBTS_Attack : public UBTService
 		struct FBlackboardKeySelector TargetKey;
 
 		UPROPERTY(EditAnywhere,BlueprintReadOnly, Category= "Blackboard")
-		float AttackRange = 170;
+		float AttackRange = 180;
 
 	protected:
 		virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;

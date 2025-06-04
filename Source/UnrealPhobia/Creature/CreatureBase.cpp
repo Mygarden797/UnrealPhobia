@@ -89,3 +89,19 @@ void ACreatureBase::Attack()
 
 }
 
+void ACreatureBase::Communicate()
+{
+	UCreatureAnimInstance* CreatureAnimInstance = Cast<UCreatureAnimInstance>(GetMesh()->GetAnimInstance());
+	RETURN_IF_NULL(CreatureAnimInstance)
+	// UE_LOG(LogTemp, Display, TEXT("ACreatureBase is Activate"));
+	ACreatureController* CreatureController = Cast<ACreatureController>(GetController());
+	RETURN_IF_NULL(CreatureController)
+
+	UBlackboardComponent* Blackboard = CreatureController->GetBlackboardComponent();
+	RETURN_IF_NULL(Blackboard)
+
+
+	CreatureAnimInstance->PlayCommunicateMontage();
+
+
+}
