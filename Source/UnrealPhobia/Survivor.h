@@ -14,7 +14,7 @@ class UInputAction;
 	- Name				: ASurvivor
 	- Description		: Player Character
 	- Date					: 2022/05/26, Hangyeol
-	- Fixed					: ½ºÇÁ¸°Æ® Áß¿¡ ½ºÅ×¹Ì³Ê°¡ È¸º¹µÇ´Â Çö»ó
+	- Fixed					: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ß¿ï¿½ ï¿½ï¿½ï¿½×¹Ì³Ê°ï¿½ È¸ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½
 */
 
 UCLASS(Blueprintable)
@@ -39,28 +39,37 @@ public:
 	UPROPERTY()
 	class UStaminaBar* StaminaBar;
 
-	// Ä³¸¯ÅÍ ¾ÕµÚ ÀÌµ¿, 1D Vector
+	// Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Õµï¿½ ï¿½Ìµï¿½, 1D Vector
 	void MoveForward(const FInputActionValue& Value);
-	// Ä³¸¯ÅÍ ÁÂ¿ì ÀÌµ¿, 1D Vector
+	// Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Â¿ï¿½ ï¿½Ìµï¿½, 1D Vector
 	void MoveRight(const FInputActionValue& Value);
-	// Ä«¸Þ¶ó ÀÌµ¿, 2D Vector
+	// Ä«ï¿½Þ¶ï¿½ ï¿½Ìµï¿½, 2D Vector
 	void Look(const FInputActionValue& Value);
 
 	// Sprint Handler 
 	void Sprint(const FInputActionValue& Value);
-	// LShift¸¦ ´©¸£°í ÀÖÀ» ¶§ ´Þ¸°´Ù.
+	// LShiftï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Þ¸ï¿½ï¿½ï¿½.
 	void StartSprint();
-	// LShift¸¦ ´©¸£Áö ¾ÊÀ» ¶§ ´Þ¸®±â¸¦ ¸ØÃá´Ù.
+	// LShiftï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Þ¸ï¿½ï¿½â¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½.
 	void StopSprint();
 
-	// Ä³¸¯ÅÍ°¡ ´Þ¸®´Â Áß ½ºÅ×¹Ì³Ê°¡ °¨¼ÒÇÑ´Ù.
+	// Ä³ï¿½ï¿½ï¿½Í°ï¿½ ï¿½Þ¸ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½×¹Ì³Ê°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	void LossStamina();
-	// Ä³¸¯ÅÍ°¡ ´Þ¸®Áö ¾ÊÀ¸¸é ½ºÅ×¹Ì³Ê¸¦ È¸º¹ÇÑ´Ù.
+	// Ä³ï¿½ï¿½ï¿½Í°ï¿½ ï¿½Þ¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½×¹Ì³Ê¸ï¿½ È¸ï¿½ï¿½ï¿½Ñ´ï¿½.
 	void RegenStamina();
-
-	// Ä³¸¯ÅÍ°¡ ¿õÅ©¸°´Ù.
+	// Ä³ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½.
 	void SetCrouch(const FInputActionValue& value);
 
+// ï¿½ï¿½Å» ï¿½ï¿½ï¿½ ï¿½ß°ï¿½(25.6.1)
+
+	void IncreaseMental(float Amount);
+	void DecreaseMental(float Amount); // ï¿½Üºï¿½ ï¿½Ç°Ý¿ï¿½
+
+	// È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	void StartMentalRegen(float RegenAmountPerTick, float RegenInterval, float RegenTotalAmount);
+	void StopMentalRegen();
+
+// ï¿½ï¿½Å» ï¿½ï¿½ï¿½ ï¿½ß°ï¿½(25.6.1)
 
 protected:
 	virtual void BeginPlay() override;
@@ -92,8 +101,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
 
-
 	FRotator TargetCameraRotation;
+
+	// Mental ì¶”ê°€
+	void GameOver();
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
@@ -129,5 +140,29 @@ private:
 
 
 	// void Die();
+	// ï¿½ï¿½Å» ï¿½ï¿½ï¿½ ï¿½ß°ï¿½(25.6.1)
+	UPROPERTY(EditDefaultsOnly, Category = "Mental")
+	float MaxMental = 200.f; // ï¿½Ö´ï¿½ ï¿½ï¿½Å» ï¿½ï¿½ï¿½ï¿½
+
+	UPROPERTY(VisibleAnywhere, Category = "Mental")
+	float CurrentMental = 200.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mental")
+	float MentalDecayRate = 1.f; // ï¿½Ê´ï¿½ 1 ï¿½ï¿½ï¿½ï¿½
+
+	FTimerHandle MentalDecayTimerHandle;
+
+	// ï¿½ï¿½Å» È¸ï¿½ï¿½ï¿½ï¿½
+	FTimerHandle MentalRegenTimerHandle;
+	bool bIsInMentalRegenZone = false;
+
+	float RegenStartMental = 0.f;
+	float RegenTargetAmount = 0.f;
+	float MentalRegenPerTick = 0.f;
+
+	void DecreaseMental(); // ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½Ò¿ï¿½
+	void RegenMental();    // È¸ï¿½ï¿½ Å¸ï¿½Ì¸Ó¿ï¿½
+
+// ï¿½ï¿½Å» ï¿½ï¿½ï¿½ ï¿½ß°ï¿½(25.6.1)
 	
 };
