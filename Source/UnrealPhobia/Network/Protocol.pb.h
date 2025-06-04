@@ -63,9 +63,9 @@ extern C_LOGINDefaultTypeInternal _C_LOGIN_default_instance_;
 class C_MOVE;
 struct C_MOVEDefaultTypeInternal;
 extern C_MOVEDefaultTypeInternal _C_MOVE_default_instance_;
-class C_TRIGGER;
-struct C_TRIGGERDefaultTypeInternal;
-extern C_TRIGGERDefaultTypeInternal _C_TRIGGER_default_instance_;
+class C_SPAWN_CREATURE;
+struct C_SPAWN_CREATUREDefaultTypeInternal;
+extern C_SPAWN_CREATUREDefaultTypeInternal _C_SPAWN_CREATURE_default_instance_;
 class S_CHAT;
 struct S_CHATDefaultTypeInternal;
 extern S_CHATDefaultTypeInternal _S_CHAT_default_instance_;
@@ -87,12 +87,15 @@ extern S_MOVEDefaultTypeInternal _S_MOVE_default_instance_;
 class S_SPAWN;
 struct S_SPAWNDefaultTypeInternal;
 extern S_SPAWNDefaultTypeInternal _S_SPAWN_default_instance_;
+class S_SPAWN_CREATURE;
+struct S_SPAWN_CREATUREDefaultTypeInternal;
+extern S_SPAWN_CREATUREDefaultTypeInternal _S_SPAWN_CREATURE_default_instance_;
+class S_START;
+struct S_STARTDefaultTypeInternal;
+extern S_STARTDefaultTypeInternal _S_START_default_instance_;
 class S_TIMER;
 struct S_TIMERDefaultTypeInternal;
 extern S_TIMERDefaultTypeInternal _S_TIMER_default_instance_;
-class S_TRIGGER;
-struct S_TRIGGERDefaultTypeInternal;
-extern S_TRIGGERDefaultTypeInternal _S_TRIGGER_default_instance_;
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
 template<> ::Protocol::C_CHAT* Arena::CreateMaybeMessage<::Protocol::C_CHAT>(Arena*);
@@ -100,7 +103,7 @@ template<> ::Protocol::C_ENTER_GAME* Arena::CreateMaybeMessage<::Protocol::C_ENT
 template<> ::Protocol::C_LEAVE_GAME* Arena::CreateMaybeMessage<::Protocol::C_LEAVE_GAME>(Arena*);
 template<> ::Protocol::C_LOGIN* Arena::CreateMaybeMessage<::Protocol::C_LOGIN>(Arena*);
 template<> ::Protocol::C_MOVE* Arena::CreateMaybeMessage<::Protocol::C_MOVE>(Arena*);
-template<> ::Protocol::C_TRIGGER* Arena::CreateMaybeMessage<::Protocol::C_TRIGGER>(Arena*);
+template<> ::Protocol::C_SPAWN_CREATURE* Arena::CreateMaybeMessage<::Protocol::C_SPAWN_CREATURE>(Arena*);
 template<> ::Protocol::S_CHAT* Arena::CreateMaybeMessage<::Protocol::S_CHAT>(Arena*);
 template<> ::Protocol::S_DESPAWN* Arena::CreateMaybeMessage<::Protocol::S_DESPAWN>(Arena*);
 template<> ::Protocol::S_ENTER_GAME* Arena::CreateMaybeMessage<::Protocol::S_ENTER_GAME>(Arena*);
@@ -108,8 +111,9 @@ template<> ::Protocol::S_LEAVE_GAME* Arena::CreateMaybeMessage<::Protocol::S_LEA
 template<> ::Protocol::S_LOGIN* Arena::CreateMaybeMessage<::Protocol::S_LOGIN>(Arena*);
 template<> ::Protocol::S_MOVE* Arena::CreateMaybeMessage<::Protocol::S_MOVE>(Arena*);
 template<> ::Protocol::S_SPAWN* Arena::CreateMaybeMessage<::Protocol::S_SPAWN>(Arena*);
+template<> ::Protocol::S_SPAWN_CREATURE* Arena::CreateMaybeMessage<::Protocol::S_SPAWN_CREATURE>(Arena*);
+template<> ::Protocol::S_START* Arena::CreateMaybeMessage<::Protocol::S_START>(Arena*);
 template<> ::Protocol::S_TIMER* Arena::CreateMaybeMessage<::Protocol::S_TIMER>(Arena*);
-template<> ::Protocol::S_TRIGGER* Arena::CreateMaybeMessage<::Protocol::S_TRIGGER>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace Protocol {
 
@@ -1075,6 +1079,7 @@ class S_SPAWN final :
 
   enum : int {
     kPlayersFieldNumber = 1,
+    kCreaturesFieldNumber = 2,
   };
   // repeated .Protocol.ObjectInfo players = 1;
   int players_size() const;
@@ -1094,6 +1099,24 @@ class S_SPAWN final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ObjectInfo >&
       players() const;
 
+  // repeated .Protocol.ObjectInfo creatures = 2;
+  int creatures_size() const;
+  private:
+  int _internal_creatures_size() const;
+  public:
+  void clear_creatures();
+  ::Protocol::ObjectInfo* mutable_creatures(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ObjectInfo >*
+      mutable_creatures();
+  private:
+  const ::Protocol::ObjectInfo& _internal_creatures(int index) const;
+  ::Protocol::ObjectInfo* _internal_add_creatures();
+  public:
+  const ::Protocol::ObjectInfo& creatures(int index) const;
+  ::Protocol::ObjectInfo* add_creatures();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ObjectInfo >&
+      creatures() const;
+
   // @@protoc_insertion_point(class_scope:Protocol.S_SPAWN)
  private:
   class _Internal;
@@ -1103,6 +1126,7 @@ class S_SPAWN final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ObjectInfo > players_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ObjectInfo > creatures_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1903,24 +1927,24 @@ class S_CHAT final :
 };
 // -------------------------------------------------------------------
 
-class S_TRIGGER final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_TRIGGER) */ {
+class S_SPAWN_CREATURE final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_SPAWN_CREATURE) */ {
  public:
-  inline S_TRIGGER() : S_TRIGGER(nullptr) {}
-  ~S_TRIGGER() override;
-  explicit PROTOBUF_CONSTEXPR S_TRIGGER(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline S_SPAWN_CREATURE() : S_SPAWN_CREATURE(nullptr) {}
+  ~S_SPAWN_CREATURE() override;
+  explicit PROTOBUF_CONSTEXPR S_SPAWN_CREATURE(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  S_TRIGGER(const S_TRIGGER& from);
-  S_TRIGGER(S_TRIGGER&& from) noexcept
-    : S_TRIGGER() {
+  S_SPAWN_CREATURE(const S_SPAWN_CREATURE& from);
+  S_SPAWN_CREATURE(S_SPAWN_CREATURE&& from) noexcept
+    : S_SPAWN_CREATURE() {
     *this = ::std::move(from);
   }
 
-  inline S_TRIGGER& operator=(const S_TRIGGER& from) {
+  inline S_SPAWN_CREATURE& operator=(const S_SPAWN_CREATURE& from) {
     CopyFrom(from);
     return *this;
   }
-  inline S_TRIGGER& operator=(S_TRIGGER&& from) noexcept {
+  inline S_SPAWN_CREATURE& operator=(S_SPAWN_CREATURE&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -1943,20 +1967,20 @@ class S_TRIGGER final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const S_TRIGGER& default_instance() {
+  static const S_SPAWN_CREATURE& default_instance() {
     return *internal_default_instance();
   }
-  static inline const S_TRIGGER* internal_default_instance() {
-    return reinterpret_cast<const S_TRIGGER*>(
-               &_S_TRIGGER_default_instance_);
+  static inline const S_SPAWN_CREATURE* internal_default_instance() {
+    return reinterpret_cast<const S_SPAWN_CREATURE*>(
+               &_S_SPAWN_CREATURE_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     12;
 
-  friend void swap(S_TRIGGER& a, S_TRIGGER& b) {
+  friend void swap(S_SPAWN_CREATURE& a, S_SPAWN_CREATURE& b) {
     a.Swap(&b);
   }
-  inline void Swap(S_TRIGGER* other) {
+  inline void Swap(S_SPAWN_CREATURE* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -1969,7 +1993,7 @@ class S_TRIGGER final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(S_TRIGGER* other) {
+  void UnsafeArenaSwap(S_SPAWN_CREATURE* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -1977,14 +2001,14 @@ class S_TRIGGER final :
 
   // implements Message ----------------------------------------------
 
-  S_TRIGGER* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<S_TRIGGER>(arena);
+  S_SPAWN_CREATURE* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S_SPAWN_CREATURE>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const S_TRIGGER& from);
+  void CopyFrom(const S_SPAWN_CREATURE& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const S_TRIGGER& from) {
-    S_TRIGGER::MergeImpl(*this, from);
+  void MergeFrom( const S_SPAWN_CREATURE& from) {
+    S_SPAWN_CREATURE::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -2002,15 +2026,15 @@ class S_TRIGGER final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(S_TRIGGER* other);
+  void InternalSwap(S_SPAWN_CREATURE* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "Protocol.S_TRIGGER";
+    return "Protocol.S_SPAWN_CREATURE";
   }
   protected:
-  explicit S_TRIGGER(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit S_SPAWN_CREATURE(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -2044,7 +2068,7 @@ class S_TRIGGER final :
       ::Protocol::ObjectInfo* creature_info);
   ::Protocol::ObjectInfo* unsafe_arena_release_creature_info();
 
-  // @@protoc_insertion_point(class_scope:Protocol.S_TRIGGER)
+  // @@protoc_insertion_point(class_scope:Protocol.S_SPAWN_CREATURE)
  private:
   class _Internal;
 
@@ -2060,24 +2084,24 @@ class S_TRIGGER final :
 };
 // -------------------------------------------------------------------
 
-class C_TRIGGER final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.C_TRIGGER) */ {
+class C_SPAWN_CREATURE final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.C_SPAWN_CREATURE) */ {
  public:
-  inline C_TRIGGER() : C_TRIGGER(nullptr) {}
-  ~C_TRIGGER() override;
-  explicit PROTOBUF_CONSTEXPR C_TRIGGER(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline C_SPAWN_CREATURE() : C_SPAWN_CREATURE(nullptr) {}
+  ~C_SPAWN_CREATURE() override;
+  explicit PROTOBUF_CONSTEXPR C_SPAWN_CREATURE(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  C_TRIGGER(const C_TRIGGER& from);
-  C_TRIGGER(C_TRIGGER&& from) noexcept
-    : C_TRIGGER() {
+  C_SPAWN_CREATURE(const C_SPAWN_CREATURE& from);
+  C_SPAWN_CREATURE(C_SPAWN_CREATURE&& from) noexcept
+    : C_SPAWN_CREATURE() {
     *this = ::std::move(from);
   }
 
-  inline C_TRIGGER& operator=(const C_TRIGGER& from) {
+  inline C_SPAWN_CREATURE& operator=(const C_SPAWN_CREATURE& from) {
     CopyFrom(from);
     return *this;
   }
-  inline C_TRIGGER& operator=(C_TRIGGER&& from) noexcept {
+  inline C_SPAWN_CREATURE& operator=(C_SPAWN_CREATURE&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -2100,20 +2124,20 @@ class C_TRIGGER final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const C_TRIGGER& default_instance() {
+  static const C_SPAWN_CREATURE& default_instance() {
     return *internal_default_instance();
   }
-  static inline const C_TRIGGER* internal_default_instance() {
-    return reinterpret_cast<const C_TRIGGER*>(
-               &_C_TRIGGER_default_instance_);
+  static inline const C_SPAWN_CREATURE* internal_default_instance() {
+    return reinterpret_cast<const C_SPAWN_CREATURE*>(
+               &_C_SPAWN_CREATURE_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     13;
 
-  friend void swap(C_TRIGGER& a, C_TRIGGER& b) {
+  friend void swap(C_SPAWN_CREATURE& a, C_SPAWN_CREATURE& b) {
     a.Swap(&b);
   }
-  inline void Swap(C_TRIGGER* other) {
+  inline void Swap(C_SPAWN_CREATURE* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -2126,7 +2150,7 @@ class C_TRIGGER final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(C_TRIGGER* other) {
+  void UnsafeArenaSwap(C_SPAWN_CREATURE* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -2134,14 +2158,14 @@ class C_TRIGGER final :
 
   // implements Message ----------------------------------------------
 
-  C_TRIGGER* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<C_TRIGGER>(arena);
+  C_SPAWN_CREATURE* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C_SPAWN_CREATURE>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const C_TRIGGER& from);
+  void CopyFrom(const C_SPAWN_CREATURE& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const C_TRIGGER& from) {
-    C_TRIGGER::MergeImpl(*this, from);
+  void MergeFrom( const C_SPAWN_CREATURE& from) {
+    C_SPAWN_CREATURE::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -2159,15 +2183,15 @@ class C_TRIGGER final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(C_TRIGGER* other);
+  void InternalSwap(C_SPAWN_CREATURE* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "Protocol.C_TRIGGER";
+    return "Protocol.C_SPAWN_CREATURE";
   }
   protected:
-  explicit C_TRIGGER(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit C_SPAWN_CREATURE(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -2220,7 +2244,7 @@ class C_TRIGGER final :
       ::Protocol::ObjectInfo* creature_info);
   ::Protocol::ObjectInfo* unsafe_arena_release_creature_info();
 
-  // @@protoc_insertion_point(class_scope:Protocol.C_TRIGGER)
+  // @@protoc_insertion_point(class_scope:Protocol.C_SPAWN_CREATURE)
  private:
   class _Internal;
 
@@ -2378,6 +2402,163 @@ class S_TIMER final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     uint64_t timer_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class S_START final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_START) */ {
+ public:
+  inline S_START() : S_START(nullptr) {}
+  ~S_START() override;
+  explicit PROTOBUF_CONSTEXPR S_START(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  S_START(const S_START& from);
+  S_START(S_START&& from) noexcept
+    : S_START() {
+    *this = ::std::move(from);
+  }
+
+  inline S_START& operator=(const S_START& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline S_START& operator=(S_START&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const S_START& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const S_START* internal_default_instance() {
+    return reinterpret_cast<const S_START*>(
+               &_S_START_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    15;
+
+  friend void swap(S_START& a, S_START& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(S_START* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(S_START* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  S_START* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S_START>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const S_START& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const S_START& from) {
+    S_START::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(S_START* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.S_START";
+  }
+  protected:
+  explicit S_START(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTriggersFieldNumber = 1,
+  };
+  // repeated .Protocol.ObjectInfo triggers = 1;
+  int triggers_size() const;
+  private:
+  int _internal_triggers_size() const;
+  public:
+  void clear_triggers();
+  ::Protocol::ObjectInfo* mutable_triggers(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ObjectInfo >*
+      mutable_triggers();
+  private:
+  const ::Protocol::ObjectInfo& _internal_triggers(int index) const;
+  ::Protocol::ObjectInfo* _internal_add_triggers();
+  public:
+  const ::Protocol::ObjectInfo& triggers(int index) const;
+  ::Protocol::ObjectInfo* add_triggers();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ObjectInfo >&
+      triggers() const;
+
+  // @@protoc_insertion_point(class_scope:Protocol.S_START)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ObjectInfo > triggers_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2635,6 +2816,43 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ObjectInfo >
 S_SPAWN::players() const {
   // @@protoc_insertion_point(field_list:Protocol.S_SPAWN.players)
   return _impl_.players_;
+}
+
+// repeated .Protocol.ObjectInfo creatures = 2;
+inline int S_SPAWN::_internal_creatures_size() const {
+  return _impl_.creatures_.size();
+}
+inline int S_SPAWN::creatures_size() const {
+  return _internal_creatures_size();
+}
+inline ::Protocol::ObjectInfo* S_SPAWN::mutable_creatures(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_SPAWN.creatures)
+  return _impl_.creatures_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ObjectInfo >*
+S_SPAWN::mutable_creatures() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_SPAWN.creatures)
+  return &_impl_.creatures_;
+}
+inline const ::Protocol::ObjectInfo& S_SPAWN::_internal_creatures(int index) const {
+  return _impl_.creatures_.Get(index);
+}
+inline const ::Protocol::ObjectInfo& S_SPAWN::creatures(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_SPAWN.creatures)
+  return _internal_creatures(index);
+}
+inline ::Protocol::ObjectInfo* S_SPAWN::_internal_add_creatures() {
+  return _impl_.creatures_.Add();
+}
+inline ::Protocol::ObjectInfo* S_SPAWN::add_creatures() {
+  ::Protocol::ObjectInfo* _add = _internal_add_creatures();
+  // @@protoc_insertion_point(field_add:Protocol.S_SPAWN.creatures)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ObjectInfo >&
+S_SPAWN::creatures() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_SPAWN.creatures)
+  return _impl_.creatures_;
 }
 
 // -------------------------------------------------------------------
@@ -2996,25 +3214,25 @@ inline void S_CHAT::set_allocated_msg(std::string* msg) {
 
 // -------------------------------------------------------------------
 
-// S_TRIGGER
+// S_SPAWN_CREATURE
 
 // .Protocol.ObjectInfo creature_info = 1;
-inline bool S_TRIGGER::_internal_has_creature_info() const {
+inline bool S_SPAWN_CREATURE::_internal_has_creature_info() const {
   return this != internal_default_instance() && _impl_.creature_info_ != nullptr;
 }
-inline bool S_TRIGGER::has_creature_info() const {
+inline bool S_SPAWN_CREATURE::has_creature_info() const {
   return _internal_has_creature_info();
 }
-inline const ::Protocol::ObjectInfo& S_TRIGGER::_internal_creature_info() const {
+inline const ::Protocol::ObjectInfo& S_SPAWN_CREATURE::_internal_creature_info() const {
   const ::Protocol::ObjectInfo* p = _impl_.creature_info_;
   return p != nullptr ? *p : reinterpret_cast<const ::Protocol::ObjectInfo&>(
       ::Protocol::_ObjectInfo_default_instance_);
 }
-inline const ::Protocol::ObjectInfo& S_TRIGGER::creature_info() const {
-  // @@protoc_insertion_point(field_get:Protocol.S_TRIGGER.creature_info)
+inline const ::Protocol::ObjectInfo& S_SPAWN_CREATURE::creature_info() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_SPAWN_CREATURE.creature_info)
   return _internal_creature_info();
 }
-inline void S_TRIGGER::unsafe_arena_set_allocated_creature_info(
+inline void S_SPAWN_CREATURE::unsafe_arena_set_allocated_creature_info(
     ::Protocol::ObjectInfo* creature_info) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.creature_info_);
@@ -3025,9 +3243,9 @@ inline void S_TRIGGER::unsafe_arena_set_allocated_creature_info(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.S_TRIGGER.creature_info)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.S_SPAWN_CREATURE.creature_info)
 }
-inline ::Protocol::ObjectInfo* S_TRIGGER::release_creature_info() {
+inline ::Protocol::ObjectInfo* S_SPAWN_CREATURE::release_creature_info() {
   
   ::Protocol::ObjectInfo* temp = _impl_.creature_info_;
   _impl_.creature_info_ = nullptr;
@@ -3042,14 +3260,14 @@ inline ::Protocol::ObjectInfo* S_TRIGGER::release_creature_info() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::Protocol::ObjectInfo* S_TRIGGER::unsafe_arena_release_creature_info() {
-  // @@protoc_insertion_point(field_release:Protocol.S_TRIGGER.creature_info)
+inline ::Protocol::ObjectInfo* S_SPAWN_CREATURE::unsafe_arena_release_creature_info() {
+  // @@protoc_insertion_point(field_release:Protocol.S_SPAWN_CREATURE.creature_info)
   
   ::Protocol::ObjectInfo* temp = _impl_.creature_info_;
   _impl_.creature_info_ = nullptr;
   return temp;
 }
-inline ::Protocol::ObjectInfo* S_TRIGGER::_internal_mutable_creature_info() {
+inline ::Protocol::ObjectInfo* S_SPAWN_CREATURE::_internal_mutable_creature_info() {
   
   if (_impl_.creature_info_ == nullptr) {
     auto* p = CreateMaybeMessage<::Protocol::ObjectInfo>(GetArenaForAllocation());
@@ -3057,12 +3275,12 @@ inline ::Protocol::ObjectInfo* S_TRIGGER::_internal_mutable_creature_info() {
   }
   return _impl_.creature_info_;
 }
-inline ::Protocol::ObjectInfo* S_TRIGGER::mutable_creature_info() {
+inline ::Protocol::ObjectInfo* S_SPAWN_CREATURE::mutable_creature_info() {
   ::Protocol::ObjectInfo* _msg = _internal_mutable_creature_info();
-  // @@protoc_insertion_point(field_mutable:Protocol.S_TRIGGER.creature_info)
+  // @@protoc_insertion_point(field_mutable:Protocol.S_SPAWN_CREATURE.creature_info)
   return _msg;
 }
-inline void S_TRIGGER::set_allocated_creature_info(::Protocol::ObjectInfo* creature_info) {
+inline void S_SPAWN_CREATURE::set_allocated_creature_info(::Protocol::ObjectInfo* creature_info) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.creature_info_);
@@ -3080,30 +3298,30 @@ inline void S_TRIGGER::set_allocated_creature_info(::Protocol::ObjectInfo* creat
     
   }
   _impl_.creature_info_ = creature_info;
-  // @@protoc_insertion_point(field_set_allocated:Protocol.S_TRIGGER.creature_info)
+  // @@protoc_insertion_point(field_set_allocated:Protocol.S_SPAWN_CREATURE.creature_info)
 }
 
 // -------------------------------------------------------------------
 
-// C_TRIGGER
+// C_SPAWN_CREATURE
 
 // .Protocol.ObjectInfo trigger_info = 1;
-inline bool C_TRIGGER::_internal_has_trigger_info() const {
+inline bool C_SPAWN_CREATURE::_internal_has_trigger_info() const {
   return this != internal_default_instance() && _impl_.trigger_info_ != nullptr;
 }
-inline bool C_TRIGGER::has_trigger_info() const {
+inline bool C_SPAWN_CREATURE::has_trigger_info() const {
   return _internal_has_trigger_info();
 }
-inline const ::Protocol::ObjectInfo& C_TRIGGER::_internal_trigger_info() const {
+inline const ::Protocol::ObjectInfo& C_SPAWN_CREATURE::_internal_trigger_info() const {
   const ::Protocol::ObjectInfo* p = _impl_.trigger_info_;
   return p != nullptr ? *p : reinterpret_cast<const ::Protocol::ObjectInfo&>(
       ::Protocol::_ObjectInfo_default_instance_);
 }
-inline const ::Protocol::ObjectInfo& C_TRIGGER::trigger_info() const {
-  // @@protoc_insertion_point(field_get:Protocol.C_TRIGGER.trigger_info)
+inline const ::Protocol::ObjectInfo& C_SPAWN_CREATURE::trigger_info() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_SPAWN_CREATURE.trigger_info)
   return _internal_trigger_info();
 }
-inline void C_TRIGGER::unsafe_arena_set_allocated_trigger_info(
+inline void C_SPAWN_CREATURE::unsafe_arena_set_allocated_trigger_info(
     ::Protocol::ObjectInfo* trigger_info) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.trigger_info_);
@@ -3114,9 +3332,9 @@ inline void C_TRIGGER::unsafe_arena_set_allocated_trigger_info(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.C_TRIGGER.trigger_info)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.C_SPAWN_CREATURE.trigger_info)
 }
-inline ::Protocol::ObjectInfo* C_TRIGGER::release_trigger_info() {
+inline ::Protocol::ObjectInfo* C_SPAWN_CREATURE::release_trigger_info() {
   
   ::Protocol::ObjectInfo* temp = _impl_.trigger_info_;
   _impl_.trigger_info_ = nullptr;
@@ -3131,14 +3349,14 @@ inline ::Protocol::ObjectInfo* C_TRIGGER::release_trigger_info() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::Protocol::ObjectInfo* C_TRIGGER::unsafe_arena_release_trigger_info() {
-  // @@protoc_insertion_point(field_release:Protocol.C_TRIGGER.trigger_info)
+inline ::Protocol::ObjectInfo* C_SPAWN_CREATURE::unsafe_arena_release_trigger_info() {
+  // @@protoc_insertion_point(field_release:Protocol.C_SPAWN_CREATURE.trigger_info)
   
   ::Protocol::ObjectInfo* temp = _impl_.trigger_info_;
   _impl_.trigger_info_ = nullptr;
   return temp;
 }
-inline ::Protocol::ObjectInfo* C_TRIGGER::_internal_mutable_trigger_info() {
+inline ::Protocol::ObjectInfo* C_SPAWN_CREATURE::_internal_mutable_trigger_info() {
   
   if (_impl_.trigger_info_ == nullptr) {
     auto* p = CreateMaybeMessage<::Protocol::ObjectInfo>(GetArenaForAllocation());
@@ -3146,12 +3364,12 @@ inline ::Protocol::ObjectInfo* C_TRIGGER::_internal_mutable_trigger_info() {
   }
   return _impl_.trigger_info_;
 }
-inline ::Protocol::ObjectInfo* C_TRIGGER::mutable_trigger_info() {
+inline ::Protocol::ObjectInfo* C_SPAWN_CREATURE::mutable_trigger_info() {
   ::Protocol::ObjectInfo* _msg = _internal_mutable_trigger_info();
-  // @@protoc_insertion_point(field_mutable:Protocol.C_TRIGGER.trigger_info)
+  // @@protoc_insertion_point(field_mutable:Protocol.C_SPAWN_CREATURE.trigger_info)
   return _msg;
 }
-inline void C_TRIGGER::set_allocated_trigger_info(::Protocol::ObjectInfo* trigger_info) {
+inline void C_SPAWN_CREATURE::set_allocated_trigger_info(::Protocol::ObjectInfo* trigger_info) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.trigger_info_);
@@ -3169,26 +3387,26 @@ inline void C_TRIGGER::set_allocated_trigger_info(::Protocol::ObjectInfo* trigge
     
   }
   _impl_.trigger_info_ = trigger_info;
-  // @@protoc_insertion_point(field_set_allocated:Protocol.C_TRIGGER.trigger_info)
+  // @@protoc_insertion_point(field_set_allocated:Protocol.C_SPAWN_CREATURE.trigger_info)
 }
 
 // .Protocol.ObjectInfo creature_info = 2;
-inline bool C_TRIGGER::_internal_has_creature_info() const {
+inline bool C_SPAWN_CREATURE::_internal_has_creature_info() const {
   return this != internal_default_instance() && _impl_.creature_info_ != nullptr;
 }
-inline bool C_TRIGGER::has_creature_info() const {
+inline bool C_SPAWN_CREATURE::has_creature_info() const {
   return _internal_has_creature_info();
 }
-inline const ::Protocol::ObjectInfo& C_TRIGGER::_internal_creature_info() const {
+inline const ::Protocol::ObjectInfo& C_SPAWN_CREATURE::_internal_creature_info() const {
   const ::Protocol::ObjectInfo* p = _impl_.creature_info_;
   return p != nullptr ? *p : reinterpret_cast<const ::Protocol::ObjectInfo&>(
       ::Protocol::_ObjectInfo_default_instance_);
 }
-inline const ::Protocol::ObjectInfo& C_TRIGGER::creature_info() const {
-  // @@protoc_insertion_point(field_get:Protocol.C_TRIGGER.creature_info)
+inline const ::Protocol::ObjectInfo& C_SPAWN_CREATURE::creature_info() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_SPAWN_CREATURE.creature_info)
   return _internal_creature_info();
 }
-inline void C_TRIGGER::unsafe_arena_set_allocated_creature_info(
+inline void C_SPAWN_CREATURE::unsafe_arena_set_allocated_creature_info(
     ::Protocol::ObjectInfo* creature_info) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.creature_info_);
@@ -3199,9 +3417,9 @@ inline void C_TRIGGER::unsafe_arena_set_allocated_creature_info(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.C_TRIGGER.creature_info)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.C_SPAWN_CREATURE.creature_info)
 }
-inline ::Protocol::ObjectInfo* C_TRIGGER::release_creature_info() {
+inline ::Protocol::ObjectInfo* C_SPAWN_CREATURE::release_creature_info() {
   
   ::Protocol::ObjectInfo* temp = _impl_.creature_info_;
   _impl_.creature_info_ = nullptr;
@@ -3216,14 +3434,14 @@ inline ::Protocol::ObjectInfo* C_TRIGGER::release_creature_info() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::Protocol::ObjectInfo* C_TRIGGER::unsafe_arena_release_creature_info() {
-  // @@protoc_insertion_point(field_release:Protocol.C_TRIGGER.creature_info)
+inline ::Protocol::ObjectInfo* C_SPAWN_CREATURE::unsafe_arena_release_creature_info() {
+  // @@protoc_insertion_point(field_release:Protocol.C_SPAWN_CREATURE.creature_info)
   
   ::Protocol::ObjectInfo* temp = _impl_.creature_info_;
   _impl_.creature_info_ = nullptr;
   return temp;
 }
-inline ::Protocol::ObjectInfo* C_TRIGGER::_internal_mutable_creature_info() {
+inline ::Protocol::ObjectInfo* C_SPAWN_CREATURE::_internal_mutable_creature_info() {
   
   if (_impl_.creature_info_ == nullptr) {
     auto* p = CreateMaybeMessage<::Protocol::ObjectInfo>(GetArenaForAllocation());
@@ -3231,12 +3449,12 @@ inline ::Protocol::ObjectInfo* C_TRIGGER::_internal_mutable_creature_info() {
   }
   return _impl_.creature_info_;
 }
-inline ::Protocol::ObjectInfo* C_TRIGGER::mutable_creature_info() {
+inline ::Protocol::ObjectInfo* C_SPAWN_CREATURE::mutable_creature_info() {
   ::Protocol::ObjectInfo* _msg = _internal_mutable_creature_info();
-  // @@protoc_insertion_point(field_mutable:Protocol.C_TRIGGER.creature_info)
+  // @@protoc_insertion_point(field_mutable:Protocol.C_SPAWN_CREATURE.creature_info)
   return _msg;
 }
-inline void C_TRIGGER::set_allocated_creature_info(::Protocol::ObjectInfo* creature_info) {
+inline void C_SPAWN_CREATURE::set_allocated_creature_info(::Protocol::ObjectInfo* creature_info) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.creature_info_);
@@ -3254,7 +3472,7 @@ inline void C_TRIGGER::set_allocated_creature_info(::Protocol::ObjectInfo* creat
     
   }
   _impl_.creature_info_ = creature_info;
-  // @@protoc_insertion_point(field_set_allocated:Protocol.C_TRIGGER.creature_info)
+  // @@protoc_insertion_point(field_set_allocated:Protocol.C_SPAWN_CREATURE.creature_info)
 }
 
 // -------------------------------------------------------------------
@@ -3281,9 +3499,52 @@ inline void S_TIMER::set_timer(uint64_t value) {
   // @@protoc_insertion_point(field_set:Protocol.S_TIMER.timer)
 }
 
+// -------------------------------------------------------------------
+
+// S_START
+
+// repeated .Protocol.ObjectInfo triggers = 1;
+inline int S_START::_internal_triggers_size() const {
+  return _impl_.triggers_.size();
+}
+inline int S_START::triggers_size() const {
+  return _internal_triggers_size();
+}
+inline ::Protocol::ObjectInfo* S_START::mutable_triggers(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_START.triggers)
+  return _impl_.triggers_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ObjectInfo >*
+S_START::mutable_triggers() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_START.triggers)
+  return &_impl_.triggers_;
+}
+inline const ::Protocol::ObjectInfo& S_START::_internal_triggers(int index) const {
+  return _impl_.triggers_.Get(index);
+}
+inline const ::Protocol::ObjectInfo& S_START::triggers(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_START.triggers)
+  return _internal_triggers(index);
+}
+inline ::Protocol::ObjectInfo* S_START::_internal_add_triggers() {
+  return _impl_.triggers_.Add();
+}
+inline ::Protocol::ObjectInfo* S_START::add_triggers() {
+  ::Protocol::ObjectInfo* _add = _internal_add_triggers();
+  // @@protoc_insertion_point(field_add:Protocol.S_START.triggers)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::ObjectInfo >&
+S_START::triggers() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_START.triggers)
+  return _impl_.triggers_;
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

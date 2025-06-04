@@ -99,8 +99,17 @@ bool Handle_S_TIMER(PacketSessionRef& session, Protocol::S_TIMER& pkt)
     return true;
 }
 
-bool Handle_S_TRIGGER(PacketSessionRef& session, Protocol::S_TRIGGER& pkt)
+bool Handle_S_START(PacketSessionRef& session, Protocol::S_START& pkt)
 {
-    //¾ÆÁ÷
+    if (auto* GameInstance = Cast<UNetworkManager>(GWorld->GetGameInstance()))
+    {
+        GameInstance->HandleStart(pkt);
+    }
+    return true;
+}
+
+bool Handle_S_SPAWN_CREATURE(PacketSessionRef& session, Protocol::S_SPAWN_CREATURE& pkt)
+{
+    //sdf
     return true;
 }
