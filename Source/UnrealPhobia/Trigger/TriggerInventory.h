@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Trigger.h"
+#include "TriggerMirror.h"
 #include "Components/ActorComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/World.h"

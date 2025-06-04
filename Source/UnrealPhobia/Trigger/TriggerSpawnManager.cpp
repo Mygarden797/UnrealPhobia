@@ -39,7 +39,7 @@ uint8 ATriggerSpawnManager::SetTriggerSpawnPoints()
     {
         if (ATriggerSpawnPoint *Point = Cast<ATriggerSpawnPoint>(Actor))
         {
-            if (Point->SpawnerId == 10)
+            if (Point->SpawnerId == 1)
             {
                 SpawnPoints.Add(Point);
             }
@@ -56,7 +56,7 @@ bool ATriggerSpawnManager::UpdateAvailablePoints()
     // bCanSpawn == false인 경우에만 추가
     for (ATriggerSpawnPoint *Point : SpawnPoints)
     {
-        if (Point && !Point->bCanSpawn)
+        if (Point && Point->bCanSpawn)
         {
             AvailablePoints.Add(Point);
         }
@@ -102,12 +102,45 @@ bool ATriggerSpawnManager::SpawnTrigger(int32 index)
     if (SpawnedTrigger)
     {
         // 스폰이 완료되었으니 해당 포인트는 비활성화
-        SelectedPoint->bCanSpawn = true;
+        SelectedPoint->bCanSpawn = false;
+
+        CurrentTriggerCount++;
 
         // 스폰된 트리거에 트리거 종류 랜덤으로 부여
         int32 RandValue = FMath::RandRange(0, static_cast<int32>(ETriggerName::None) - 1);
         SpawnedTrigger->SetTriggerName(static_cast<ETriggerName>(RandValue));
+        SpawnedTrigger->TriggerSpawnPoint = SelectedPoint;
         return true;
     }
     return false;
+}
+
+void ATriggerSpawnManager::StartCooldown()
+{
+    bIsSpawning = true;
+    GetWorld()->GetTimerManager().SetTimer(
+        CooldownTimerHandle,                // 타이머 핸들
+        this,                               // 호출 대상
+        &ATriggerSpawnManager::EndCooldown, // 호출할 함수
+        SpawnCooldown,                      // 지연 시간 (초)
+        false                               // 반복 여부 (false면 단발성)
+    );
+}
+
+void ATriggerSpawnManager::EndCooldown()
+{
+    SpawnTriggerInRandom();
+
+    if (CurrentTriggerCount < DefaultTriggerCount)
+        StartCooldown();
+    else
+        bIsSpawning = false;
+}
+
+void ATriggerSpawnManager::StartSpawn()
+{
+    CurrentTriggerCount--;
+    if (bIsSpawning)
+        return;
+    StartCooldown();
 }
