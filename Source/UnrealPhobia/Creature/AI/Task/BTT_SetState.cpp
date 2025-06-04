@@ -18,21 +18,21 @@ EBTNodeResult::Type UBTT_SetState::ExecuteTask(UBehaviorTreeComponent& OwnerComp
     ACreatureController* CreatureController = Cast<ACreatureController>(OwnerComp.GetAIOwner()); //AIController 가져오기
     if(CreatureController == nullptr) 
     {
-        // UE_LOG(LogTemp,Warning,TEXT("CreatureController is null"));
+        UE_LOG(LogTemp,Warning,TEXT("CreatureController is null"));
         return EBTNodeResult::Failed;
     }
 
     APawn* Pawn = CreatureController->GetPawn(); //Creatrue Pawn 가져오기
     if(Pawn == nullptr)
     {
-        // UE_LOG(LogTemp,Warning,TEXT("Pawn is null"));
+        UE_LOG(LogTemp,Warning,TEXT("Pawn is null"));
         return EBTNodeResult::Failed;
     } 
 
     ACreatureBase* Creature = Cast<ACreatureBase>(Pawn); //Creature casting
     if(Creature == nullptr)
     {
-        // UE_LOG(LogTemp,Warning,TEXT("Creature is null"));
+        UE_LOG(LogTemp,Warning,TEXT("Creature is null"));
         return EBTNodeResult::Failed;
     } 
     // UE_LOG(LogTemp,Warning,TEXT("BTT_SetState is Still Activated"));
