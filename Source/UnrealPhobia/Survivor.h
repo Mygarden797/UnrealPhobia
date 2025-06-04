@@ -26,11 +26,18 @@ public:
 	ASurvivor(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	// virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, 
+	//	class AController* EventIstigator, AActor* DamageCauser) override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UUserWidget> CrosshairWidgetClass;
 	UPROPERTY()
 	class UUserWidget* CrosshairWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UStaminaBar> StaminaBarClass;
+	UPROPERTY()
+	class UStaminaBar* StaminaBar;
 
 	// ĳ���� �յ� �̵�, 1D Vector
 	void MoveForward(const FInputActionValue& Value);
@@ -51,6 +58,9 @@ public:
 	// ĳ���Ͱ� �޸��� ������ ���׹̳ʸ� ȸ���Ѵ�.
 	void RegenStamina();
 
+	// ĳ���Ͱ� ��ũ����.
+	void SetCrouch(const FInputActionValue& value);
+
 
 // ��Ż ��� �߰�(25.6.1)
 
@@ -70,7 +80,7 @@ protected:
 
 	// Enhanced Input, IMC Default
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<UInputMappingContext> DefaultMappingContext;
+	TObjectPtr<UInputMappingContext> SurvivorMovingContext;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> MoveForwardAction;
@@ -84,11 +94,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> SprintAction;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> CrouchAction;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera");
 	TObjectPtr<USpringArmComponent> SpringArm;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
+
 
 	FRotator TargetCameraRotation;
 
@@ -103,8 +117,22 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
 	float StaminaLossRate = 20.f;
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
-	float StaminaRegenRate = 10.f;
-	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float StaminaRegenRate = 20.f;
+
+	UPROPERTY(EditAnywhere, Category = "Mental")
+	float MaxMental = 100.0f;
+	UPROPERTY(VisibleAnywhere, Category = "Mental")
+	float CurrentMental = 100.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = "Mental")
+	bool bIsFear = false;
+	UPROPERTY(VisibleAnywhere, Category = "Mental")
+	bool bIsDead = false;
+
+	bool bIsSprinting = false;
+
+
+
 
 	FTimerHandle FStaminaLossHandle;
 	FTimerHandle FStaminaRegenHandle;
