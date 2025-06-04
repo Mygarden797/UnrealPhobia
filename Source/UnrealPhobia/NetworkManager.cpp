@@ -10,6 +10,7 @@
 #include "Protocol.pb.h"
 #include "ClientPacketHandler.h"
 #include "Contents/ProtoPlayer.h"
+#include "ProtoGameState.h"
 
 void UNetworkManager::ConnectToGameServer()
 {
@@ -73,6 +74,7 @@ void UNetworkManager::SendPacket(SendBufferRef SendBuffer)
     GameServerSession->SendPacket(SendBuffer);
 }
 
+//크리쳐 추가된 버전으로 수정해야함.
 void UNetworkManager::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool IsMine)
 {
     if (Socket == nullptr || GameServerSession == nullptr)
@@ -119,6 +121,12 @@ void UNetworkManager::HandleSpawn(const Protocol::S_SPAWN& SpawnPkt)
     for (auto& Player : SpawnPkt.players())
     {
         HandleSpawn(Player, false);
+    }
+    for (auto& Creature : SpawnPkt.creatures())
+    {
+        //크리쳐 생기면 기능 추가
+        UE_LOG(LogTemp, Log, TEXT("Spawn Creature"));
+        //HandleSpawn(Creature, false);
     }
 }
 
@@ -177,3 +185,19 @@ void UNetworkManager::HandleTimer(const Protocol::S_TIMER& TimerPkt)
     UE_LOG(LogTemp, Log, TEXT("Timer : %llu"), Timer);
 }
 
+void UNetworkManager::HandleStart(const Protocol::S_START& StartPkt)
+{
+    if (Socket == nullptr || GameServerSession == nullptr)
+        return;
+
+    auto* World = GetWorld();
+    if (World == nullptr)
+        return;
+
+    auto* GameState = Cast<AProtoGameState>(World->GetGameState());
+
+    for (auto& Trigger : StartPkt.triggers())
+    {
+        GameState->SpawnTrigger(Trigger);
+    }
+}
