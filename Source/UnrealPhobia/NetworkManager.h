@@ -32,6 +32,7 @@ public:
     void HandleSpawn(const Protocol::ObjectInfo& PlayerInfo, bool IsMine);
     void HandleSpawn(const Protocol::S_ENTER_GAME& EnterGamePkt);
     void HandleSpawn(const Protocol::S_SPAWN& SpawnPkt);
+    void HandleSpawnCreature(const Protocol::S_SPAWN_CREATURE& SpawnCreaturePkt);
 
     void HandleDespawn(uint64 ObjectId);
     void HandleDespawn(const Protocol::S_DESPAWN& DespawnPkt);
@@ -39,6 +40,7 @@ public:
     void HandleMove(const Protocol::S_MOVE& MovePkt);
 
     void HandleTimer(const Protocol::S_TIMER& TimerPkt);
+    void HandleStart(const Protocol::S_START& StartPkt);
 
 public:
     // GameServer
@@ -53,4 +55,5 @@ public:
 
     AProtoPlayer* MyPlayer;
     TMap<uint64, AProtoPlayer*> Players;
+    
 };
