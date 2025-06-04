@@ -44,6 +44,7 @@ public:
 	TArray<AActor*> PatrolPoints;
 
 	void Attack();
+	void Communicate();
 
 private:
 	float AttackDamage = 10;
