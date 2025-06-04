@@ -46,3 +46,17 @@ void UCreatureAnimInstance::PlayAttackMontage()
         Montage_Play(AttackMontage);
     }
 }
+
+void UCreatureAnimInstance::PlayCommunicateMontage()
+{
+    if(!CommunicateMontage)
+    {
+        UE_LOG(LogTemp, Display, TEXT("AttackMontage is nullptr"));
+    }
+    
+    if(!Montage_IsPlaying(CommunicateMontage))
+    {
+        UE_LOG(LogTemp, Display, TEXT("AttackMontage is Activate"));
+        Montage_Play(CommunicateMontage);
+    }
+}

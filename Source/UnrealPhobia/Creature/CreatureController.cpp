@@ -9,6 +9,7 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AIPerceptionTypes.h"
+#include "Survivor.h"
 
 
 
@@ -26,6 +27,7 @@ ACreatureController::ACreatureController()
     //AIPerceptionCOmponent 오브젝트 생성
     UAIPerceptionComponent* CreaturePerception = CreateOptionalDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
     CreaturePerception->OnTargetPerceptionUpdated.AddDynamic(this,&ACreatureController::OnTargetDetected);
+    CreaturePerception->OnTargetPerceptionUpdated.AddDynamic(this,&ACreatureController::OnFriendDetected);
 
     SetPerceptionComponent(*CreaturePerception);
     //UAISenseConfig_sight 오브젝트 생성
@@ -73,6 +75,10 @@ void ACreatureController::OnPossess(APawn * PawnToPossess)
         {
             UE_LOG(LogTemp,Error,TEXT("BehaviorTree is False."));
         }
+        else
+        {
+            UE_LOG(LogTemp, Display, TEXT("CreatureBT is Activate"));
+        }
 
 
 
@@ -93,7 +99,7 @@ void ACreatureController::BeginPlay()
 
 void ACreatureController::OnTargetDetected(AActor* Actor, FAIStimulus Stimulus)
 {
-    ACharacter * Player = Cast<ACharacter>(Actor);
+    ASurvivor * Player = Cast<ASurvivor>(Actor);
     RETURN_IF_NULL(Player);
 
     if(Stimulus.WasSuccessfullySensed())
@@ -125,4 +131,29 @@ void ACreatureController::OnTargetDetected(AActor* Actor, FAIStimulus Stimulus)
     }
 
 
+}
+
+void ACreatureController::OnFriendDetected(AActor* Actor, FAIStimulus Stimulus)
+{
+    ACreatureBase* FriendCreature = Cast<ACreatureBase>(Actor);
+    RETURN_IF_NULL(FriendCreature);
+
+    UE_LOG(LogTemp, Display, TEXT("Friend is Detecting"));
+    ACreatureBase* MySelf = Cast<ACreatureBase>(GetPawn());
+    
+
+    if(FriendList.Contains(FriendCreature) == false)
+    {
+        Blackboard->SetValueAsObject(Target,FriendCreature);
+        FriendList.Add(FriendCreature);
+        bIsDetected = true;
+        MySelf->SetState(ECreatureState::Communicate);
+        
+    }
+    else
+    {
+        bIsDetected = false;
+        Blackboard->SetValueAsObject(Target,nullptr);
+    }
+    
 }
