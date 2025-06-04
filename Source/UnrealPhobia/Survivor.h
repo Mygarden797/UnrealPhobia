@@ -26,11 +26,18 @@ public:
 	ASurvivor(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	// virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, 
+	//	class AController* EventIstigator, AActor* DamageCauser) override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UUserWidget> CrosshairWidgetClass;
 	UPROPERTY()
 	class UUserWidget* CrosshairWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UStaminaBar> StaminaBarClass;
+	UPROPERTY()
+	class UStaminaBar* StaminaBar;
 
 	// 캐릭터 앞뒤 이동, 1D Vector
 	void MoveForward(const FInputActionValue& Value);
@@ -96,10 +103,31 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
 	float StaminaLossRate = 20.f;
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
-	float StaminaRegenRate = 10.f;
-	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float StaminaRegenRate = 20.f;
+
+	UPROPERTY(EditAnywhere, Category = "Mental")
+	float MaxMental = 100.0f;
+	UPROPERTY(VisibleAnywhere, Category = "Mental")
+	float CurrentMental = 100.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = "Mental")
+	bool bIsFear = false;
+	UPROPERTY(VisibleAnywhere, Category = "Mental")
+	bool bIsDead = false;
+
+	bool bIsSprinting = false;
+
+
+
 
 	FTimerHandle FStaminaLossHandle;
 	FTimerHandle FStaminaRegenHandle;
-	bool bIsSprinting = false;
+	FTimerHandle FMentalTimerHandle;
+
+	UFUNCTION()
+	void LossMental();
+
+
+	// void Die();
+	
 };
