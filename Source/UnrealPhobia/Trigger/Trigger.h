@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "TriggerSpawnPoint.h"
 #include "Trigger.generated.h"
 
 /*
@@ -38,6 +39,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "StaticMesh|Assets")
 	UStaticMesh *TriggerMesh; // 트리거 메시
+
+	ATriggerSpawnPoint *TriggerSpawnPoint;
 
 protected:
 	virtual void BeginPlay() override;

@@ -27,10 +27,14 @@ class UNREALPHOBIA_API UCreatureAnimInstance : public UAnimInstance
 		class APawn* Owner;
 
 		void PlayAttackMontage();
+		void PlayCommunicateMontage();
 
 	private:
 		UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = Animation,Meta = (AllowPrivateAccess = true))
 		UAnimMontage* AttackMontage;
+
+		UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = Animation,Meta = (AllowPrivateAccess = true))
+		UAnimMontage* CommunicateMontage;
 
 
 

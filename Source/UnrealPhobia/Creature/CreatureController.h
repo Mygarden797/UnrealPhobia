@@ -70,6 +70,9 @@ class UNREALPHOBIA_API ACreatureController : public AAIController
 		UFUNCTION()
 		void OnTargetDetected(AActor* Actor, FAIStimulus Stimulus);
 
+		UFUNCTION()
+		void OnFriendDetected(AActor* Actor, FAIStimulus Stimulus);
+
 		UPROPERTY(EditDefaultsOnly, Category = AI)
 		class UBehaviorTree* BTAsset;
 
@@ -79,6 +82,7 @@ class UNREALPHOBIA_API ACreatureController : public AAIController
 
 
 		bool bIsDetected = false;
+		TSet<ACreatureBase*> FriendList; 
 
 
 };
