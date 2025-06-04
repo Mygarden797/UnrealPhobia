@@ -119,17 +119,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
 	float StaminaRegenRate = 20.f;
 
-	UPROPERTY(EditAnywhere, Category = "Mental")
-	float MaxMental = 100.0f;
-	UPROPERTY(VisibleAnywhere, Category = "Mental")
-	float CurrentMental = 100.0f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mental")
 	bool bIsFear = false;
 	UPROPERTY(VisibleAnywhere, Category = "Mental")
 	bool bIsDead = false;
-
-	bool bIsSprinting = false;
 
 
 
