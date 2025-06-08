@@ -9,34 +9,33 @@
 #include "EnhancedInputSubsystems.h"
 #include "Blueprint/UserWidget.h"
 #include "StaminaBar.h"
+#include "MentalBar.h"
 
-ASurvivor::ASurvivor(const FObjectInitializer& ObjectInitializer)
+ASurvivor::ASurvivor(const FObjectInitializer &ObjectInitializer)
 {
 	// ĳ���� �浹 ũ��
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-	
-	GetCharacterMovement()->bOrientRotationToMovement = false;					// ��Ʈ�ѷ� �������� ĳ���� ȸ��
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); 
+
+	GetCharacterMovement()->bOrientRotationToMovement = false; // ��Ʈ�ѷ� �������� ĳ���� ȸ��
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 	GetCharacterMovement()->MaxWalkSpeedCrouched = 200.f;
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
-	CurrentStamina = MaxStamina;
-	// UE_LOG(LogTemp, Error, TEXT("CurrentStamina, Init: %f"), CurrentStamina);
+	// CurrentStamina = MaxStamina;
+	//  UE_LOG(LogTemp, Error, TEXT("CurrentStamina, Init: %f"), CurrentStamina);
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->TargetArmLength = 90.0f;
 	SpringArm->SocketOffset = FVector(10.f, 45.f, 0.f);
 	SpringArm->ProbeSize = 12.f;
-	// SpringArm->bUsePawnControlRotation = true; 
+	// SpringArm->bUsePawnControlRotation = true;
 
 	// SpringArm ������Ʈ ����
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(SpringArm, USpringArmComponent::SocketName); 
-	// FollowCamera->bUsePawnControlRotation = false; 
-
-	
+	FollowCamera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
+	// FollowCamera->bUsePawnControlRotation = false;
 }
 
 void ASurvivor::BeginPlay()
@@ -49,9 +48,9 @@ void ASurvivor::BeginPlay()
 	// UE_LOG(LogTemp, Error, TEXT("CurrentMental, Init: %f"), CurrentMental);
 
 	// Ű ���ε� ��������
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (APlayerController *PlayerController = Cast<APlayerController>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem *Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(SurvivorMovingContext, 0);
 		}
@@ -64,8 +63,8 @@ void ASurvivor::BeginPlay()
 	// ���ؼ� ��������
 	if (IsLocallyControlled() && CrosshairWidgetClass)
 	{
-		CrosshairWidget =CreateWidget<UUserWidget>(GetWorld(), CrosshairWidgetClass);
-		if (CrosshairWidget) 
+		CrosshairWidget = CreateWidget<UUserWidget>(GetWorld(), CrosshairWidgetClass);
+		if (CrosshairWidget)
 		{
 			CrosshairWidget->AddToViewport();
 		}
@@ -75,18 +74,18 @@ void ASurvivor::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("Failed to load Crosshair!!"));
 	}
 
-// ��Ż����߰�(25.6.1)
-	CurrentMental = MaxMental;
+	// ��Ż����߰�(25.6.1)
+
 	// ��Ż �ڿ� ���� Ÿ�̸�
 	GetWorldTimerManager().SetTimer(
 		MentalDecayTimerHandle,
 		this,
 		&ASurvivor::DecreaseMental,
-		1.0f,  // �ʴ� 1ȸ
-		true
-	);
-// ��Ż����߰�(25.6.1)
+		1.0f, // �ʴ� 1ȸ
+		true);
+	// ��Ż����߰�(25.6.1)
 	// ���׹̳� UI ��������
+	CurrentStamina = MaxStamina;
 	if (IsLocallyControlled() && StaminaBarClass)
 	{
 		StaminaBar = CreateWidget<UStaminaBar>(GetWorld(), StaminaBarClass);
@@ -96,21 +95,40 @@ void ASurvivor::BeginPlay()
 		}
 	}
 
+	CurrentMental = MaxMental;
+	if (IsLocallyControlled() && MentalBarClass)
+	{
+		MentalBar = CreateWidget<UMentalBar>(GetWorld(), MentalBarClass);
+		if (MentalBar)
+		{
+			MentalBar->AddToViewport();
+		}
+	}
 
-
+	if (IsLocallyControlled() && InventoryWidgetClass)
+	{
+		InventoryWidget = CreateWidget<UUserWidget>(GetWorld(), InventoryWidgetClass);
+		if (InventoryWidget)
+		{
+			InventoryWidget->AddToViewport();
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load Inventory!!"));
+	}
 }
 
-void ASurvivor::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ASurvivor::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (UEnhancedInputComponent* EIC = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	if (UEnhancedInputComponent *EIC = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EIC->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ASurvivor::MoveForward);
 		EIC->BindAction(MoveRightAction, ETriggerEvent::Triggered, this, &ASurvivor::MoveRight);
 		EIC->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASurvivor::Look);
 
-		
 		EIC->BindAction(SprintAction, ETriggerEvent::Started, this, &ASurvivor::Sprint);
 		EIC->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASurvivor::Sprint);
 
@@ -123,7 +141,7 @@ void ASurvivor::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	}
 }
 
-void ASurvivor::MoveForward(const FInputActionValue& Value)
+void ASurvivor::MoveForward(const FInputActionValue &Value)
 {
 	const float AxisValue = Value.Get<float>();
 	if (Controller && AxisValue != 0.0f)
@@ -134,13 +152,13 @@ void ASurvivor::MoveForward(const FInputActionValue& Value)
 
 		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Move Forward"));
 	}
-	else 
+	else
 	{
 		// UE_LOG(LogTemp, Error, TEXT("No Controller or AxisValue is 0 in MoveForward!!"));
 	}
 }
 
-void ASurvivor::MoveRight(const FInputActionValue& Value)
+void ASurvivor::MoveRight(const FInputActionValue &Value)
 {
 	const float AxisValue = Value.Get<float>();
 
@@ -158,7 +176,7 @@ void ASurvivor::MoveRight(const FInputActionValue& Value)
 	}
 }
 
-void ASurvivor::Look(const FInputActionValue& Value)
+void ASurvivor::Look(const FInputActionValue &Value)
 {
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
@@ -166,7 +184,7 @@ void ASurvivor::Look(const FInputActionValue& Value)
 	{
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y*-1);
+		AddControllerPitchInput(LookAxisVector.Y * -1);
 	}
 	else
 	{
@@ -174,9 +192,9 @@ void ASurvivor::Look(const FInputActionValue& Value)
 	}
 }
 
-void ASurvivor::Sprint(const FInputActionValue& Value)
+void ASurvivor::Sprint(const FInputActionValue &Value)
 {
-	const bool DoSprint = Value.Get<bool>();			// LShift�� ������ ���� �� true
+	const bool DoSprint = Value.Get<bool>(); // LShift�� ������ ���� �� true
 
 	if (DoSprint && CurrentStamina > 0.f)
 	{
@@ -190,7 +208,7 @@ void ASurvivor::Sprint(const FInputActionValue& Value)
 
 void ASurvivor::StartSprint()
 {
-	if (bIsSprinting || CurrentStamina <= 0.f)			// �޸��� ���̰ų� ���׹̳� ������ ����
+	if (bIsSprinting || CurrentStamina <= 0.f) // �޸��� ���̰ų� ���׹̳� ������ ����
 		return;
 
 	bIsSprinting = true;
@@ -198,14 +216,13 @@ void ASurvivor::StartSprint()
 
 	if (!GetWorldTimerManager().IsTimerActive(FStaminaLossHandle))
 	{
-			GetWorldTimerManager().ClearTimer(FStaminaLossHandle);
-			GetWorldTimerManager().SetTimer(
+		GetWorldTimerManager().ClearTimer(FStaminaLossHandle);
+		GetWorldTimerManager().SetTimer(
 			FStaminaLossHandle,
 			this,
 			&ASurvivor::LossStamina,
 			0.1f,
-			true
-		);
+			true);
 	}
 	// UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Start: %f"), CurrentStamina);
 }
@@ -221,11 +238,11 @@ void ASurvivor::StopSprint()
 	if (CurrentStamina < MaxStamina)
 	{
 		GetWorldTimerManager().SetTimer(
-			FStaminaRegenHandle, 
-			this, 
-			&ASurvivor::RegenStamina, 
-			0.1f, 
-			true);	
+			FStaminaRegenHandle,
+			this,
+			&ASurvivor::RegenStamina,
+			0.1f,
+			true);
 	}
 	// UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Stop: %f"), CurrentStamina);
 }
@@ -242,18 +259,14 @@ void ASurvivor::LossStamina()
 	{
 		CurrentStamina = 0.0f;
 		// UE_LOG(LogTemp, Display, TEXT("LossStamina() - Sprint ����, Stamina: %.2f"), CurrentStamina);
-		StopSprint(); 
+		StopSprint();
 	}
 	else
 	{
 		CurrentStamina -= StaminaLossRate * 0.1f;
 		// UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Loss: %f"), CurrentStamina);
 	}
-	if (StaminaBar)
-	{
-		float Percent = CurrentStamina / MaxStamina;
-		StaminaBar->SetStaminaPercent(Percent);
-	}
+	UpdateStaminaBar();
 }
 
 void ASurvivor::RegenStamina()
@@ -263,32 +276,28 @@ void ASurvivor::RegenStamina()
 		GetWorldTimerManager().ClearTimer(FStaminaRegenHandle);
 		return;
 	}
-	else 
+	else
 	{
 		CurrentStamina += StaminaRegenRate * 0.1f;
 		// UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Regen: %f"), CurrentStamina);
 		CurrentStamina = FMath::Min(CurrentStamina, MaxStamina);
 	}
 
-	if (StaminaBar)
-	{
-		float Percent = CurrentStamina / MaxStamina;
-		StaminaBar->SetStaminaPercent(Percent);
-	}
-
+	UpdateStaminaBar();
 }
-
 
 // Mental(25.6.1.)
 
 void ASurvivor::IncreaseMental(float Amount)
 {
 	CurrentMental = FMath::Clamp(CurrentMental + Amount, 0.f, MaxMental);
+	UpdateMentalBar();
 }
 
 void ASurvivor::DecreaseMental(float Amount)
 {
 	CurrentMental = FMath::Clamp(CurrentMental - Amount, 0.f, MaxMental);
+	UpdateMentalBar();
 }
 
 // Mental
@@ -305,6 +314,7 @@ void ASurvivor::DecreaseMental()
 			GameOver();
 		}
 	}
+	UpdateMentalBar();
 }
 
 void ASurvivor::GameOver()
@@ -315,7 +325,8 @@ void ASurvivor::GameOver()
 // Mental
 void ASurvivor::StartMentalRegen(float RegenAmountPerTick, float RegenInterval, float RegenTotalAmount)
 {
-	if (bIsInMentalRegenZone) return;
+	if (bIsInMentalRegenZone)
+		return;
 
 	bIsInMentalRegenZone = true;
 	RegenStartMental = CurrentMental;
@@ -327,8 +338,7 @@ void ASurvivor::StartMentalRegen(float RegenAmountPerTick, float RegenInterval, 
 		this,
 		&ASurvivor::RegenMental,
 		RegenInterval,
-		true
-	);
+		true);
 }
 
 void ASurvivor::StopMentalRegen()
@@ -354,8 +364,7 @@ void ASurvivor::RegenMental()
 	CurrentMental = FMath::Clamp(CurrentMental + MentalRegenPerTick, 0.f, MaxMental);
 }
 
-
-void ASurvivor::SetCrouch(const FInputActionValue& value)
+void ASurvivor::SetCrouch(const FInputActionValue &value)
 {
 	const bool bPressed = value.Get<bool>();
 	if (bPressed)
@@ -365,6 +374,26 @@ void ASurvivor::SetCrouch(const FInputActionValue& value)
 	else
 	{
 		UnCrouch();
+	}
+}
+
+// Update Stamina Bar UI
+void ASurvivor::UpdateStaminaBar()
+{
+	if (StaminaBar)
+	{
+		float Percent = CurrentStamina / MaxStamina;
+		StaminaBar->SetStaminaPercent(Percent);
+	}
+}
+
+// Update Mental Bar UI
+void ASurvivor::UpdateMentalBar()
+{
+	if (MentalBar)
+	{
+		float Percent = CurrentMental / MaxMental;
+		MentalBar->SetMentalPercent(Percent);
 	}
 }
 

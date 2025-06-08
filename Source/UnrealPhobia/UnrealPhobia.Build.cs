@@ -8,7 +8,11 @@ public class UnrealPhobia : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput", "Sockets", "Networking","AIModule","GameplayTasks","NavigationSystem","UMG" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput", "Sockets", "Networking","AIModule","GameplayTasks","NavigationSystem","UMG",
+            "Slate",      // Slate 위젯 스타일
+            "SlateCore"   // FSlateBrush 등
+
+         });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "ProtobufCore" });
 

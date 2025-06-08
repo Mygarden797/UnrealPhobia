@@ -4,25 +4,24 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "StaminaBar.generated.h"
+#include "MentalBar.generated.h"
 
 class UProgressBar;
-
 /**
  *
  */
 UCLASS()
-class UNREALPHOBIA_API UStaminaBar : public UUserWidget
+class UNREALPHOBIA_API UMentalBar : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetStaminaPercent(float Percent);
+	void SetMentalPercent(float Percent);
 
 protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY(meta = (BindWidget))
-	UProgressBar *StaminaBar;
+	UProgressBar *MentalBar;
 };
