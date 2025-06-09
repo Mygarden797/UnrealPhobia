@@ -23,31 +23,45 @@ class UNREALPHOBIA_API ASurvivor : public ACharacter
 	GENERATED_BODY()
 
 public:
-	ASurvivor(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	ASurvivor(const FObjectInitializer &ObjectInitializer = FObjectInitializer::Get());
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	// virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, 
+	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
+	// virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	//	class AController* EventIstigator, AActor* DamageCauser) override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UUserWidget> CrosshairWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UUserWidget> InventoryWidgetClass;
+
 	UPROPERTY()
-	class UUserWidget* CrosshairWidget;
+	class UUserWidget *CrosshairWidget;
+
+	UPROPERTY()
+	class UUserWidget *InventoryWidget;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UStaminaBar> StaminaBarClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UMentalBar> MentalBarClass;
+
 	UPROPERTY()
-	class UStaminaBar* StaminaBar;
+	class UStaminaBar *StaminaBar;
+
+	UPROPERTY()
+	class UMentalBar *MentalBar;
 
 	// ĳ���� �յ� �̵�, 1D Vector
-	void MoveForward(const FInputActionValue& Value);
+	void MoveForward(const FInputActionValue &Value);
 	// ĳ���� �¿� �̵�, 1D Vector
-	void MoveRight(const FInputActionValue& Value);
+	void MoveRight(const FInputActionValue &Value);
 	// ī�޶� �̵�, 2D Vector
-	void Look(const FInputActionValue& Value);
+	void Look(const FInputActionValue &Value);
 
-	// Sprint Handler 
-	void Sprint(const FInputActionValue& Value);
+	// Sprint Handler
+	void Sprint(const FInputActionValue &Value);
 	// LShift�� ������ ���� �� �޸���.
 	void StartSprint();
 	// LShift�� ������ ���� �� �޸��⸦ �����.
@@ -57,10 +71,11 @@ public:
 	void LossStamina();
 	// ĳ���Ͱ� �޸��� ������ ���׹̳ʸ� ȸ���Ѵ�.
 	void RegenStamina();
-	// ĳ���Ͱ� ��ũ����.
-	void SetCrouch(const FInputActionValue& value);
 
-// ��Ż ��� �߰�(25.6.1)
+	// ĳ���Ͱ� ��ũ����.
+	void SetCrouch(const FInputActionValue &value);
+
+	// ��Ż ��� �߰�(25.6.1)
 
 	void IncreaseMental(float Amount);
 	void DecreaseMental(float Amount); // �ܺ� �ǰݿ�
@@ -69,7 +84,7 @@ public:
 	void StartMentalRegen(float RegenAmountPerTick, float RegenInterval, float RegenTotalAmount);
 	void StopMentalRegen();
 
-// ��Ż ��� �߰�(25.6.1)
+	// ��Ż ��� �߰�(25.6.1)
 
 protected:
 	virtual void BeginPlay() override;
@@ -116,30 +131,16 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
 	float StaminaRegenRate = 20.f;
 
-	UPROPERTY(EditAnywhere, Category = "Mental")
-	float MaxMental = 100.0f;
-	UPROPERTY(VisibleAnywhere, Category = "Mental")
-	float CurrentMental = 100.0f;
-
 	UPROPERTY(VisibleAnywhere, Category = "Mental")
 	bool bIsFear = false;
 	UPROPERTY(VisibleAnywhere, Category = "Mental")
 	bool bIsDead = false;
 
-	bool bIsSprinting = false;
-
-
-
-
 	FTimerHandle FStaminaLossHandle;
 	FTimerHandle FStaminaRegenHandle;
-	FTimerHandle FMentalTimerHandle;
+	bool bIsLossingStamina = false;
+	bool bIsSprinting = false;
 
-	UFUNCTION()
-	void LossMental();
-
-
-	// void Die();
 	// ��Ż ��� �߰�(25.6.1)
 	UPROPERTY(EditDefaultsOnly, Category = "Mental")
 	float MaxMental = 200.f; // �ִ� ��Ż ����
@@ -161,8 +162,11 @@ private:
 	float MentalRegenPerTick = 0.f;
 
 	void DecreaseMental(); // �ڿ� ���ҿ�
-	void RegenMental();    // ȸ�� Ÿ�̸ӿ�
+	void RegenMental();	   // ȸ�� Ÿ�̸ӿ�
 
-// ��Ż ��� �߰�(25.6.1)
-	
+	// ��Ż ��� �߰�(25.6.1)
+
+	// ByeongJun 25.6.7
+	void UpdateStaminaBar();
+	void UpdateMentalBar();
 };

@@ -34,7 +34,7 @@ uint8 ATriggerSpawnManager::SetTriggerSpawnPoints()
         ATriggerSpawnPoint::StaticClass(),
         FoundActors);
 
-    // SpawnerId == 10 인 것만 필터링
+    // SpawnerId == 1 인 것만 필터링
     for (AActor *Actor : FoundActors)
     {
         if (ATriggerSpawnPoint *Point = Cast<ATriggerSpawnPoint>(Actor))

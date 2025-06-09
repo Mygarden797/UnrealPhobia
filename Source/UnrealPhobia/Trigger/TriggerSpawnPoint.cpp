@@ -3,5 +3,5 @@
 #include "TriggerSpawnPoint.h"
 ATriggerSpawnPoint::ATriggerSpawnPoint()
 {
-    SpawnerId = 10;
+    SpawnerId = 1;
 }
