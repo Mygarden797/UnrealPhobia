@@ -8,7 +8,11 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Blueprint/UserWidget.h"
+<<<<<<< Updated upstream
+=======
 #include "StaminaBar.h"
+#include "Kismet/GameplayStatics.h"
+>>>>>>> Stashed changes
 #include "MentalBar.h"
 
 ASurvivor::ASurvivor(const FObjectInitializer &ObjectInitializer)
@@ -83,7 +87,19 @@ void ASurvivor::BeginPlay()
 		&ASurvivor::DecreaseMental,
 		1.0f, // �ʴ� 1ȸ
 		true);
-	// ��Ż����߰�(25.6.1)
+	
+	// Deactivates all CandleRooms
+	TArray<AActor*> FoundTriggers;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers);
+
+	for (AActor* Trigger : FoundTriggers)
+	{
+		Trigger->Tags.Remove(FName("Active")); // 태그 제거 → 트리거 내부에서 Active 기준으로 동작하게 만들 것
+	}
+
+	ActivateRandomMentalTrigger();
+
+// ��Ż����߰�(25.6.1)
 	// ���׹̳� UI ��������
 	CurrentStamina = MaxStamina;
 	if (IsLocallyControlled() && StaminaBarClass)
@@ -323,28 +339,28 @@ void ASurvivor::GameOver()
 }
 
 // Mental
-void ASurvivor::StartMentalRegen(float RegenAmountPerTick, float RegenInterval, float RegenTotalAmount)
+void ASurvivor::StartMentalRegen(float Duration)
 {
-	if (bIsInMentalRegenZone)
-		return;
+	if (bIsInMentalRegenZone) return;
 
 	bIsInMentalRegenZone = true;
-	RegenStartMental = CurrentMental;
-	RegenTargetAmount = RegenTotalAmount;
-	MentalRegenPerTick = RegenAmountPerTick;
 
 	GetWorldTimerManager().SetTimer(
 		MentalRegenTimerHandle,
 		this,
 		&ASurvivor::RegenMental,
 		RegenInterval,
-		true);
+		true
+	);
 }
 
 void ASurvivor::StopMentalRegen()
 {
 	bIsInMentalRegenZone = false;
 	GetWorldTimerManager().ClearTimer(MentalRegenTimerHandle);
+	GetWorldTimerManager().ClearTimer(MentalRegenDurationHandle);
+
+	ActivateRandomMentalTrigger();
 }
 
 void ASurvivor::RegenMental()
@@ -355,80 +371,11 @@ void ASurvivor::RegenMental()
 		return;
 	}
 
-	if (CurrentMental - RegenStartMental >= RegenTargetAmount)
-	{
-		StopMentalRegen();
-		return;
-	}
+	// if (CurrentMental - RegenStartMental >= RegenTargetAmount)
+	// {
+	// 	StopMentalRegen();
+	// 	return;
+	// }
 
 	CurrentMental = FMath::Clamp(CurrentMental + MentalRegenPerTick, 0.f, MaxMental);
 }
-
-void ASurvivor::SetCrouch(const FInputActionValue &value)
-{
-	const bool bPressed = value.Get<bool>();
-	if (bPressed)
-	{
-		bIsCrouch = true;
-		Crouch();
-	}
-	else
-	{
-		bIsCrouch = false;
-		UnCrouch();
-	}
-}
-
-// Update Stamina Bar UI
-void ASurvivor::UpdateStaminaBar()
-{
-	if (StaminaBar)
-	{
-		float Percent = CurrentStamina / MaxStamina;
-		StaminaBar->SetStaminaPercent(Percent);
-	}
-}
-
-// Update Mental Bar UI
-void ASurvivor::UpdateMentalBar()
-{
-	if (MentalBar)
-	{
-		float Percent = CurrentMental / MaxMental;
-		MentalBar->SetMentalPercent(Percent);
-	}
-}
-
-/*
-
-float ASurvivor::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
-	AController* EventInstigator, AActor* DamageCauser)
-{
-	if (bIsDead) return 0.0f;
-
-	if (bIsFear && CurrentMental <= 0.0f)
-	{
-		Die();
-		return DamageAmount;
-	}
-
-	float AppliedDamage = FMath::Min(CurrentMental, DamageAmount);
-	CurrentMental -= AppliedDamage;
-
-	if (CurrentMental < 0.0f)
-	{
-		bIsFear = true;
-	}
-}
-
-void ASurvivor::Die()
-{
-	bIsDead = true;
-	// bIsFear = false;
-
-	GetWorld()->GetTimerManager().ClearTimer(FMentalTimerHandle);
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GetMesh()->SetSimulatePhysics(true);
-	DisableInput(nullptr);
-}
-*/
