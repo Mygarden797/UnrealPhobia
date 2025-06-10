@@ -46,11 +46,10 @@ public:
 	void SelectSlot(int32 Index);
 
 	int32 SelectedIndex = 0, MaxInventorySize = 2, CurrentInventorySize = 0;
-
-private:
 	TArray<ETriggerName> Inventory;
 
-	UCameraComponent *CamComp;
+private:
+		UCameraComponent *CamComp;
 
 	float MaxReachDistance = 400; // 최대 습득 사거리
 	float ReachRadius = 20;		  // 습득 반경
