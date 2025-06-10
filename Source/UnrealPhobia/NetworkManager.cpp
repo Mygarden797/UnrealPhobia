@@ -125,7 +125,18 @@ void UNetworkManager::HandleSpawn(const Protocol::S_SPAWN& SpawnPkt)
     for (auto& Creature : SpawnPkt.creatures())
     {
         //크리쳐 생기면 기능 추가
-        UE_LOG(LogTemp, Log, TEXT("Spawn Creature"));
+        //****소환 가져오기에서 수정 필요
+        //UE_LOG(LogTemp, Log, TEXT("Spawn Creature"));
+        auto* World = GetWorld();
+        if (World == nullptr)
+            return;
+
+        auto* GameState = Cast<AProtoGameState>(World->GetGameState());
+        GameState->SpawnCreature(
+            FVector(Creature.pos_info().x(), Creature.pos_info().y(), Creature.pos_info().z()),
+            FRotator(0.0f, Creature.pos_info().yaw(), 0.0f),
+            TEXT("/Game/AI/BP_CreatureGrey.BP_CreatureGrey_C")
+        );
         //HandleSpawn(Creature, false);
     }
 }
