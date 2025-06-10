@@ -369,10 +369,12 @@ void ASurvivor::SetCrouch(const FInputActionValue &value)
 	const bool bPressed = value.Get<bool>();
 	if (bPressed)
 	{
+		bIsCrouch = true;
 		Crouch();
 	}
 	else
 	{
+		bIsCrouch = false;
 		UnCrouch();
 	}
 }
