@@ -8,11 +8,10 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Blueprint/UserWidget.h"
-<<<<<<< Updated upstream
-=======
+
 #include "StaminaBar.h"
 #include "Kismet/GameplayStatics.h"
->>>>>>> Stashed changes
+
 #include "MentalBar.h"
 
 ASurvivor::ASurvivor(const FObjectInitializer &ObjectInitializer)
@@ -341,17 +340,10 @@ void ASurvivor::GameOver()
 // Mental
 void ASurvivor::StartMentalRegen(float Duration)
 {
-	if (bIsInMentalRegenZone) return;
-
 	bIsInMentalRegenZone = true;
 
-	GetWorldTimerManager().SetTimer(
-		MentalRegenTimerHandle,
-		this,
-		&ASurvivor::RegenMental,
-		RegenInterval,
-		true
-	);
+	GetWorldTimerManager().SetTimer(MentalRegenTimerHandle, this, &ASurvivor::RegenMental, MentalRegenTickTime, true);
+	GetWorldTimerManager().SetTimer(MentalRegenDurationHandle, this, &ASurvivor::StopMentalRegen, Duration, false);
 }
 
 void ASurvivor::StopMentalRegen()
@@ -378,4 +370,136 @@ void ASurvivor::RegenMental()
 	// }
 
 	CurrentMental = FMath::Clamp(CurrentMental + MentalRegenPerTick, 0.f, MaxMental);
+
 }
+
+void ASurvivor::ActivateRandomMentalTrigger()
+{
+	TArray<AActor*> FoundTriggers;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers);
+
+	TArray<AActor*> AvailableTriggers;
+	for (AActor* Trigger : FoundTriggers)
+	{
+		if (Trigger != CurrentTrigger)
+		{
+			AvailableTriggers.Add(Trigger);
+		}
+	}
+
+	if (AvailableTriggers.Num() > 0)
+	{
+		int32 Index = FMath::RandRange(0, AvailableTriggers.Num() - 1);
+		AActor* SelectedTrigger = AvailableTriggers[Index];
+		CurrentTrigger = SelectedTrigger;
+		SelectedTrigger->Tags.AddUnique(FName("Active"));  // Activate with Active Tag
+
+		UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger->GetName());
+	}
+}
+
+
+/*
+
+float ASurvivor::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+	AController* EventInstigator, AActor* DamageCauser)
+{
+	if (bIsDead) return 0.0f;
+
+	if (bIsFear && CurrentMental <= 0.0f)
+	{
+		Die();
+		return DamageAmount;
+	}
+
+	float AppliedDamage = FMath::Min(CurrentMental, DamageAmount);
+	CurrentMental -= AppliedDamage;
+
+	if (CurrentMental < 0.0f)
+	{
+		bIsFear = true;
+	}
+}
+
+void ASurvivor::Die()
+{
+	bIsDead = true;
+	// bIsFear = false;
+
+	GetWorld()->GetTimerManager().ClearTimer(FMentalTimerHandle);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetSimulatePhysics(true);
+	DisableInput(nullptr);
+}
+*/
+
+
+
+void ASurvivor::SetCrouch(const FInputActionValue &value)
+{
+	const bool bPressed = value.Get<bool>();
+	if (bPressed)
+	{
+		bIsCrouch = true;
+		Crouch();
+	}
+	else
+	{
+		bIsCrouch = false;
+		UnCrouch();
+	}
+}
+
+// Update Stamina Bar UI
+void ASurvivor::UpdateStaminaBar()
+{
+	if (StaminaBar)
+	{
+		float Percent = CurrentStamina / MaxStamina;
+		StaminaBar->SetStaminaPercent(Percent);
+	}
+}
+
+// Update Mental Bar UI
+void ASurvivor::UpdateMentalBar()
+{
+	if (MentalBar)
+	{
+		float Percent = CurrentMental / MaxMental;
+		MentalBar->SetMentalPercent(Percent);
+	}
+}
+
+/*
+
+float ASurvivor::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+	AController* EventInstigator, AActor* DamageCauser)
+{
+	if (bIsDead) return 0.0f;
+
+	if (bIsFear && CurrentMental <= 0.0f)
+	{
+		Die();
+		return DamageAmount;
+	}
+
+	float AppliedDamage = FMath::Min(CurrentMental, DamageAmount);
+	CurrentMental -= AppliedDamage;
+
+	if (CurrentMental < 0.0f)
+	{
+		bIsFear = true;
+	}
+}
+
+void ASurvivor::Die()
+{
+	bIsDead = true;
+	// bIsFear = false;
+
+	GetWorld()->GetTimerManager().ClearTimer(FMentalTimerHandle);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetSimulatePhysics(true);
+	DisableInput(nullptr);
+}
+*/
