@@ -61,7 +61,7 @@ void ANetworkMirror::Tick(float DeltaTime)
 }
 
 //¼ÒÈ¯ À§Ä¡¶û trigger_id ¹Ù²ã¾ßÇÔ.
-void ANetworkMirror::ActivateTrigger()
+bool ANetworkMirror::ActivateTrigger()
 {
     Protocol::C_SPAWN_CREATURE SpawnCreaturePkt;
     TriggerInfo->set_object_id(1);
@@ -76,5 +76,24 @@ void ANetworkMirror::ActivateTrigger()
     SpawnCreaturePkt.mutable_creature_info()->CopyFrom(*CreatureInfo);
 
     SEND_PACKET(SpawnCreaturePkt);
+    return true;
 
+}
+
+bool ANetworkMirror::ActivateTrigger(int64 trigger_id)
+{
+    Protocol::C_SPAWN_CREATURE SpawnCreaturePkt;
+    TriggerInfo->set_object_id(trigger_id);
+    {
+        auto pos = CreatureInfo->mutable_pos_info();
+        pos->set_x(-3972.f);
+        pos->set_y(-12010.f);
+        pos->set_z(610.f);
+        pos->set_yaw(90.f);
+    }
+    SpawnCreaturePkt.mutable_trigger_info()->CopyFrom(*TriggerInfo);
+    SpawnCreaturePkt.mutable_creature_info()->CopyFrom(*CreatureInfo);
+
+    SEND_PACKET(SpawnCreaturePkt);
+    return true;
 }

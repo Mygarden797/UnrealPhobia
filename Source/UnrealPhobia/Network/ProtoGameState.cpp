@@ -31,6 +31,7 @@ bool AProtoGameState::SpawnTrigger(Protocol::ObjectInfo objectInfo)
         // 스폰된 트리거에 트리거 종류 랜덤으로 부여
         int32 RandValue = FMath::RandRange(0, static_cast<int32>(ETriggerName::None) - 1);
         SpawnedTrigger->SetTriggerName(static_cast<ETriggerName>(RandValue));
+        SpawnedTrigger->TriggerInfo->set_object_id(objectInfo.object_id());
         return true;
     }
     return false;
