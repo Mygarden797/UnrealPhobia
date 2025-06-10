@@ -29,7 +29,8 @@ public:
     UStaticMeshComponent* BaseMeshComponent; // Default mesh component
 
     UFUNCTION(BlueprintCallable)
-    void ActivateTrigger();
+    bool ActivateTrigger();
+    bool ActivateTrigger(int64 trigger_id);
 
 protected:
     // Called when the game starts or when spawned
@@ -38,7 +39,7 @@ protected:
     void SetupMirrorMesh();
 
 
-    //임시 트리거 정보, 각자 Info를 가지게 되면 필요없음
+    //임시 트리거 정보
     class Protocol::ObjectInfo* TriggerInfo; 
     class Protocol::ObjectInfo* CreatureInfo;
 
