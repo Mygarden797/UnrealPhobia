@@ -2,6 +2,7 @@
 
 
 #include "Network/ProtoGameState.h"
+#include "Creature/CreatureBase.h"
 #include "Kismet/GameplayStatics.h"
 
 AProtoGameState::AProtoGameState()
@@ -33,4 +34,21 @@ bool AProtoGameState::SpawnTrigger(Protocol::ObjectInfo objectInfo)
         return true;
     }
     return false;
+}
+
+//소환하는 방식 바꿔야할 듯
+bool AProtoGameState::SpawnCreature(FVector SpawnPoint, FRotator SpawnRotate, FString Creature)
+{
+    TSubclassOf<ACreatureBase> BP_Creature;
+    BP_Creature = LoadClass<ACreatureBase>(nullptr, *Creature);
+    if (BP_Creature == nullptr)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("BP_Creature is not Load"));
+        return false;
+    }
+    FActorSpawnParameters Params;
+
+    ACreatureBase* SpawnActor = GetWorld()->SpawnActor<ACreatureBase>(BP_Creature, SpawnPoint, SpawnRotate, Params);
+    //ACreatureBase* SpawnActor = GetWorld()->SpawnActor<ACreatureBase>(ACreatureBase::StaticClass(), SpawnPoint, SpawnRotate, Params);
+    return true;
 }

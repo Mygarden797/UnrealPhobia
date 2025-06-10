@@ -25,5 +25,7 @@ class UNREALPHOBIA_API UWorldSpawnManager : public UWorldSubsystem
 
 		class ACreatureBase* SpawnCreature(FVector SpawnPoint, FRotator SpawnRotate,FString Creature);
 	
+	private:
+		//void OnWorldSpawnManagerInitialized(UWorld* World, const UWorld::InitializationValues IVS);
 	
 };

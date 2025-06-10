@@ -23,6 +23,10 @@ class UNREALPHOBIA_API AProtoGameState : public AGameStateBase
 public:
     AProtoGameState();
 
+    const FString CreatureGrey = TEXT("/Game/AI/BP_CreatureGrey.BP_CreatureGrey_C"); //초기 위치 표현
+
     bool SpawnTrigger(Protocol::ObjectInfo);
+    
+    bool SpawnCreature(FVector SpawnPoint, FRotator SpawnRotate, FString Creature);
 
 };
