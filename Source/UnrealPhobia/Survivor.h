@@ -80,7 +80,7 @@ public:
 	void DecreaseMental(float Amount); // �ܺ� �ǰݿ�
 
 	// ȸ�� ����
-	void StartMentalRegen(float RegenAmountPerTick, float RegenInterval, float RegenTotalAmount);
+	void StartMentalRegen(float Duration);
 	void StopMentalRegen();
 
 	// ��Ż ��� �߰�(25.6.1)
@@ -129,6 +129,34 @@ protected:
 
 	// Mental 추가
 	void GameOver();
+
+	// ��Ż ��� �߰�(25.6.1)
+	UPROPERTY(EditDefaultsOnly, Category = "Mental")
+	float MaxMental = 200.f; // �ִ� ��Ż ����
+
+	UPROPERTY(VisibleAnywhere, Category = "Mental")
+	float CurrentMental = 200.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mental")
+	float MentalDecayRate = 1.f; // �ʴ� 1 ����
+
+	FTimerHandle MentalDecayTimerHandle;
+
+	// ��Ż ȸ����
+	FTimerHandle MentalRegenTimerHandle;
+	FTimerHandle MentalRegenDurationHandle;
+	bool bIsInMentalRegenZone = false;
+
+	float MentalRegenTickTime = 1.f;
+	float MentalRegenPerTick = 5.f;
+
+	UPROPERTY()
+	AActor* CurrentTrigger;
+	void DecreaseMental();
+	void RegenMental();
+	void ActivateRandomMentalTrigger();
+
+// ��Ż ��� �߰�(25.6.1)
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
