@@ -351,6 +351,7 @@ void ASurvivor::StopMentalRegen()
 	bIsInMentalRegenZone = false;
 	GetWorldTimerManager().ClearTimer(MentalRegenTimerHandle);
 	GetWorldTimerManager().ClearTimer(MentalRegenDurationHandle);
+	CurrentTrigger->Tags.Remove(FName("Active"));
 
 	ActivateRandomMentalTrigger();
 }

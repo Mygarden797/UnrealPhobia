@@ -148,7 +148,7 @@ protected:
 	bool bIsInMentalRegenZone = false;
 
 	float MentalRegenTickTime = 1.f;
-	float MentalRegenPerTick = 5.f;
+	float MentalRegenPerTick = 6.f;
 
 	UPROPERTY()
 	AActor* CurrentTrigger;
