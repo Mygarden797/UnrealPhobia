@@ -74,6 +74,16 @@ public:
 
 	// ĳ���Ͱ� ��ũ����.
 	void SetCrouch(const FInputActionValue &value);
+		// ��Ż ��� �߰�(25.6.1)
+
+	void IncreaseMental(float Amount);
+	void DecreaseMental(float Amount); // �ܺ� �ǰݿ�
+
+	// ȸ�� ����
+	void StartMentalRegen(float RegenAmountPerTick, float RegenInterval, float RegenTotalAmount);
+	void StopMentalRegen();
+
+	// ��Ż ��� �߰�(25.6.1)
 
 protected:
 	virtual void BeginPlay() override;
@@ -138,5 +148,30 @@ private:
 	FTimerHandle FStaminaLossHandle;
 	FTimerHandle FStaminaRegenHandle;
 	FTimerHandle FMentalTimerHandle;
+	bool bIsLossingStamina = false;
+
+	// ��Ż ��� �߰�(25.6.1)
+
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mental")
+	float MentalDecayRate = 1.f; // �ʴ� 1 ����
+
+	FTimerHandle MentalDecayTimerHandle;
+
+	// ��Ż ȸ����
+	FTimerHandle MentalRegenTimerHandle;
+	bool bIsInMentalRegenZone = false;
+
+	float RegenStartMental = 0.f;
+	float RegenTargetAmount = 0.f;
+	float MentalRegenPerTick = 0.f;
+
+	void DecreaseMental(); // �ڿ� ���ҿ�
+	void RegenMental();	   // ȸ�� Ÿ�̸ӿ�
+
+	// ��Ż ��� �߰�(25.6.1)
+	// ByeongJun 25.6.7
+	void UpdateStaminaBar();
+	void UpdateMentalBar();
 	
 };
