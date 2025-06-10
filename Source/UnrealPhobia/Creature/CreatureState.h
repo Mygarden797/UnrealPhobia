@@ -11,6 +11,7 @@ enum class ECreatureState : uint8
 	Investigate UMETA(DisplayName = "Investigate"),
 	Attack	UMETA(DisplayName = "Attack"),
 	Communicate UMETA(DisplayName = "Communicate"),
+	Check UMETA(DisplayName = "Check"),
 
 
 };

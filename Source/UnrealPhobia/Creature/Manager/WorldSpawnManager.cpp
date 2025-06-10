@@ -7,10 +7,13 @@
 #include "Kismet/GameplayStatics.h"
 
 
+const FString UWorldSpawnManager::CreatureGrey = TEXT("/Game/AI/BP_CreatureGrey.BP_CreatureGrey_C"); //초기 위치 표현
+const FString UWorldSpawnManager::CreatureWhiteMask = TEXT("/Game/AI/BP_CreatureWhiteMask.BP_CreatureWhiteMask_C");
+const FString UWorldSpawnManager::CreatureZombie = TEXT("/Game/AI/BP_CreatureZombie.BP_CreatureZombie_C");
+
 void UWorldSpawnManager::Initialize(FSubsystemCollectionBase& Collection)
 {
     Super::Initialize(Collection);
-    FWorldDelegates::OnPostWorldInitialization.AddUObject(this, &UWorldSpawnManager::OnWorldSpawnManagerInitialized);
 }
 
 void UWorldSpawnManager::Deinitialize()
@@ -29,16 +32,14 @@ class ACreatureBase* UWorldSpawnManager::SpawnCreature(FVector SpawnPoint, FRota
 		return nullptr;
 	}
 	FActorSpawnParameters Params;
+		/* 같은 자리에서 스폰 시에 충돌이 일어나도 스폰해주기 위함이다.*/
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
 
 	ACreatureBase* SpawnActor = GetWorld()->SpawnActor<ACreatureBase>(BP_Creature,SpawnPoint,SpawnRotate,Params);
 
 	return SpawnActor;
 }
 
-void UWorldSpawnManager::OnWorldSpawnManagerInitialized(UWorld* World, const UWorld::InitializationValues IVS)
-{
-    /*시작 시 실험을 위해서 캐릭터를 스폰시키는 코드*/
-    SpawnCreature(FVector::ZeroVector,FRotator::ZeroRotator,CreatureGrey);
-	// SpawnCreature(FVector::ZeroVector,FRotator::ZeroRotator,CreatureGrey);
-}
+
 

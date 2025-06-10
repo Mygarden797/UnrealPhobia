@@ -46,6 +46,8 @@ public:
 	void Attack();
 	void Communicate();
 
+
+
 private:
 	float AttackDamage = 10;
 

@@ -7,6 +7,8 @@
 #include "Components/CapsuleComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 // Sets default values
 ACreatureBase::ACreatureBase()
 {
@@ -17,6 +19,12 @@ ACreatureBase::ACreatureBase()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	//레벨에 직접 배치되거나 런타임에 스폰 시에 자동 소유
 	State = ECreatureState::Idle;
+
+	    /*캐릭터 간의 회피 기능 설정*/
+    GetCharacterMovement()->bUseRVOAvoidance = true;    
+    GetCharacterMovement()->AvoidanceConsiderationRadius = 300.f;
+    GetCharacterMovement()->AvoidanceWeight = 0.5f;
+
 }
 
 
