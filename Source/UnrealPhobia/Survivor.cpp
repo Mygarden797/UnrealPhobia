@@ -85,9 +85,6 @@ void ASurvivor::BeginPlay()
 		}
 	}
 
-
-	GetWorld()->GetTimerManager().SetTimer(FMentalTimerHandle, this, &ASurvivor::LossMental, 1.0f, true);
-
 }
 
 void ASurvivor::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -273,60 +270,12 @@ void ASurvivor::SetCrouch(const FInputActionValue& value)
 	const bool bPressed = value.Get<bool>();
 	if (bPressed)
 	{
+		bIsCrouch = true;
 		Crouch();
 	}
 	else
 	{
+		bIsCrouch = false;
 		UnCrouch();
 	}
 }
-
-void ASurvivor::LossMental()
-{
-	if (bIsDead) return;
-
-	if (CurrentMental > 0.0f)
-	{
-		CurrentMental = FMath::Max(CurrentMental - 1.0f, 0.0f);
-		bIsFear = false;
-	}
-
-	if (CurrentMental <= 0.0f && !bIsFear)
-	{
-		bIsFear = true;
-	}
-}
-
-/*
-
-float ASurvivor::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
-	AController* EventInstigator, AActor* DamageCauser)
-{
-	if (bIsDead) return 0.0f;
-
-	if (bIsFear && CurrentMental <= 0.0f)
-	{
-		Die();
-		return DamageAmount;
-	}
-
-	float AppliedDamage = FMath::Min(CurrentMental, DamageAmount);
-	CurrentMental -= AppliedDamage;
-
-	if (CurrentMental < 0.0f)
-	{
-		bIsFear = true;
-	}
-}
-
-void ASurvivor::Die()
-{
-	bIsDead = true;
-	// bIsFear = false;
-
-	GetWorld()->GetTimerManager().ClearTimer(FMentalTimerHandle);
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GetMesh()->SetSimulatePhysics(true);
-	DisableInput(nullptr);
-}
-*/

@@ -61,7 +61,6 @@ public:
 	// 캐릭터가 웅크린다.
 	void SetCrouch(const FInputActionValue& value);
 
-
 protected:
 	virtual void BeginPlay() override;
 
@@ -92,6 +91,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Stamina")
+	bool bIsSprinting = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Stamina")
+	bool bIsCrouch = false;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Mental")
+	bool bIsFear = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Mental")
+	bool bIsDead = false;
 
 	FRotator TargetCameraRotation;
 
@@ -110,24 +118,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Mental")
 	float CurrentMental = 100.0f;
 
-	UPROPERTY(VisibleAnywhere, Category = "Mental")
-	bool bIsFear = false;
-	UPROPERTY(VisibleAnywhere, Category = "Mental")
-	bool bIsDead = false;
-
-	bool bIsSprinting = false;
-
-
-
-
 	FTimerHandle FStaminaLossHandle;
 	FTimerHandle FStaminaRegenHandle;
 	FTimerHandle FMentalTimerHandle;
-
-	UFUNCTION()
-	void LossMental();
-
-
-	// void Die();
 	
 };
