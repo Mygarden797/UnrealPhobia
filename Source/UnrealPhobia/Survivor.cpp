@@ -177,6 +177,8 @@ void ASurvivor::Sprint(const FInputActionValue& Value)
 
 void ASurvivor::StartSprint()
 {
+	if (bIsCrouch)
+		return;
 	if (bIsSprinting || CurrentStamina <= 0.f)			// 달리기 중이거나 스테미너 없으면 리턴
 		return;
 
@@ -267,6 +269,10 @@ void ASurvivor::RegenStamina()
 
 void ASurvivor::SetCrouch(const FInputActionValue& value)
 {
+	if (bIsSprinting)
+	{
+		bIsSprinting = false;
+	}
 	const bool bPressed = value.Get<bool>();
 	if (bPressed)
 	{
