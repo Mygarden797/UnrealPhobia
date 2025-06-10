@@ -14,6 +14,7 @@ const FString UWorldSpawnManager::CreatureZombie = TEXT("/Game/AI/BP_CreatureZom
 void UWorldSpawnManager::Initialize(FSubsystemCollectionBase& Collection)
 {
     Super::Initialize(Collection);
+    //FWorldDelegates::OnPostWorldInitialization.AddUObject(this, &UWorldSpawnManager::OnWorldSpawnManagerInitialized);
 }
 
 void UWorldSpawnManager::Deinitialize()
@@ -41,5 +42,10 @@ class ACreatureBase* UWorldSpawnManager::SpawnCreature(FVector SpawnPoint, FRota
 	return SpawnActor;
 }
 
-
+//void UWorldSpawnManager::OnWorldSpawnManagerInitialized(UWorld* World, const UWorld::InitializationValues IVS)
+//{
+//    /*시작 시 실험을 위해서 캐릭터를 스폰시키는 코드*/
+//    SpawnCreature(FVector::ZeroVector,FRotator::ZeroRotator,CreatureGrey);
+//	// SpawnCreature(FVector::ZeroVector,FRotator::ZeroRotator,CreatureGrey);
+//}
 
