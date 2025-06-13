@@ -4,6 +4,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "TriggerSpawnPoint.h"
+#include "Protocol.pb.h"
 #include "Trigger.generated.h"
 
 /*
@@ -29,6 +30,8 @@ class UNREALPHOBIA_API ATrigger : public AActor
 
 public:
 	ATrigger();
+	~ATrigger();
+
 	void SetTriggerName(ETriggerName Name); // 트리거 타입 지정 함수
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StaticMesh")
@@ -41,6 +44,8 @@ public:
 	UStaticMesh *TriggerMesh; // 트리거 메시
 
 	ATriggerSpawnPoint *TriggerSpawnPoint;
+	// 트리거 정보, 아이디 받아오는것만 public으로 해야함.
+	class Protocol::ObjectInfo *TriggerInfo;
 
 protected:
 	virtual void BeginPlay() override;

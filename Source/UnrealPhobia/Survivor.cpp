@@ -83,8 +83,6 @@ void ASurvivor::BeginPlay()
 		&ASurvivor::DecreaseMental,
 		1.0f, // �ʴ� 1ȸ
 		true);
-<<<<<<< Updated upstream
-=======
 
 	// Deactivates all CandleRooms
 	TArray<AActor *> FoundTriggers;
@@ -97,7 +95,6 @@ void ASurvivor::BeginPlay()
 
 	ActivateRandomMentalTrigger();
 
->>>>>>> Stashed changes
 	// ��Ż����߰�(25.6.1)
 	// ���׹̳� UI ��������
 	CurrentStamina = MaxStamina;
@@ -338,28 +335,22 @@ void ASurvivor::GameOver()
 }
 
 // Mental
-void ASurvivor::StartMentalRegen(float RegenAmountPerTick, float RegenInterval, float RegenTotalAmount)
+void ASurvivor::StartMentalRegen(float Duration)
 {
-	if (bIsInMentalRegenZone)
-		return;
-
 	bIsInMentalRegenZone = true;
-	RegenStartMental = CurrentMental;
-	RegenTargetAmount = RegenTotalAmount;
-	MentalRegenPerTick = RegenAmountPerTick;
 
-	GetWorldTimerManager().SetTimer(
-		MentalRegenTimerHandle,
-		this,
-		&ASurvivor::RegenMental,
-		RegenInterval,
-		true);
+	GetWorldTimerManager().SetTimer(MentalRegenTimerHandle, this, &ASurvivor::RegenMental, MentalRegenTickTime, true);
+	GetWorldTimerManager().SetTimer(MentalRegenDurationHandle, this, &ASurvivor::StopMentalRegen, Duration, false);
 }
 
 void ASurvivor::StopMentalRegen()
 {
 	bIsInMentalRegenZone = false;
 	GetWorldTimerManager().ClearTimer(MentalRegenTimerHandle);
+	GetWorldTimerManager().ClearTimer(MentalRegenDurationHandle);
+	CurrentTrigger->Tags.Remove(FName("Active"));
+
+	ActivateRandomMentalTrigger();
 }
 
 void ASurvivor::RegenMental()
@@ -370,17 +361,15 @@ void ASurvivor::RegenMental()
 		return;
 	}
 
-	if (CurrentMental - RegenStartMental >= RegenTargetAmount)
-	{
-		StopMentalRegen();
-		return;
-	}
+	// if (CurrentMental - RegenStartMental >= RegenTargetAmount)
+	// {
+	// 	StopMentalRegen();
+	// 	return;
+	// }
 
 	CurrentMental = FMath::Clamp(CurrentMental + MentalRegenPerTick, 0.f, MaxMental);
 }
 
-<<<<<<< Updated upstream
-=======
 void ASurvivor::ActivateRandomMentalTrigger()
 {
 	TArray<AActor *> FoundTriggers;
@@ -440,7 +429,6 @@ void ASurvivor::Die()
 }
 */
 
->>>>>>> Stashed changes
 void ASurvivor::SetCrouch(const FInputActionValue &value)
 {
 	const bool bPressed = value.Get<bool>();
@@ -473,7 +461,6 @@ void ASurvivor::UpdateMentalBar()
 		MentalBar->SetMentalPercent(Percent);
 	}
 }
-
 
 /*
 

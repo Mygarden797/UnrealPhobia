@@ -6,6 +6,7 @@
 #include "Trigger.h"
 #include "TriggerMirror.h"
 #include "Components/ActorComponent.h"
+#include "Network/Contents/NetworkMirror.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
@@ -50,10 +51,7 @@ public:
 
 	int32 SelectedIndex = 0, MaxInventorySize = 2, CurrentInventorySize = 0;
 	TArray<ETriggerName> Inventory;
-<<<<<<< Updated upstream
-=======
 	TArray<int64> TriggerIDs; // 임시로 트리거 ID 저장용, 나중에 다른 형식으로 하꾸는게...?
->>>>>>> Stashed changes
 
 private:
 	UCameraComponent *CamComp;

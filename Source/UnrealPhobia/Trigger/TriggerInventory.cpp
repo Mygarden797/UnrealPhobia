@@ -10,12 +10,8 @@ UTriggerInventory::UTriggerInventory()
 	PrimaryComponentTick.bCanEverTick = true;
 	UE_LOG(LogTemp, Log, TEXT("UTriggerInventory Created"));
 	Inventory.Init(ETriggerName::None, MaxInventorySize);
-<<<<<<< Updated upstream
-
-=======
 	TriggerIDs.Init(0, MaxInventorySize);
 	Survivor = Cast<ASurvivor>(GetOwner());
->>>>>>> Stashed changes
 	if (SetCameraComponent())
 	{
 		UE_LOG(LogTemp, Display, TEXT("CameraComponent is set"));
@@ -94,14 +90,10 @@ void UTriggerInventory::PickUp()
 				int32 ValidIndex = Inventory.Find(ETriggerName::None);
 
 				if (ValidIndex != -1) // None이 있는지 확인
-<<<<<<< Updated upstream
-					Inventory[ValidIndex] = HitTrigger->TriggerName;
-=======
 				{
 					Inventory[ValidIndex] = HitTrigger->TriggerName;
 					TriggerIDs[ValidIndex] = HitTrigger->TriggerInfo->object_id(); // 임시로 트리거 ID 저장
 				}
->>>>>>> Stashed changes
 
 				UE_LOG(LogTemp, Log, TEXT("You got %s! [%d/%d]"), *HitActor->GetName(), ++CurrentInventorySize, MaxInventorySize);
 				if (HitTrigger->TriggerSpawnPoint)
@@ -120,8 +112,6 @@ void UTriggerInventory::PickUp()
 				CurrentInventorySize--;
 			}
 		}
-<<<<<<< Updated upstream
-=======
 		else if (Inventory[SelectedIndex] != ETriggerName::None && HitActor->IsA(ANetworkMirror::StaticClass()))
 		{
 			ANetworkMirror *HitMirror = Cast<ANetworkMirror>(HitActor);
@@ -132,7 +122,6 @@ void UTriggerInventory::PickUp()
 			}
 		}
 		Survivor->InventoryWidget->RefreshInventory();
->>>>>>> Stashed changes
 	}
 }
 

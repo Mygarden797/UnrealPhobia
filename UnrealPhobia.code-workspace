@@ -10,27 +10,7 @@
 		}
 	],
 	"settings": {
-		"typescript.tsc.autoDetect": "off",
-		"files.associations": {
-<<<<<<< Updated upstream
-			"complex": "cpp",
-			"functional": "cpp",
-			"type_traits": "cpp",
-			"xtr1common": "cpp",
-			"xutility": "cpp",
-			"__bit_reference": "cpp",
-			"bitset": "cpp",
-			"deque": "cpp",
-			"__memory": "cpp",
-			"limits": "cpp",
-			"ratio": "cpp",
-			"tuple": "cpp",
-			"vector": "cpp"
-=======
-			"*.rh": "cpp",
-			"fft": "cpp"
->>>>>>> Stashed changes
-		}
+		"typescript.tsc.autoDetect": "off"
 	},
 	"extensions": {
 		"recommendations": [
