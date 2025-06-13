@@ -12,6 +12,7 @@
 	"settings": {
 		"typescript.tsc.autoDetect": "off",
 		"files.associations": {
+<<<<<<< Updated upstream
 			"complex": "cpp",
 			"functional": "cpp",
 			"type_traits": "cpp",
@@ -25,6 +26,10 @@
 			"ratio": "cpp",
 			"tuple": "cpp",
 			"vector": "cpp"
+=======
+			"*.rh": "cpp",
+			"fft": "cpp"
+>>>>>>> Stashed changes
 		}
 	},
 	"extensions": {

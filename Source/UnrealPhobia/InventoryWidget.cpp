@@ -11,7 +11,6 @@ void UInventoryWidget::NativeConstruct()
 
     Super::NativeConstruct();
 
-    // 1) 컴포넌트 찾아오기
     if (APlayerController *PC = GetOwningPlayer())
     {
         if (APawn *Pawn = PC->GetPawn())
@@ -34,11 +33,11 @@ void UInventoryWidget::RefreshInventory()
     const TArray<ETriggerName> &Slots = InvComp->Inventory;
 
     SlotGrid->ClearChildren();
-    const int32 Cols = 4;
+    const int32 Cols = InvComp->MaxInventorySize;
     for (int32 Index = 0; Index < Slots.Num(); ++Index)
     {
         UInventorySlotWidget *SlotW = CreateWidget<UInventorySlotWidget>(GetWorld(), InventorySlotClass);
-        SlotW->InitSlot(Slots[Index]);
+        SlotW->InitSlot(Slots[Index], Index == InvComp->SelectedIndex);
         int32 Row = Index / Cols;
         int32 Col = Index % Cols;
         SlotGrid->AddChildToUniformGrid(SlotW, Row, Col);

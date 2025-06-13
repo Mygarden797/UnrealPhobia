@@ -33,13 +33,10 @@ public:
 	TSubclassOf<class UUserWidget> CrosshairWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<class UUserWidget> InventoryWidgetClass;
+	TSubclassOf<class UInventoryWidget> InventoryWidgetClass;
 
 	UPROPERTY()
 	class UUserWidget *CrosshairWidget;
-
-	UPROPERTY()
-	class UUserWidget *InventoryWidget;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UStaminaBar> StaminaBarClass;
@@ -52,6 +49,9 @@ public:
 
 	UPROPERTY()
 	class UMentalBar *MentalBar;
+
+	UPROPERTY()
+	class UInventoryWidget *InventoryWidget;
 
 	// ĳ���� �յ� �̵�, 1D Vector
 	void MoveForward(const FInputActionValue &Value);
@@ -74,7 +74,10 @@ public:
 
 	// ĳ���Ͱ� ��ũ����.
 	void SetCrouch(const FInputActionValue &value);
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 	// ��Ż ��� �߰�(25.6.1)
 
 	void IncreaseMental(float Amount);
@@ -157,15 +160,49 @@ private:
 	FTimerHandle MentalRegenTimerHandle;
 	bool bIsInMentalRegenZone = false;
 
+<<<<<<< Updated upstream
+=======
+	float MentalRegenTickTime = 1.f;
+	float MentalRegenPerTick = 6.f;
+
+	UPROPERTY()
+	AActor *CurrentTrigger;
+	void DecreaseMental();
+	void RegenMental();
+	void ActivateRandomMentalTrigger();
+
+	// ��Ż ��� �߰�(25.6.1)
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float MaxStamina = 100.f;
+	UPROPERTY(VisibleAnywhere, Category = "Stamina")
+	float CurrentStamina = 100.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float StaminaLossRate = 20.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float StaminaRegenRate = 20.f;
+
+	FTimerHandle FStaminaLossHandle;
+	FTimerHandle FStaminaRegenHandle;
+	FTimerHandle FMentalTimerHandle;
+	bool bIsLossingStamina = false;
+
+	// ��Ż ��� �߰�(25.6.1)
+
+>>>>>>> Stashed changes
 	float RegenStartMental = 0.f;
 	float RegenTargetAmount = 0.f;
 	float MentalRegenPerTick = 0.f;
 
+<<<<<<< Updated upstream
 	void DecreaseMental(); // �ڿ� ���ҿ�
 	void RegenMental();	   // ȸ�� Ÿ�̸ӿ�
 
 	// ��Ż ��� �߰�(25.6.1)
 
+=======
+>>>>>>> Stashed changes
 	// ByeongJun 25.6.7
 	void UpdateStaminaBar();
 	void UpdateMentalBar();

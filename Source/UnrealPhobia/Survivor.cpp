@@ -10,7 +10,7 @@
 #include "Blueprint/UserWidget.h"
 #include "StaminaBar.h"
 #include "MentalBar.h"
-
+#include "InventoryWidget.h"
 ASurvivor::ASurvivor(const FObjectInitializer &ObjectInitializer)
 {
 	// ĳ���� �浹 ũ��
@@ -83,6 +83,21 @@ void ASurvivor::BeginPlay()
 		&ASurvivor::DecreaseMental,
 		1.0f, // �ʴ� 1ȸ
 		true);
+<<<<<<< Updated upstream
+=======
+
+	// Deactivates all CandleRooms
+	TArray<AActor *> FoundTriggers;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers);
+
+	for (AActor *Trigger : FoundTriggers)
+	{
+		Trigger->Tags.Remove(FName("Active")); // 태그 제거 → 트리거 내부에서 Active 기준으로 동작하게 만들 것
+	}
+
+	ActivateRandomMentalTrigger();
+
+>>>>>>> Stashed changes
 	// ��Ż����߰�(25.6.1)
 	// ���׹̳� UI ��������
 	CurrentStamina = MaxStamina;
@@ -107,7 +122,7 @@ void ASurvivor::BeginPlay()
 
 	if (IsLocallyControlled() && InventoryWidgetClass)
 	{
-		InventoryWidget = CreateWidget<UUserWidget>(GetWorld(), InventoryWidgetClass);
+		InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
 		if (InventoryWidget)
 		{
 			InventoryWidget->AddToViewport();
@@ -364,6 +379,68 @@ void ASurvivor::RegenMental()
 	CurrentMental = FMath::Clamp(CurrentMental + MentalRegenPerTick, 0.f, MaxMental);
 }
 
+<<<<<<< Updated upstream
+=======
+void ASurvivor::ActivateRandomMentalTrigger()
+{
+	TArray<AActor *> FoundTriggers;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers);
+
+	TArray<AActor *> AvailableTriggers;
+	for (AActor *Trigger : FoundTriggers)
+	{
+		if (Trigger != CurrentTrigger)
+		{
+			AvailableTriggers.Add(Trigger);
+		}
+	}
+
+	if (AvailableTriggers.Num() > 0)
+	{
+		int32 Index = FMath::RandRange(0, AvailableTriggers.Num() - 1);
+		AActor *SelectedTrigger = AvailableTriggers[Index];
+		CurrentTrigger = SelectedTrigger;
+		SelectedTrigger->Tags.AddUnique(FName("Active")); // Activate with Active Tag
+
+		UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger->GetName());
+	}
+}
+
+/*
+
+float ASurvivor::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+	AController* EventInstigator, AActor* DamageCauser)
+{
+	if (bIsDead) return 0.0f;
+
+	if (bIsFear && CurrentMental <= 0.0f)
+	{
+		Die();
+		return DamageAmount;
+	}
+
+	float AppliedDamage = FMath::Min(CurrentMental, DamageAmount);
+	CurrentMental -= AppliedDamage;
+
+	if (CurrentMental < 0.0f)
+	{
+		bIsFear = true;
+	}
+}
+
+void ASurvivor::Die()
+{
+	bIsDead = true;
+	// bIsFear = false;
+
+	GetWorld()->GetTimerManager().ClearTimer(FMentalTimerHandle);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetSimulatePhysics(true);
+	DisableInput(nullptr);
+}
+*/
+
+>>>>>>> Stashed changes
 void ASurvivor::SetCrouch(const FInputActionValue &value)
 {
 	const bool bPressed = value.Get<bool>();
@@ -396,6 +473,7 @@ void ASurvivor::UpdateMentalBar()
 		MentalBar->SetMentalPercent(Percent);
 	}
 }
+
 
 /*
 

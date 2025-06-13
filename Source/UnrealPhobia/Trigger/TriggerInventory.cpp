@@ -2,13 +2,20 @@
 
 #include "TriggerInventory.h"
 #include "Engine/World.h"
+#include "Survivor.h"
+#include "InventoryWidget.h"
 
 UTriggerInventory::UTriggerInventory()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	UE_LOG(LogTemp, Log, TEXT("UTriggerInventory Created"));
 	Inventory.Init(ETriggerName::None, MaxInventorySize);
+<<<<<<< Updated upstream
 
+=======
+	TriggerIDs.Init(0, MaxInventorySize);
+	Survivor = Cast<ASurvivor>(GetOwner());
+>>>>>>> Stashed changes
 	if (SetCameraComponent())
 	{
 		UE_LOG(LogTemp, Display, TEXT("CameraComponent is set"));
@@ -87,7 +94,14 @@ void UTriggerInventory::PickUp()
 				int32 ValidIndex = Inventory.Find(ETriggerName::None);
 
 				if (ValidIndex != -1) // None이 있는지 확인
+<<<<<<< Updated upstream
 					Inventory[ValidIndex] = HitTrigger->TriggerName;
+=======
+				{
+					Inventory[ValidIndex] = HitTrigger->TriggerName;
+					TriggerIDs[ValidIndex] = HitTrigger->TriggerInfo->object_id(); // 임시로 트리거 ID 저장
+				}
+>>>>>>> Stashed changes
 
 				UE_LOG(LogTemp, Log, TEXT("You got %s! [%d/%d]"), *HitActor->GetName(), ++CurrentInventorySize, MaxInventorySize);
 				if (HitTrigger->TriggerSpawnPoint)
@@ -106,9 +120,22 @@ void UTriggerInventory::PickUp()
 				CurrentInventorySize--;
 			}
 		}
+<<<<<<< Updated upstream
+=======
+		else if (Inventory[SelectedIndex] != ETriggerName::None && HitActor->IsA(ANetworkMirror::StaticClass()))
+		{
+			ANetworkMirror *HitMirror = Cast<ANetworkMirror>(HitActor);
+			if (HitMirror->ActivateTrigger(TriggerIDs[SelectedIndex]))
+			{
+				Inventory[SelectedIndex] = ETriggerName::None;
+				CurrentInventorySize--;
+			}
+		}
+		Survivor->InventoryWidget->RefreshInventory();
+>>>>>>> Stashed changes
 	}
 }
-// 인벤토리 사이즈를 확인하여 Reach로 받은 Trigger를 인벤토리에 추가
+
 void UTriggerInventory::DropOff()
 {
 	USkeletalMeshComponent *SkeletalMeshComp = GetOwner()->FindComponentByClass<USkeletalMeshComponent>();
@@ -121,7 +148,7 @@ void UTriggerInventory::DropOff()
 		FActorSpawnParameters Params;
 		ATrigger *DroppedTrigger = GetWorld()->SpawnActor<ATrigger>(
 			ATrigger::StaticClass(),
-			SkeletalMeshComp->GetComponentLocation() + FVector(0, 0, 110),
+			SkeletalMeshComp->GetComponentLocation() + FVector(0, 0, 80),
 			CamComp->GetComponentRotation(),
 			Params);
 		if (DroppedTrigger)
@@ -133,6 +160,7 @@ void UTriggerInventory::DropOff()
 			UE_LOG(LogTemp, Log, TEXT("Trigger Dropped"));
 		}
 	}
+	Survivor->InventoryWidget->RefreshInventory();
 }
 
 void UTriggerInventory::SelectSlot(int32 Index)
@@ -141,5 +169,6 @@ void UTriggerInventory::SelectSlot(int32 Index)
 	{
 		SelectedIndex = Index - 1;
 		UE_LOG(LogTemp, Log, TEXT("Slot Changed to %d"), SelectedIndex + 1);
+		Survivor->InventoryWidget->RefreshInventory();
 	}
 }
