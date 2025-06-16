@@ -9,7 +9,7 @@
 class UProgressBar;
 
 /**
- * 
+ *
  */
 UCLASS()
 class UNREALPHOBIA_API UStaminaBar : public UUserWidget
@@ -24,7 +24,5 @@ protected:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY(meta = (BindWidget))
-	UProgressBar* StaminaBar;
-
-	
+	UProgressBar *StaminaBar;
 };

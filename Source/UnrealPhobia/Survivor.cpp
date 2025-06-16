@@ -8,35 +8,37 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Blueprint/UserWidget.h"
-#include "StaminaBar.h"
 
-ASurvivor::ASurvivor(const FObjectInitializer& ObjectInitializer)
+#include "StaminaBar.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "MentalBar.h"
+
+ASurvivor::ASurvivor(const FObjectInitializer &ObjectInitializer)
 {
 	// ĳ���� �浹 ũ��
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-	
-	GetCharacterMovement()->bOrientRotationToMovement = false;					// ��Ʈ�ѷ� �������� ĳ���� ȸ��
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); 
+
+	GetCharacterMovement()->bOrientRotationToMovement = false; // ��Ʈ�ѷ� �������� ĳ���� ȸ��
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 	GetCharacterMovement()->MaxWalkSpeedCrouched = 200.f;
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
-	CurrentStamina = MaxStamina;
-	// UE_LOG(LogTemp, Error, TEXT("CurrentStamina, Init: %f"), CurrentStamina);
+	// CurrentStamina = MaxStamina;
+	//  UE_LOG(LogTemp, Error, TEXT("CurrentStamina, Init: %f"), CurrentStamina);
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->TargetArmLength = 90.0f;
 	SpringArm->SocketOffset = FVector(10.f, 45.f, 0.f);
 	SpringArm->ProbeSize = 12.f;
-	// SpringArm->bUsePawnControlRotation = true; 
+	// SpringArm->bUsePawnControlRotation = true;
 
 	// SpringArm ������Ʈ ����
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(SpringArm, USpringArmComponent::SocketName); 
-	// FollowCamera->bUsePawnControlRotation = false; 
-
-	
+	FollowCamera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
+	// FollowCamera->bUsePawnControlRotation = false;
 }
 
 void ASurvivor::BeginPlay()
@@ -49,9 +51,9 @@ void ASurvivor::BeginPlay()
 	// UE_LOG(LogTemp, Error, TEXT("CurrentMental, Init: %f"), CurrentMental);
 
 	// Ű ���ε� ��������
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (APlayerController *PlayerController = Cast<APlayerController>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem *Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(SurvivorMovingContext, 0);
 		}
@@ -64,8 +66,8 @@ void ASurvivor::BeginPlay()
 	// ���ؼ� ��������
 	if (IsLocallyControlled() && CrosshairWidgetClass)
 	{
-		CrosshairWidget =CreateWidget<UUserWidget>(GetWorld(), CrosshairWidgetClass);
-		if (CrosshairWidget) 
+		CrosshairWidget = CreateWidget<UUserWidget>(GetWorld(), CrosshairWidgetClass);
+		if (CrosshairWidget)
 		{
 			CrosshairWidget->AddToViewport();
 		}
@@ -75,18 +77,30 @@ void ASurvivor::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("Failed to load Crosshair!!"));
 	}
 
-// ��Ż����߰�(25.6.1)
-	CurrentMental = MaxMental;
+	// ��Ż����߰�(25.6.1)
+
 	// ��Ż �ڿ� ���� Ÿ�̸�
 	GetWorldTimerManager().SetTimer(
 		MentalDecayTimerHandle,
 		this,
 		&ASurvivor::DecreaseMental,
-		1.0f,  // �ʴ� 1ȸ
-		true
-	);
+		1.0f, // �ʴ� 1ȸ
+		true);
+	
+	// Deactivates all CandleRooms
+	TArray<AActor*> FoundTriggers;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers);
+
+	for (AActor* Trigger : FoundTriggers)
+	{
+		Trigger->Tags.Remove(FName("Active")); // 태그 제거 → 트리거 내부에서 Active 기준으로 동작하게 만들 것
+	}
+
+	ActivateRandomMentalTrigger();
+
 // ��Ż����߰�(25.6.1)
 	// ���׹̳� UI ��������
+	CurrentStamina = MaxStamina;
 	if (IsLocallyControlled() && StaminaBarClass)
 	{
 		StaminaBar = CreateWidget<UStaminaBar>(GetWorld(), StaminaBarClass);
@@ -96,21 +110,40 @@ void ASurvivor::BeginPlay()
 		}
 	}
 
+	CurrentMental = MaxMental;
+	if (IsLocallyControlled() && MentalBarClass)
+	{
+		MentalBar = CreateWidget<UMentalBar>(GetWorld(), MentalBarClass);
+		if (MentalBar)
+		{
+			MentalBar->AddToViewport();
+		}
+	}
 
-
+	if (IsLocallyControlled() && InventoryWidgetClass)
+	{
+		InventoryWidget = CreateWidget<UUserWidget>(GetWorld(), InventoryWidgetClass);
+		if (InventoryWidget)
+		{
+			InventoryWidget->AddToViewport();
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load Inventory!!"));
+	}
 }
 
-void ASurvivor::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ASurvivor::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (UEnhancedInputComponent* EIC = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	if (UEnhancedInputComponent *EIC = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EIC->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ASurvivor::MoveForward);
 		EIC->BindAction(MoveRightAction, ETriggerEvent::Triggered, this, &ASurvivor::MoveRight);
 		EIC->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASurvivor::Look);
 
-		
 		EIC->BindAction(SprintAction, ETriggerEvent::Started, this, &ASurvivor::Sprint);
 		EIC->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASurvivor::Sprint);
 
@@ -123,7 +156,7 @@ void ASurvivor::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	}
 }
 
-void ASurvivor::MoveForward(const FInputActionValue& Value)
+void ASurvivor::MoveForward(const FInputActionValue &Value)
 {
 	const float AxisValue = Value.Get<float>();
 	if (Controller && AxisValue != 0.0f)
@@ -134,13 +167,13 @@ void ASurvivor::MoveForward(const FInputActionValue& Value)
 
 		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Move Forward"));
 	}
-	else 
+	else
 	{
 		// UE_LOG(LogTemp, Error, TEXT("No Controller or AxisValue is 0 in MoveForward!!"));
 	}
 }
 
-void ASurvivor::MoveRight(const FInputActionValue& Value)
+void ASurvivor::MoveRight(const FInputActionValue &Value)
 {
 	const float AxisValue = Value.Get<float>();
 
@@ -158,7 +191,7 @@ void ASurvivor::MoveRight(const FInputActionValue& Value)
 	}
 }
 
-void ASurvivor::Look(const FInputActionValue& Value)
+void ASurvivor::Look(const FInputActionValue &Value)
 {
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
@@ -166,7 +199,7 @@ void ASurvivor::Look(const FInputActionValue& Value)
 	{
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y*-1);
+		AddControllerPitchInput(LookAxisVector.Y * -1);
 	}
 	else
 	{
@@ -174,9 +207,9 @@ void ASurvivor::Look(const FInputActionValue& Value)
 	}
 }
 
-void ASurvivor::Sprint(const FInputActionValue& Value)
+void ASurvivor::Sprint(const FInputActionValue &Value)
 {
-	const bool DoSprint = Value.Get<bool>();			// LShift�� ������ ���� �� true
+	const bool DoSprint = Value.Get<bool>(); // LShift�� ������ ���� �� true
 
 	if (DoSprint && CurrentStamina > 0.f)
 	{
@@ -190,7 +223,7 @@ void ASurvivor::Sprint(const FInputActionValue& Value)
 
 void ASurvivor::StartSprint()
 {
-	if (bIsSprinting || CurrentStamina <= 0.f)			// �޸��� ���̰ų� ���׹̳� ������ ����
+	if (bIsSprinting || CurrentStamina <= 0.f) // �޸��� ���̰ų� ���׹̳� ������ ����
 		return;
 
 	bIsSprinting = true;
@@ -198,14 +231,13 @@ void ASurvivor::StartSprint()
 
 	if (!GetWorldTimerManager().IsTimerActive(FStaminaLossHandle))
 	{
-			GetWorldTimerManager().ClearTimer(FStaminaLossHandle);
-			GetWorldTimerManager().SetTimer(
+		GetWorldTimerManager().ClearTimer(FStaminaLossHandle);
+		GetWorldTimerManager().SetTimer(
 			FStaminaLossHandle,
 			this,
 			&ASurvivor::LossStamina,
 			0.1f,
-			true
-		);
+			true);
 	}
 	// UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Start: %f"), CurrentStamina);
 }
@@ -221,11 +253,11 @@ void ASurvivor::StopSprint()
 	if (CurrentStamina < MaxStamina)
 	{
 		GetWorldTimerManager().SetTimer(
-			FStaminaRegenHandle, 
-			this, 
-			&ASurvivor::RegenStamina, 
-			0.1f, 
-			true);	
+			FStaminaRegenHandle,
+			this,
+			&ASurvivor::RegenStamina,
+			0.1f,
+			true);
 	}
 	// UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Stop: %f"), CurrentStamina);
 }
@@ -242,18 +274,14 @@ void ASurvivor::LossStamina()
 	{
 		CurrentStamina = 0.0f;
 		// UE_LOG(LogTemp, Display, TEXT("LossStamina() - Sprint ����, Stamina: %.2f"), CurrentStamina);
-		StopSprint(); 
+		StopSprint();
 	}
 	else
 	{
 		CurrentStamina -= StaminaLossRate * 0.1f;
 		// UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Loss: %f"), CurrentStamina);
 	}
-	if (StaminaBar)
-	{
-		float Percent = CurrentStamina / MaxStamina;
-		StaminaBar->SetStaminaPercent(Percent);
-	}
+	UpdateStaminaBar();
 }
 
 void ASurvivor::RegenStamina()
@@ -263,32 +291,28 @@ void ASurvivor::RegenStamina()
 		GetWorldTimerManager().ClearTimer(FStaminaRegenHandle);
 		return;
 	}
-	else 
+	else
 	{
 		CurrentStamina += StaminaRegenRate * 0.1f;
 		// UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Regen: %f"), CurrentStamina);
 		CurrentStamina = FMath::Min(CurrentStamina, MaxStamina);
 	}
 
-	if (StaminaBar)
-	{
-		float Percent = CurrentStamina / MaxStamina;
-		StaminaBar->SetStaminaPercent(Percent);
-	}
-
+	UpdateStaminaBar();
 }
-
 
 // Mental(25.6.1.)
 
 void ASurvivor::IncreaseMental(float Amount)
 {
 	CurrentMental = FMath::Clamp(CurrentMental + Amount, 0.f, MaxMental);
+	UpdateMentalBar();
 }
 
 void ASurvivor::DecreaseMental(float Amount)
 {
 	CurrentMental = FMath::Clamp(CurrentMental - Amount, 0.f, MaxMental);
+	UpdateMentalBar();
 }
 
 // Mental
@@ -305,6 +329,7 @@ void ASurvivor::DecreaseMental()
 			GameOver();
 		}
 	}
+	UpdateMentalBar();
 }
 
 void ASurvivor::GameOver()
@@ -313,28 +338,22 @@ void ASurvivor::GameOver()
 }
 
 // Mental
-void ASurvivor::StartMentalRegen(float RegenAmountPerTick, float RegenInterval, float RegenTotalAmount)
+void ASurvivor::StartMentalRegen(float Duration)
 {
-	if (bIsInMentalRegenZone) return;
-
 	bIsInMentalRegenZone = true;
-	RegenStartMental = CurrentMental;
-	RegenTargetAmount = RegenTotalAmount;
-	MentalRegenPerTick = RegenAmountPerTick;
 
-	GetWorldTimerManager().SetTimer(
-		MentalRegenTimerHandle,
-		this,
-		&ASurvivor::RegenMental,
-		RegenInterval,
-		true
-	);
+	GetWorldTimerManager().SetTimer(MentalRegenTimerHandle, this, &ASurvivor::RegenMental, MentalRegenTickTime, true);
+	GetWorldTimerManager().SetTimer(MentalRegenDurationHandle, this, &ASurvivor::StopMentalRegen, Duration, false);
 }
 
 void ASurvivor::StopMentalRegen()
 {
 	bIsInMentalRegenZone = false;
 	GetWorldTimerManager().ClearTimer(MentalRegenTimerHandle);
+	GetWorldTimerManager().ClearTimer(MentalRegenDurationHandle);
+	CurrentTrigger->Tags.Remove(FName("Active"));
+
+	ActivateRandomMentalTrigger();
 }
 
 void ASurvivor::RegenMental()
@@ -345,26 +364,110 @@ void ASurvivor::RegenMental()
 		return;
 	}
 
-	if (CurrentMental - RegenStartMental >= RegenTargetAmount)
-	{
-		StopMentalRegen();
-		return;
-	}
+	// if (CurrentMental - RegenStartMental >= RegenTargetAmount)
+	// {
+	// 	StopMentalRegen();
+	// 	return;
+	// }
 
 	CurrentMental = FMath::Clamp(CurrentMental + MentalRegenPerTick, 0.f, MaxMental);
+
+}
+
+void ASurvivor::ActivateRandomMentalTrigger()
+{
+	TArray<AActor*> FoundTriggers;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers);
+
+	TArray<AActor*> AvailableTriggers;
+	for (AActor* Trigger : FoundTriggers)
+	{
+		if (Trigger != CurrentTrigger)
+		{
+			AvailableTriggers.Add(Trigger);
+		}
+	}
+
+	if (AvailableTriggers.Num() > 0)
+	{
+		int32 Index = FMath::RandRange(0, AvailableTriggers.Num() - 1);
+		AActor* SelectedTrigger = AvailableTriggers[Index];
+		CurrentTrigger = SelectedTrigger;
+		SelectedTrigger->Tags.AddUnique(FName("Active"));  // Activate with Active Tag
+
+		UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger->GetName());
+	}
 }
 
 
-void ASurvivor::SetCrouch(const FInputActionValue& value)
+/*
+
+float ASurvivor::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+	AController* EventInstigator, AActor* DamageCauser)
+{
+	if (bIsDead) return 0.0f;
+
+	if (bIsFear && CurrentMental <= 0.0f)
+	{
+		Die();
+		return DamageAmount;
+	}
+
+	float AppliedDamage = FMath::Min(CurrentMental, DamageAmount);
+	CurrentMental -= AppliedDamage;
+
+	if (CurrentMental < 0.0f)
+	{
+		bIsFear = true;
+	}
+}
+
+void ASurvivor::Die()
+{
+	bIsDead = true;
+	// bIsFear = false;
+
+	GetWorld()->GetTimerManager().ClearTimer(FMentalTimerHandle);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetSimulatePhysics(true);
+	DisableInput(nullptr);
+}
+*/
+
+
+
+void ASurvivor::SetCrouch(const FInputActionValue &value)
 {
 	const bool bPressed = value.Get<bool>();
 	if (bPressed)
 	{
+		bIsCrouch = true;
 		Crouch();
 	}
 	else
 	{
+		bIsCrouch = false;
 		UnCrouch();
+	}
+}
+
+// Update Stamina Bar UI
+void ASurvivor::UpdateStaminaBar()
+{
+	if (StaminaBar)
+	{
+		float Percent = CurrentStamina / MaxStamina;
+		StaminaBar->SetStaminaPercent(Percent);
+	}
+}
+
+// Update Mental Bar UI
+void ASurvivor::UpdateMentalBar()
+{
+	if (MentalBar)
+	{
+		float Percent = CurrentMental / MaxMental;
+		MentalBar->SetMentalPercent(Percent);
 	}
 }
 

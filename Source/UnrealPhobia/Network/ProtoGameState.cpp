@@ -2,6 +2,7 @@
 
 
 #include "Network/ProtoGameState.h"
+#include "Creature/CreatureBase.h"
 #include "Kismet/GameplayStatics.h"
 
 AProtoGameState::AProtoGameState()
@@ -30,7 +31,25 @@ bool AProtoGameState::SpawnTrigger(Protocol::ObjectInfo objectInfo)
         // 스폰된 트리거에 트리거 종류 랜덤으로 부여
         int32 RandValue = FMath::RandRange(0, static_cast<int32>(ETriggerName::None) - 1);
         SpawnedTrigger->SetTriggerName(static_cast<ETriggerName>(RandValue));
+        SpawnedTrigger->TriggerInfo->set_object_id(objectInfo.object_id());
         return true;
     }
     return false;
+}
+
+//소환하는 방식 바꿔야할 듯
+bool AProtoGameState::SpawnCreature(FVector SpawnPoint, FRotator SpawnRotate, FString Creature)
+{
+    TSubclassOf<ACreatureBase> BP_Creature;
+    BP_Creature = LoadClass<ACreatureBase>(nullptr, *Creature);
+    if (BP_Creature == nullptr)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("BP_Creature is not Load"));
+        return false;
+    }
+    FActorSpawnParameters Params;
+
+    ACreatureBase* SpawnActor = GetWorld()->SpawnActor<ACreatureBase>(BP_Creature, SpawnPoint, SpawnRotate, Params);
+    //ACreatureBase* SpawnActor = GetWorld()->SpawnActor<ACreatureBase>(ACreatureBase::StaticClass(), SpawnPoint, SpawnRotate, Params);
+    return true;
 }

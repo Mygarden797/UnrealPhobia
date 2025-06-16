@@ -23,31 +23,45 @@ class UNREALPHOBIA_API ASurvivor : public ACharacter
 	GENERATED_BODY()
 
 public:
-	ASurvivor(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	ASurvivor(const FObjectInitializer &ObjectInitializer = FObjectInitializer::Get());
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	// virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, 
+	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
+	// virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	//	class AController* EventIstigator, AActor* DamageCauser) override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UUserWidget> CrosshairWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UUserWidget> InventoryWidgetClass;
+
 	UPROPERTY()
-	class UUserWidget* CrosshairWidget;
+	class UUserWidget *CrosshairWidget;
+
+	UPROPERTY()
+	class UUserWidget *InventoryWidget;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UStaminaBar> StaminaBarClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UMentalBar> MentalBarClass;
+
 	UPROPERTY()
-	class UStaminaBar* StaminaBar;
+	class UStaminaBar *StaminaBar;
+
+	UPROPERTY()
+	class UMentalBar *MentalBar;
 
 	// ĳ���� �յ� �̵�, 1D Vector
-	void MoveForward(const FInputActionValue& Value);
+	void MoveForward(const FInputActionValue &Value);
 	// ĳ���� �¿� �̵�, 1D Vector
-	void MoveRight(const FInputActionValue& Value);
+	void MoveRight(const FInputActionValue &Value);
 	// ī�޶� �̵�, 2D Vector
-	void Look(const FInputActionValue& Value);
+	void Look(const FInputActionValue &Value);
 
-	// Sprint Handler 
-	void Sprint(const FInputActionValue& Value);
+	// Sprint Handler
+	void Sprint(const FInputActionValue &Value);
 	// LShift�� ������ ���� �� �޸���.
 	void StartSprint();
 	// LShift�� ������ ���� �� �޸��⸦ �����.
@@ -59,19 +73,17 @@ public:
 	void RegenStamina();
 
 	// ĳ���Ͱ� ��ũ����.
-	void SetCrouch(const FInputActionValue& value);
-
-
-// ��Ż ��� �߰�(25.6.1)
+	void SetCrouch(const FInputActionValue &value);
+		// ��Ż ��� �߰�(25.6.1)
 
 	void IncreaseMental(float Amount);
 	void DecreaseMental(float Amount); // �ܺ� �ǰݿ�
 
 	// ȸ�� ����
-	void StartMentalRegen(float RegenAmountPerTick, float RegenInterval, float RegenTotalAmount);
+	void StartMentalRegen(float Duration);
 	void StopMentalRegen();
 
-// ��Ż ��� �߰�(25.6.1)
+	// ��Ż ��� �߰�(25.6.1)
 
 protected:
 	virtual void BeginPlay() override;
@@ -103,38 +115,22 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Stamina")
+	bool bIsSprinting = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Stamina")
+	bool bIsCrouch = false;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Mental")
+	bool bIsFear = false;
+	UPROPERTY(BlueprintReadWrite, Category = "Mental")
+	bool bIsDead = false;
 
 	FRotator TargetCameraRotation;
 
 	// Mental 추가
 	void GameOver();
 
-private:
-	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
-	float MaxStamina = 100.f;
-	UPROPERTY(VisibleAnywhere, Category = "Stamina")
-	float CurrentStamina = 100.f;
-	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
-	float StaminaLossRate = 20.f;
-	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
-	float StaminaRegenRate = 20.f;
-
-
-	UPROPERTY(VisibleAnywhere, Category = "Mental")
-	bool bIsFear = false;
-	UPROPERTY(VisibleAnywhere, Category = "Mental")
-	bool bIsDead = false;
-
-
-
-
-	FTimerHandle FStaminaLossHandle;
-	FTimerHandle FStaminaRegenHandle;
-	bool bIsLossingStamina = false;
-	bool bIsSprinting = false;
-
-
-// ��Ż ��� �߰�(25.6.1)
+	// ��Ż ��� �߰�(25.6.1)
 	UPROPERTY(EditDefaultsOnly, Category = "Mental")
 	float MaxMental = 200.f; // �ִ� ��Ż ����
 
@@ -148,14 +144,46 @@ private:
 
 	// ��Ż ȸ����
 	FTimerHandle MentalRegenTimerHandle;
+	FTimerHandle MentalRegenDurationHandle;
 	bool bIsInMentalRegenZone = false;
+
+	float MentalRegenTickTime = 1.f;
+	float MentalRegenPerTick = 6.f;
+
+	UPROPERTY()
+	AActor* CurrentTrigger;
+	void DecreaseMental();
+	void RegenMental();
+	void ActivateRandomMentalTrigger();
+
+// ��Ż ��� �߰�(25.6.1)
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float MaxStamina = 100.f;
+	UPROPERTY(VisibleAnywhere, Category = "Stamina")
+	float CurrentStamina = 100.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float StaminaLossRate = 20.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
+	float StaminaRegenRate = 20.f;
+
+
+	FTimerHandle FStaminaLossHandle;
+	FTimerHandle FStaminaRegenHandle;
+	FTimerHandle FMentalTimerHandle;
+	bool bIsLossingStamina = false;
+
+	// ��Ż ��� �߰�(25.6.1)
 
 	float RegenStartMental = 0.f;
 	float RegenTargetAmount = 0.f;
-	float MentalRegenPerTick = 0.f;
 
-	void DecreaseMental(); // �ڿ� ���ҿ�
-	void RegenMental();    // ȸ�� Ÿ�̸ӿ�
 
-// ��Ż ��� �߰�(25.6.1)
+
+	// ��Ż ��� �߰�(25.6.1)
+	// ByeongJun 25.6.7
+	void UpdateStaminaBar();
+	void UpdateMentalBar();
+	
 };

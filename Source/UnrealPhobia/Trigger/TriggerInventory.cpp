@@ -8,6 +8,7 @@ UTriggerInventory::UTriggerInventory()
 	PrimaryComponentTick.bCanEverTick = true;
 	UE_LOG(LogTemp, Log, TEXT("UTriggerInventory Created"));
 	Inventory.Init(ETriggerName::None, MaxInventorySize);
+    TriggerIDs.Init(0, MaxInventorySize); 
 
 	if (SetCameraComponent())
 	{
@@ -86,8 +87,12 @@ void UTriggerInventory::PickUp()
 				ATrigger *HitTrigger = Cast<ATrigger>(HitActor);
 				int32 ValidIndex = Inventory.Find(ETriggerName::None);
 
-				if (ValidIndex != -1) // None이 있는지 확인
-					Inventory[ValidIndex] = HitTrigger->TriggerName;
+                if (ValidIndex != -1) // None이 있는지 확인
+                {
+                    Inventory[ValidIndex] = HitTrigger->TriggerName;
+                    TriggerIDs[ValidIndex] = HitTrigger->TriggerInfo->object_id(); // 임시로 트리거 ID 저장
+                }
+					
 
 				UE_LOG(LogTemp, Log, TEXT("You got %s! [%d/%d]"), *HitActor->GetName(), ++CurrentInventorySize, MaxInventorySize);
 				if (HitTrigger->TriggerSpawnPoint)
@@ -106,6 +111,15 @@ void UTriggerInventory::PickUp()
 				CurrentInventorySize--;
 			}
 		}
+        else if (Inventory[SelectedIndex] != ETriggerName::None && HitActor->IsA(ANetworkMirror::StaticClass()))
+        {
+            ANetworkMirror* HitMirror = Cast<ANetworkMirror>(HitActor);
+            if (HitMirror->ActivateTrigger(TriggerIDs[SelectedIndex]))
+            {
+                Inventory[SelectedIndex] = ETriggerName::None;
+                CurrentInventorySize--;
+            }
+        }
 	}
 }
 // 인벤토리 사이즈를 확인하여 Reach로 받은 Trigger를 인벤토리에 추가
