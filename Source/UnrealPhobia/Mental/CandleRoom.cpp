@@ -41,6 +41,7 @@ void ACandleRoom::OnOverlapBegin(UPrimitiveComponent *OverlappedComp, AActor *Ot
         // 현재 트리거가 활성화 상태인지 확인 (Active 태그가 붙어 있는지)
         if (Tags.Contains(FName("Active")))
         {
+			Survivor->CurrentTrigger = this;
             Survivor->StartMentalRegen(10.f);
         }
     }

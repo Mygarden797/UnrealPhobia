@@ -88,15 +88,71 @@ void ASurvivor::BeginPlay()
 		true);
 	
 	// Deactivates all CandleRooms
-	TArray<AActor*> FoundTriggers;
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers);
+	// TArray<AActor*> FoundTriggers;
+	// UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers);
 
+	// for (AActor* Trigger : FoundTriggers)
+	// {
+	// 	Trigger->Tags.Remove(FName("Active")); // 태그 제거 → 트리거 내부에서 Active 기준으로 동작하게 만들 것
+	// }
+	// ActivateRandomMentalTrigger();
+
+	TArray<AActor*> FoundTriggers;
+	TArray<AActor*> FoundTriggers2;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers);
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom2"), FoundTriggers2);
+
+	TArray<AActor*> AvailableTriggers;
 	for (AActor* Trigger : FoundTriggers)
 	{
-		Trigger->Tags.Remove(FName("Active")); // 태그 제거 → 트리거 내부에서 Active 기준으로 동작하게 만들 것
+		if (Trigger != CurrentTrigger)
+		{
+			AvailableTriggers.Add(Trigger);
+		}
 	}
 
-	ActivateRandomMentalTrigger();
+	TArray<AActor*> AvailableTriggers2;
+	for (AActor* Trigger : FoundTriggers2)
+	{
+		if (Trigger != CurrentTrigger)
+		{
+			AvailableTriggers2.Add(Trigger);
+		}
+	}
+
+// CandleRoom 트리거 이름 출력
+UE_LOG(LogTemp, Log, TEXT("=== FoundTriggers (CandleRoom) ==="));
+for (AActor* Trigger : FoundTriggers)
+{
+    if (Trigger)
+    {
+        UE_LOG(LogTemp, Log, TEXT("Trigger Name: %s"), *Trigger->GetName());
+    }
+}
+
+// CandleRoom2 트리거 이름 출력
+UE_LOG(LogTemp, Log, TEXT("=== FoundTriggers2 (CandleRoom2) ==="));
+for (AActor* Trigger : FoundTriggers2)
+{
+    if (Trigger)
+    {
+        UE_LOG(LogTemp, Log, TEXT("Trigger Name: %s"), *Trigger->GetName());
+    }
+}
+
+
+	if (AvailableTriggers.Num() > 0)
+	{
+		int32 Index = FMath::RandRange(0, AvailableTriggers.Num() - 1);
+		int32 Index2 = FMath::RandRange(0, AvailableTriggers2.Num() - 1);
+		AActor* SelectedTrigger = AvailableTriggers[Index];
+		AActor* SelectedTrigger2 = AvailableTriggers2[Index2];
+		SelectedTrigger->Tags.AddUnique(FName("Active"));  // Activate with Active Tag
+		SelectedTrigger2->Tags.AddUnique(FName("Active"));
+
+		UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger->GetName());
+		UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger2->GetName());
+	}
 
 // ��Ż����߰�(25.6.1)
 	// ���׹̳� UI ��������
@@ -337,6 +393,27 @@ void ASurvivor::DecreaseMental()
 void ASurvivor::GameOver()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Game Over! Mental is Zero."));
+
+	// 1. 캐릭터 입력 비활성화
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		DisableInput(PlayerController);
+	}
+
+	// 2. 화면 페이드아웃 (블랙)
+	if (PlayerController && PlayerController->PlayerCameraManager)
+	{
+		// Params: FromAlpha, ToAlpha, Duration, Color, bShouldFadeAudio, bHoldWhenFinished
+		PlayerController->PlayerCameraManager->StartCameraFade(
+			0.f,            // FromAlpha (투명)
+			1.f,            // ToAlpha (불투명)
+			1.f,            // Duration (2초 동안 페이드)
+			FLinearColor::Black, // Color
+			false,          // bShouldFadeAudio
+			true            // bHoldWhenFinished
+		);
+	}
 }
 
 // Mental
@@ -378,13 +455,43 @@ void ASurvivor::RegenMental()
 
 void ASurvivor::ActivateRandomMentalTrigger()
 {
-	TArray<AActor*> FoundTriggers;
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers);
+	TArray<AActor*> FoundTriggers1;
+	TArray<AActor*> FoundTriggers2;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers1);
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom2"), FoundTriggers2);
+
+	// 현재 트리거가 CandleRoom 계열인지 CandleRoom2 계열인지 판별
+	FName CurrentMapTag;
+	if (CurrentTrigger && CurrentTrigger->Tags.Contains(FName("CandleRoom")))
+	{
+		CurrentMapTag = FName("CandleRoom");
+	}
+	else if (CurrentTrigger && CurrentTrigger->Tags.Contains(FName("CandleRoom2")))
+	{
+		CurrentMapTag = FName("CandleRoom2");
+	}
+	else
+	{
+		// CurrentTrigger가 없으면 기본 CandleRoom으로 처리
+		CurrentMapTag = FName("CandleRoom");
+	}
+
+	// 같은 맵의 트리거들 중에서 현재 트리거가 아닌 것만 고르기
+	TArray<AActor*>* AllTriggers = nullptr;
+
+	if (CurrentMapTag == FName("CandleRoom"))
+	{
+		AllTriggers = &FoundTriggers1;
+	}
+	else
+	{
+		AllTriggers = &FoundTriggers2;
+	}
 
 	TArray<AActor*> AvailableTriggers;
-	for (AActor* Trigger : FoundTriggers)
+	for (AActor* Trigger : *AllTriggers)
 	{
-		if (Trigger != CurrentTrigger)
+		if (Trigger && Trigger != CurrentTrigger)
 		{
 			AvailableTriggers.Add(Trigger);
 		}
@@ -394,13 +501,28 @@ void ASurvivor::ActivateRandomMentalTrigger()
 	{
 		int32 Index = FMath::RandRange(0, AvailableTriggers.Num() - 1);
 		AActor* SelectedTrigger = AvailableTriggers[Index];
+
+		if (CurrentTrigger)
+		{
+			CurrentTrigger->Tags.Remove(FName("Active"));
+		}
+
+		SelectedTrigger->Tags.AddUnique(FName("Active"));
 		CurrentTrigger = SelectedTrigger;
-		SelectedTrigger->Tags.AddUnique(FName("Active"));  // Activate with Active Tag
 
 		UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger->GetName());
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No available triggers found in %s"), *CurrentMapTag.ToString());
+	}
 }
 
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
 /*
 
 float ASurvivor::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,

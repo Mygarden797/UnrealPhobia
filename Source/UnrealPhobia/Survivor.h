@@ -85,6 +85,12 @@ public:
 
 	// ��Ż ��� �߰�(25.6.1)
 
+	UPROPERTY()
+	AActor* CurrentTrigger;
+	void DecreaseMental();
+	void RegenMental();
+	void ActivateRandomMentalTrigger();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -149,12 +155,6 @@ protected:
 
 	float MentalRegenTickTime = 1.f;
 	float MentalRegenPerTick = 6.f;
-
-	UPROPERTY()
-	AActor* CurrentTrigger;
-	void DecreaseMental();
-	void RegenMental();
-	void ActivateRandomMentalTrigger();
 
 // ��Ż ��� �߰�(25.6.1)
 
