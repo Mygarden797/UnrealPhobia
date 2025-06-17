@@ -31,9 +31,9 @@ void ACandleRoom::BeginPlay()
 	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &ACandleRoom::OnOverlapEnd);
 }
 
-void ACandleRoom::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-                                 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-                                 const FHitResult& SweepResult)
+void ACandleRoom::OnOverlapBegin(UPrimitiveComponent *OverlappedComp, AActor *OtherActor,
+								 UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+								 const FHitResult &SweepResult)
 {
     ASurvivor* Survivor = Cast<ASurvivor>(OtherActor);
     if (Survivor)
@@ -46,8 +46,8 @@ void ACandleRoom::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Ot
     }
 }
 
-void ACandleRoom::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-                               UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void ACandleRoom::OnOverlapEnd(UPrimitiveComponent *OverlappedComp, AActor *OtherActor,
+							   UPrimitiveComponent *OtherComp, int32 OtherBodyIndex)
 {
 	ASurvivor* Survivor = Cast<ASurvivor>(OtherActor);
 	if (Survivor && Tags.Contains(FName("Active")))

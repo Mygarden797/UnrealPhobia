@@ -33,13 +33,10 @@ public:
 	TSubclassOf<class UUserWidget> CrosshairWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<class UUserWidget> InventoryWidgetClass;
+	TSubclassOf<class UInventoryWidget> InventoryWidgetClass;
 
 	UPROPERTY()
 	class UUserWidget *CrosshairWidget;
-
-	UPROPERTY()
-	class UUserWidget *InventoryWidget;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UStaminaBar> StaminaBarClass;
@@ -52,6 +49,9 @@ public:
 
 	UPROPERTY()
 	class UMentalBar *MentalBar;
+
+	UPROPERTY()
+	class UInventoryWidget *InventoryWidget;
 
 	// ĳ���� �յ� �̵�, 1D Vector
 	void MoveForward(const FInputActionValue &Value);
@@ -77,7 +77,7 @@ public:
 		// ��Ż ��� �߰�(25.6.1)
 
 	void IncreaseMental(float Amount);
-	void DecreaseMental(float Amount); // �ܺ� �ǰݿ�
+	void DecreaseMental(float Amount);
 
 	// ȸ�� ����
 	void StartMentalRegen(float Duration);
@@ -167,7 +167,6 @@ private:
 	float StaminaLossRate = 20.f;
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
 	float StaminaRegenRate = 20.f;
-
 
 	FTimerHandle FStaminaLossHandle;
 	FTimerHandle FStaminaRegenHandle;

@@ -30,5 +30,6 @@ protected:
 	UPROPERTY()
 	UTriggerInventory *InvComp;
 
+public:
 	void RefreshInventory();
 };

@@ -13,7 +13,7 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "MentalBar.h"
-
+#include "InventoryWidget.h"
 ASurvivor::ASurvivor(const FObjectInitializer &ObjectInitializer)
 {
 	// ĳ���� �浹 ũ��
@@ -122,7 +122,7 @@ void ASurvivor::BeginPlay()
 
 	if (IsLocallyControlled() && InventoryWidgetClass)
 	{
-		InventoryWidget = CreateWidget<UUserWidget>(GetWorld(), InventoryWidgetClass);
+		InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
 		if (InventoryWidget)
 		{
 			InventoryWidget->AddToViewport();
@@ -398,7 +398,6 @@ void ASurvivor::ActivateRandomMentalTrigger()
 		UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger->GetName());
 	}
 }
-
 
 /*
 

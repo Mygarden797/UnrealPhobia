@@ -2,14 +2,16 @@
 
 #include "TriggerInventory.h"
 #include "Engine/World.h"
+#include "Survivor.h"
+#include "InventoryWidget.h"
 
 UTriggerInventory::UTriggerInventory()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	UE_LOG(LogTemp, Log, TEXT("UTriggerInventory Created"));
 	Inventory.Init(ETriggerName::None, MaxInventorySize);
-    TriggerIDs.Init(0, MaxInventorySize); 
-
+	TriggerIDs.Init(0, MaxInventorySize);
+	Survivor = Cast<ASurvivor>(GetOwner());
 	if (SetCameraComponent())
 	{
 		UE_LOG(LogTemp, Display, TEXT("CameraComponent is set"));
@@ -111,18 +113,19 @@ void UTriggerInventory::PickUp()
 				CurrentInventorySize--;
 			}
 		}
-        else if (Inventory[SelectedIndex] != ETriggerName::None && HitActor->IsA(ANetworkMirror::StaticClass()))
-        {
-            ANetworkMirror* HitMirror = Cast<ANetworkMirror>(HitActor);
-            if (HitMirror->ActivateTrigger(TriggerIDs[SelectedIndex]))
-            {
-                Inventory[SelectedIndex] = ETriggerName::None;
-                CurrentInventorySize--;
-            }
-        }
+		else if (Inventory[SelectedIndex] != ETriggerName::None && HitActor->IsA(ANetworkMirror::StaticClass()))
+		{
+			ANetworkMirror *HitMirror = Cast<ANetworkMirror>(HitActor);
+			if (HitMirror->ActivateTrigger(TriggerIDs[SelectedIndex]))
+			{
+				Inventory[SelectedIndex] = ETriggerName::None;
+				CurrentInventorySize--;
+			}
+		}
+		Survivor->InventoryWidget->RefreshInventory();
 	}
 }
-// 인벤토리 사이즈를 확인하여 Reach로 받은 Trigger를 인벤토리에 추가
+
 void UTriggerInventory::DropOff()
 {
 	USkeletalMeshComponent *SkeletalMeshComp = GetOwner()->FindComponentByClass<USkeletalMeshComponent>();
@@ -135,7 +138,7 @@ void UTriggerInventory::DropOff()
 		FActorSpawnParameters Params;
 		ATrigger *DroppedTrigger = GetWorld()->SpawnActor<ATrigger>(
 			ATrigger::StaticClass(),
-			SkeletalMeshComp->GetComponentLocation() + FVector(0, 0, 110),
+			SkeletalMeshComp->GetComponentLocation() + FVector(0, 0, 80),
 			CamComp->GetComponentRotation(),
 			Params);
 		if (DroppedTrigger)
@@ -147,6 +150,7 @@ void UTriggerInventory::DropOff()
 			UE_LOG(LogTemp, Log, TEXT("Trigger Dropped"));
 		}
 	}
+	Survivor->InventoryWidget->RefreshInventory();
 }
 
 void UTriggerInventory::SelectSlot(int32 Index)
@@ -155,5 +159,6 @@ void UTriggerInventory::SelectSlot(int32 Index)
 	{
 		SelectedIndex = Index - 1;
 		UE_LOG(LogTemp, Log, TEXT("Slot Changed to %d"), SelectedIndex + 1);
+		Survivor->InventoryWidget->RefreshInventory();
 	}
 }

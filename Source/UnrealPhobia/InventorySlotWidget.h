@@ -18,14 +18,18 @@ class UNREALPHOBIA_API UInventorySlotWidget : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void InitSlot(ETriggerName InTrigger);
+	void InitSlot(ETriggerName InTrigger, bool bIsSelected);
 
 protected:
 	// 디자이너에서 바인딩
 	UPROPERTY(meta = (BindWidget))
 	UImage *SlotImage;
 
+	UPROPERTY(meta = (BindWidget))
+	UImage *SlotBackgroundImage;
 	// Enum → Texture 매핑 테이블
 	UPROPERTY(EditAnywhere, Category = "Trigger")
 	TMap<ETriggerName, TSoftObjectPtr<UTexture2D>> TriggerIcons;
+	UPROPERTY(EditAnywhere, Category = "Background")
+	TMap<bool, TSoftObjectPtr<UTexture2D>> BackgroundImages;
 };
