@@ -63,6 +63,7 @@ PROTOBUF_CONSTEXPR PlayerInfo::PlayerInfo(
   , /*decltype(_impl_.object_id_)*/uint64_t{0u}
   , /*decltype(_impl_.mental_)*/0
   , /*decltype(_impl_.stamina_)*/0
+  , /*decltype(_impl_.team_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct PlayerInfoDefaultTypeInternal {
   PROTOBUF_CONSTEXPR PlayerInfoDefaultTypeInternal()
@@ -90,6 +91,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORIT
 PROTOBUF_CONSTEXPR CreatureInfo::CreatureInfo(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.object_id_)*/uint64_t{0u}
+  , /*decltype(_impl_.spawn_point_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct CreatureInfoDefaultTypeInternal {
   PROTOBUF_CONSTEXPR CreatureInfoDefaultTypeInternal()
@@ -140,6 +142,7 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::Protocol::PlayerInfo, _impl_.mental_),
   PROTOBUF_FIELD_OFFSET(::Protocol::PlayerInfo, _impl_.stamina_),
   PROTOBUF_FIELD_OFFSET(::Protocol::PlayerInfo, _impl_.triggers_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::PlayerInfo, _impl_.team_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::TriggerInfo, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -155,13 +158,14 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::Protocol::CreatureInfo, _impl_.object_id_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::CreatureInfo, _impl_.spawn_point_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::Protocol::PosInfo)},
   { 12, -1, -1, sizeof(::Protocol::ObjectInfo)},
   { 24, -1, -1, sizeof(::Protocol::PlayerInfo)},
-  { 34, -1, -1, sizeof(::Protocol::TriggerInfo)},
-  { 42, -1, -1, sizeof(::Protocol::CreatureInfo)},
+  { 35, -1, -1, sizeof(::Protocol::TriggerInfo)},
+  { 43, -1, -1, sizeof(::Protocol::CreatureInfo)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -182,20 +186,21 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "\001(\0132\021.Protocol.PosInfo\022)\n\013player_info\030\004 "
   "\001(\0132\024.Protocol.PlayerInfo\022+\n\014trigger_inf"
   "o\030\005 \001(\0132\025.Protocol.TriggerInfo\022-\n\rcreatu"
-  "re_info\030\006 \001(\0132\026.Protocol.CreatureInfo\"i\n"
-  "\nPlayerInfo\022\021\n\tobject_id\030\001 \001(\004\022\016\n\006mental"
-  "\030\002 \001(\002\022\017\n\007stamina\030\003 \001(\002\022\'\n\010triggers\030\004 \003("
-  "\0132\025.Protocol.TriggerInfo\"5\n\013TriggerInfo\022"
-  "\021\n\tobject_id\030\001 \001(\004\022\023\n\013trigger_lid\030\002 \001(\004\""
-  "!\n\014CreatureInfo\022\021\n\tobject_id\030\001 \001(\004b\006prot"
-  "o3"
+  "re_info\030\006 \001(\0132\026.Protocol.CreatureInfo\"\207\001"
+  "\n\nPlayerInfo\022\021\n\tobject_id\030\001 \001(\004\022\016\n\006menta"
+  "l\030\002 \001(\002\022\017\n\007stamina\030\003 \001(\002\022\'\n\010triggers\030\004 \003"
+  "(\0132\025.Protocol.TriggerInfo\022\034\n\004team\030\005 \001(\0162"
+  "\016.Protocol.Team\"5\n\013TriggerInfo\022\021\n\tobject"
+  "_id\030\001 \001(\004\022\023\n\013trigger_lid\030\002 \001(\004\"6\n\014Creatu"
+  "reInfo\022\021\n\tobject_id\030\001 \001(\004\022\023\n\013spawn_point"
+  "\030\002 \001(\004b\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Struct_2eproto_deps[1] = {
   &::descriptor_table_Enum_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_Struct_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Struct_2eproto = {
-    false, false, 602, descriptor_table_protodef_Struct_2eproto,
+    false, false, 654, descriptor_table_protodef_Struct_2eproto,
     "Struct.proto",
     &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 5,
     schemas, file_default_instances, TableStruct_Struct_2eproto::offsets,
@@ -966,12 +971,13 @@ PlayerInfo::PlayerInfo(const PlayerInfo& from)
     , decltype(_impl_.object_id_){}
     , decltype(_impl_.mental_){}
     , decltype(_impl_.stamina_){}
+    , decltype(_impl_.team_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&_impl_.object_id_, &from._impl_.object_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.stamina_) -
-    reinterpret_cast<char*>(&_impl_.object_id_)) + sizeof(_impl_.stamina_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.team_) -
+    reinterpret_cast<char*>(&_impl_.object_id_)) + sizeof(_impl_.team_));
   // @@protoc_insertion_point(copy_constructor:Protocol.PlayerInfo)
 }
 
@@ -984,6 +990,7 @@ inline void PlayerInfo::SharedCtor(
     , decltype(_impl_.object_id_){uint64_t{0u}}
     , decltype(_impl_.mental_){0}
     , decltype(_impl_.stamina_){0}
+    , decltype(_impl_.team_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -1014,8 +1021,8 @@ void PlayerInfo::Clear() {
 
   _impl_.triggers_.Clear();
   ::memset(&_impl_.object_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.stamina_) -
-      reinterpret_cast<char*>(&_impl_.object_id_)) + sizeof(_impl_.stamina_));
+      reinterpret_cast<char*>(&_impl_.team_) -
+      reinterpret_cast<char*>(&_impl_.object_id_)) + sizeof(_impl_.team_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1059,6 +1066,15 @@ const char* PlayerInfo::_InternalParse(const char* ptr, ::_pbi::ParseContext* ct
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<34>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
+      // .Protocol.Team team = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_team(static_cast<::Protocol::Team>(val));
         } else
           goto handle_unusual;
         continue;
@@ -1125,6 +1141,13 @@ uint8_t* PlayerInfo::_InternalSerialize(
         InternalWriteMessage(4, repfield, repfield.GetCachedSize(), target, stream);
   }
 
+  // .Protocol.Team team = 5;
+  if (this->_internal_team() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      5, this->_internal_team(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1171,6 +1194,12 @@ size_t PlayerInfo::ByteSizeLong() const {
     total_size += 1 + 4;
   }
 
+  // .Protocol.Team team = 5;
+  if (this->_internal_team() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_team());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -1207,6 +1236,9 @@ void PlayerInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PRO
   if (raw_stamina != 0) {
     _this->_internal_set_stamina(from._internal_stamina());
   }
+  if (from._internal_team() != 0) {
+    _this->_internal_set_team(from._internal_team());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1226,8 +1258,8 @@ void PlayerInfo::InternalSwap(PlayerInfo* other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   _impl_.triggers_.InternalSwap(&other->_impl_.triggers_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(PlayerInfo, _impl_.stamina_)
-      + sizeof(PlayerInfo::_impl_.stamina_)
+      PROTOBUF_FIELD_OFFSET(PlayerInfo, _impl_.team_)
+      + sizeof(PlayerInfo::_impl_.team_)
       - PROTOBUF_FIELD_OFFSET(PlayerInfo, _impl_.object_id_)>(
           reinterpret_cast<char*>(&_impl_.object_id_),
           reinterpret_cast<char*>(&other->_impl_.object_id_));
@@ -1467,10 +1499,13 @@ CreatureInfo::CreatureInfo(const CreatureInfo& from)
   CreatureInfo* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.object_id_){}
+    , decltype(_impl_.spawn_point_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _this->_impl_.object_id_ = from._impl_.object_id_;
+  ::memcpy(&_impl_.object_id_, &from._impl_.object_id_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.spawn_point_) -
+    reinterpret_cast<char*>(&_impl_.object_id_)) + sizeof(_impl_.spawn_point_));
   // @@protoc_insertion_point(copy_constructor:Protocol.CreatureInfo)
 }
 
@@ -1480,6 +1515,7 @@ inline void CreatureInfo::SharedCtor(
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.object_id_){uint64_t{0u}}
+    , decltype(_impl_.spawn_point_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -1507,7 +1543,9 @@ void CreatureInfo::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.object_id_ = uint64_t{0u};
+  ::memset(&_impl_.object_id_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.spawn_point_) -
+      reinterpret_cast<char*>(&_impl_.object_id_)) + sizeof(_impl_.spawn_point_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1521,6 +1559,14 @@ const char* CreatureInfo::_InternalParse(const char* ptr, ::_pbi::ParseContext* 
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
           _impl_.object_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // uint64 spawn_point = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.spawn_point_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -1560,6 +1606,12 @@ uint8_t* CreatureInfo::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_object_id(), target);
   }
 
+  // uint64 spawn_point = 2;
+  if (this->_internal_spawn_point() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(2, this->_internal_spawn_point(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1579,6 +1631,11 @@ size_t CreatureInfo::ByteSizeLong() const {
   // uint64 object_id = 1;
   if (this->_internal_object_id() != 0) {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_object_id());
+  }
+
+  // uint64 spawn_point = 2;
+  if (this->_internal_spawn_point() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_spawn_point());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -1602,6 +1659,9 @@ void CreatureInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::P
   if (from._internal_object_id() != 0) {
     _this->_internal_set_object_id(from._internal_object_id());
   }
+  if (from._internal_spawn_point() != 0) {
+    _this->_internal_set_spawn_point(from._internal_spawn_point());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1619,7 +1679,12 @@ bool CreatureInfo::IsInitialized() const {
 void CreatureInfo::InternalSwap(CreatureInfo* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_.object_id_, other->_impl_.object_id_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(CreatureInfo, _impl_.spawn_point_)
+      + sizeof(CreatureInfo::_impl_.spawn_point_)
+      - PROTOBUF_FIELD_OFFSET(CreatureInfo, _impl_.object_id_)>(
+          reinterpret_cast<char*>(&_impl_.object_id_),
+          reinterpret_cast<char*>(&other->_impl_.object_id_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata CreatureInfo::GetMetadata() const {

@@ -44,7 +44,7 @@ public:
 	UStaticMesh *TriggerMesh; // 트리거 메시
 
 	ATriggerSpawnPoint *TriggerSpawnPoint;
-    //트리거 정보, 아이디 받아오는것만 public으로 해야함.
+    //트리거 정보, 아이디 받아오는것만 public으로 해야함. 그냥 id만 정수로 관리해도 괜찮을 듯
     class Protocol::ObjectInfo* TriggerInfo;
 
 protected:

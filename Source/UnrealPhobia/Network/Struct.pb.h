@@ -640,6 +640,7 @@ class PlayerInfo final :
     kObjectIdFieldNumber = 1,
     kMentalFieldNumber = 2,
     kStaminaFieldNumber = 3,
+    kTeamFieldNumber = 5,
   };
   // repeated .Protocol.TriggerInfo triggers = 4;
   int triggers_size() const;
@@ -686,6 +687,15 @@ class PlayerInfo final :
   void _internal_set_stamina(float value);
   public:
 
+  // .Protocol.Team team = 5;
+  void clear_team();
+  ::Protocol::Team team() const;
+  void set_team(::Protocol::Team value);
+  private:
+  ::Protocol::Team _internal_team() const;
+  void _internal_set_team(::Protocol::Team value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.PlayerInfo)
  private:
   class _Internal;
@@ -698,6 +708,7 @@ class PlayerInfo final :
     uint64_t object_id_;
     float mental_;
     float stamina_;
+    int team_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -986,6 +997,7 @@ class CreatureInfo final :
 
   enum : int {
     kObjectIdFieldNumber = 1,
+    kSpawnPointFieldNumber = 2,
   };
   // uint64 object_id = 1;
   void clear_object_id();
@@ -994,6 +1006,15 @@ class CreatureInfo final :
   private:
   uint64_t _internal_object_id() const;
   void _internal_set_object_id(uint64_t value);
+  public:
+
+  // uint64 spawn_point = 2;
+  void clear_spawn_point();
+  uint64_t spawn_point() const;
+  void set_spawn_point(uint64_t value);
+  private:
+  uint64_t _internal_spawn_point() const;
+  void _internal_set_spawn_point(uint64_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.CreatureInfo)
@@ -1005,6 +1026,7 @@ class CreatureInfo final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     uint64_t object_id_;
+    uint64_t spawn_point_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1649,6 +1671,26 @@ PlayerInfo::triggers() const {
   return _impl_.triggers_;
 }
 
+// .Protocol.Team team = 5;
+inline void PlayerInfo::clear_team() {
+  _impl_.team_ = 0;
+}
+inline ::Protocol::Team PlayerInfo::_internal_team() const {
+  return static_cast< ::Protocol::Team >(_impl_.team_);
+}
+inline ::Protocol::Team PlayerInfo::team() const {
+  // @@protoc_insertion_point(field_get:Protocol.PlayerInfo.team)
+  return _internal_team();
+}
+inline void PlayerInfo::_internal_set_team(::Protocol::Team value) {
+  
+  _impl_.team_ = value;
+}
+inline void PlayerInfo::set_team(::Protocol::Team value) {
+  _internal_set_team(value);
+  // @@protoc_insertion_point(field_set:Protocol.PlayerInfo.team)
+}
+
 // -------------------------------------------------------------------
 
 // TriggerInfo
@@ -1715,6 +1757,26 @@ inline void CreatureInfo::_internal_set_object_id(uint64_t value) {
 inline void CreatureInfo::set_object_id(uint64_t value) {
   _internal_set_object_id(value);
   // @@protoc_insertion_point(field_set:Protocol.CreatureInfo.object_id)
+}
+
+// uint64 spawn_point = 2;
+inline void CreatureInfo::clear_spawn_point() {
+  _impl_.spawn_point_ = uint64_t{0u};
+}
+inline uint64_t CreatureInfo::_internal_spawn_point() const {
+  return _impl_.spawn_point_;
+}
+inline uint64_t CreatureInfo::spawn_point() const {
+  // @@protoc_insertion_point(field_get:Protocol.CreatureInfo.spawn_point)
+  return _internal_spawn_point();
+}
+inline void CreatureInfo::_internal_set_spawn_point(uint64_t value) {
+  
+  _impl_.spawn_point_ = value;
+}
+inline void CreatureInfo::set_spawn_point(uint64_t value) {
+  _internal_set_spawn_point(value);
+  // @@protoc_insertion_point(field_set:Protocol.CreatureInfo.spawn_point)
 }
 
 #ifdef __GNUC__

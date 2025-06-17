@@ -11,6 +11,8 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AIPerceptionTypes.h"
 #include "Survivor.h"
+#include "Network/Contents/ProtoPlayer.h"
+#include "Network/Contents/NetworkPlayer.h"
 
 
 
@@ -128,18 +130,53 @@ void ACreatureController::OnTargetDetected(AActor* Actor, FAIStimulus Stimulus)
 UE_LOG(LogTemp, Warning, TEXT("Detected Actor: %s (%s)"),
     *Actor->GetName(),
     *Actor->GetClass()->GetName());
-    ASurvivor * Player = Cast<ASurvivor>(Actor);
-    RETURN_IF_NULL(Player);
-
-    if(Stimulus.WasSuccessfullySensed())
+    
+    //Network캐릭터 추가    
+    if (AProtoPlayer* ProtoPlayer = Cast<AProtoPlayer>(Actor))
     {
-        Blackboard->SetValueAsObject(Target,Player);
-        bIsDetected = true;
+        RETURN_IF_NULL(ProtoPlayer);
 
+        if (Stimulus.WasSuccessfullySensed())
+        {
+            Blackboard->SetValueAsObject(Target, ProtoPlayer);
+            bIsDetected = true;
+
+        }
+        else
+        {
+            bIsDetected = false;
+        }
     }
-    else
+    else if (ANetworkPlayer* NetworkPlayer = Cast<ANetworkPlayer>(Actor))
     {
-        bIsDetected = false;
+        RETURN_IF_NULL(NetworkPlayer);
+
+        if (Stimulus.WasSuccessfullySensed())
+        {
+            Blackboard->SetValueAsObject(Target, NetworkPlayer);
+            bIsDetected = true;
+
+        }
+        else
+        {
+            bIsDetected = false;
+        }
+    }
+    
+    else if (ASurvivor* Player = Cast<ASurvivor>(Actor))
+    {
+        RETURN_IF_NULL(Player);
+
+        if (Stimulus.WasSuccessfullySensed())
+        {
+            Blackboard->SetValueAsObject(Target, Player);
+            bIsDetected = true;
+
+        }
+        else
+        {
+            bIsDetected = false;
+        }
     }
 
     ACreatureBase* Creature = Cast<ACreatureBase>(GetPawn());

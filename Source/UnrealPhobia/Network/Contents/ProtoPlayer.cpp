@@ -9,6 +9,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "MyProtoPlayer.h"
+#include "NetworkPlayer.h"
 
 
 AProtoPlayer::AProtoPlayer()
@@ -104,7 +105,9 @@ void AProtoPlayer::Tick(float DeltaSeconds)
 
 bool AProtoPlayer::IsMyPlayer()
 {
-    return Cast<AMyProtoPlayer>(this) != nullptr;
+    //return Cast<AMyProtoPlayer>(this) != nullptr;
+    //Å×½ºÆ®~~
+    return Cast<ANetworkPlayer>(this) != nullptr;
 }
 
 void AProtoPlayer::SetMoveState(Protocol::MoveState State)
