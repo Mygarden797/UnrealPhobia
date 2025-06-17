@@ -223,7 +223,9 @@ void ASurvivor::Sprint(const FInputActionValue &Value)
 
 void ASurvivor::StartSprint()
 {
-	if (bIsSprinting || CurrentStamina <= 0.f) // �޸��� ���̰ų� ���׹̳� ������ ����
+	if (bIsCrouch)
+		return;
+	if (bIsSprinting || CurrentStamina <= 0.f)			// �޸��� ���̰ų� ���׹̳� ������ ����
 		return;
 
 	bIsSprinting = true;
@@ -437,6 +439,10 @@ void ASurvivor::Die()
 
 void ASurvivor::SetCrouch(const FInputActionValue &value)
 {
+	if (bIsSprinting)
+	{
+		bIsSprinting = false;
+	}
 	const bool bPressed = value.Get<bool>();
 	if (bPressed)
 	{
