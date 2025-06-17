@@ -89,12 +89,11 @@ void UTriggerInventory::PickUp()
 				ATrigger *HitTrigger = Cast<ATrigger>(HitActor);
 				int32 ValidIndex = Inventory.Find(ETriggerName::None);
 
-                if (ValidIndex != -1) // None이 있는지 확인
-                {
-                    Inventory[ValidIndex] = HitTrigger->TriggerName;
-                    TriggerIDs[ValidIndex] = HitTrigger->TriggerInfo->object_id(); // 임시로 트리거 ID 저장
-                }
-					
+				if (ValidIndex != -1) // None이 있는지 확인
+				{
+					Inventory[ValidIndex] = HitTrigger->TriggerName;
+					TriggerIDs[ValidIndex] = HitTrigger->TriggerInfo->object_id(); // 임시로 트리거 ID 저장
+				}
 
 				UE_LOG(LogTemp, Log, TEXT("You got %s! [%d/%d], ID : %d"), *HitActor->GetName(), ++CurrentInventorySize, MaxInventorySize, TriggerIDs[ValidIndex]);
 				if (HitTrigger->TriggerSpawnPoint)
@@ -113,16 +112,17 @@ void UTriggerInventory::PickUp()
 				CurrentInventorySize--;
 			}
 		}
-        else if (Inventory[SelectedIndex] != ETriggerName::None && HitActor->IsA(ANetworkMirror::StaticClass()))
-        {
-            ANetworkMirror* HitMirror = Cast<ANetworkMirror>(HitActor);
-            if (HitMirror->ActivateTrigger(TriggerIDs[SelectedIndex]))
-            {
-                Inventory[SelectedIndex] = ETriggerName::None;
-                CurrentInventorySize--;
-                TriggerIDs[SelectedIndex] = 0; // ID 초기화
-            }
-        }
+		else if (Inventory[SelectedIndex] != ETriggerName::None && HitActor->IsA(ANetworkMirror::StaticClass()))
+		{
+			ANetworkMirror *HitMirror = Cast<ANetworkMirror>(HitActor);
+			if (HitMirror->ActivateTrigger(TriggerIDs[SelectedIndex]))
+			{
+				Inventory[SelectedIndex] = ETriggerName::None;
+				CurrentInventorySize--;
+				TriggerIDs[SelectedIndex] = 0; // ID 초기화
+			}
+		}
+		Survivor->InventoryWidget->RefreshInventory();
 	}
 }
 
@@ -144,11 +144,11 @@ void UTriggerInventory::DropOff()
 		if (DroppedTrigger)
 		{
 			DroppedTrigger->SetTriggerName(Inventory[SelectedIndex]);
-            DroppedTrigger->TriggerInfo->set_object_id(TriggerIDs[SelectedIndex]); // 트리거 ID 설정
+			DroppedTrigger->TriggerInfo->set_object_id(TriggerIDs[SelectedIndex]); // 트리거 ID 설정
 			DroppedTrigger->BaseMeshComponent->AddImpulse(DroppedTrigger->GetActorForwardVector() * 500, NAME_None, true);
 			CurrentInventorySize--;
 			Inventory[SelectedIndex] = ETriggerName::None;
-            TriggerIDs[SelectedIndex] = 0; // ID 초기화
+			TriggerIDs[SelectedIndex] = 0; // ID 초기화
 			UE_LOG(LogTemp, Log, TEXT("Trigger Dropped"));
 		}
 	}
