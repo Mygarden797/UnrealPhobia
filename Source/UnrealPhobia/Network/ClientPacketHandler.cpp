@@ -113,3 +113,12 @@ bool Handle_S_SPAWN_CREATURE(PacketSessionRef& session, Protocol::S_SPAWN_CREATU
     //sdf
     return true;
 }
+
+bool Handle_S_MATCH(PacketSessionRef& session, Protocol::S_MATCH& pkt)
+{
+    //if (auto* GameInstance = Cast<UNetworkManager>(GWorld->GetGameInstance()))
+    //{
+    //    GameInstance->HandleMatch(pkt);
+    //}
+    return true;
+}

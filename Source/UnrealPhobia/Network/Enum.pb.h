@@ -177,6 +177,32 @@ inline bool MoveState_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<MoveState>(
     MoveState_descriptor(), name, value);
 }
+enum Team : int {
+  TEAM_NONE = 0,
+  TEAM_ONE = 1,
+  TEAM_TWO = 2,
+  Team_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  Team_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool Team_IsValid(int value);
+constexpr Team Team_MIN = TEAM_NONE;
+constexpr Team Team_MAX = TEAM_TWO;
+constexpr int Team_ARRAYSIZE = Team_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* Team_descriptor();
+template<typename T>
+inline const std::string& Team_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, Team>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function Team_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    Team_descriptor(), enum_t_value);
+}
+inline bool Team_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, Team* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<Team>(
+    Team_descriptor(), name, value);
+}
 // ===================================================================
 
 
@@ -223,6 +249,11 @@ template <> struct is_proto_enum< ::Protocol::MoveState> : ::std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::MoveState>() {
   return ::Protocol::MoveState_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::Team> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::Team>() {
+  return ::Protocol::Team_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

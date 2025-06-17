@@ -53,7 +53,7 @@ public:
 private:
 		UCameraComponent *CamComp;
 
-	float MaxReachDistance = 400; // 최대 습득 사거리
+	float MaxReachDistance = 500; // 최대 습득 사거리
 	float ReachRadius = 20;		  // 습득 반경
 
 	bool Reach(FHitResult &OutHR) const; // 범위 내 트리거 오브젝트 확인 및 반환, 찾기 실패 시 널포인터 반환

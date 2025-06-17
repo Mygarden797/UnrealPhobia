@@ -94,7 +94,7 @@ void UTriggerInventory::PickUp()
                 }
 					
 
-				UE_LOG(LogTemp, Log, TEXT("You got %s! [%d/%d]"), *HitActor->GetName(), ++CurrentInventorySize, MaxInventorySize);
+				UE_LOG(LogTemp, Log, TEXT("You got %s! [%d/%d], ID : %d"), *HitActor->GetName(), ++CurrentInventorySize, MaxInventorySize, TriggerIDs[ValidIndex]);
 				if (HitTrigger->TriggerSpawnPoint)
 					HitTrigger->TriggerSpawnPoint->bCanSpawn = true;
 
@@ -118,6 +118,7 @@ void UTriggerInventory::PickUp()
             {
                 Inventory[SelectedIndex] = ETriggerName::None;
                 CurrentInventorySize--;
+                TriggerIDs[SelectedIndex] = 0; // ID 초기화
             }
         }
 	}
@@ -141,12 +142,15 @@ void UTriggerInventory::DropOff()
 		if (DroppedTrigger)
 		{
 			DroppedTrigger->SetTriggerName(Inventory[SelectedIndex]);
+            DroppedTrigger->TriggerInfo->set_object_id(TriggerIDs[SelectedIndex]); // 트리거 ID 설정
 			DroppedTrigger->BaseMeshComponent->AddImpulse(DroppedTrigger->GetActorForwardVector() * 500, NAME_None, true);
 			CurrentInventorySize--;
 			Inventory[SelectedIndex] = ETriggerName::None;
+            TriggerIDs[SelectedIndex] = 0; // ID 초기화
 			UE_LOG(LogTemp, Log, TEXT("Trigger Dropped"));
 		}
 	}
+    //일단 떨궈진 트리거 서버에서 관리 안함.
 }
 
 void UTriggerInventory::SelectSlot(int32 Index)
