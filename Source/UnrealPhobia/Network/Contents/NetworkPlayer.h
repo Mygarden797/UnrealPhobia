@@ -87,6 +87,12 @@ public:
     /** Returns FollowCamera subobject **/
     FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+    UPROPERTY()
+    AActor* CurrentTrigger;
+    void DecreaseMental();
+    void RegenMental();
+    void ActivateRandomMentalTrigger();
+
 protected:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;
@@ -158,13 +164,8 @@ protected:
     float MentalRegenTickTime = 1.f;
     float MentalRegenPerTick = 6.f;
 
-    UPROPERTY()
-    AActor* CurrentTrigger;
-
     void GameOver();
-    void DecreaseMental();
-    void RegenMental();
-    void ActivateRandomMentalTrigger();
+
 
     // Network-related variables
     const float MOVE_PACKET_SEND_DELAY = 0.2f;

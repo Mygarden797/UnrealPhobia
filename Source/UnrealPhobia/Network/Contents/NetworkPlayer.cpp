@@ -144,7 +144,7 @@ void ANetworkPlayer::BeginPlay()
         }
     }
 
-    // CandleRoom Æ®¸®°Å ÀÌ¸§ Ãâ·Â
+    // CandleRoom Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½
     UE_LOG(LogTemp, Log, TEXT("=== FoundTriggers (CandleRoom) ==="));
     for (AActor* Trigger : FoundTriggers)
     {
@@ -154,7 +154,7 @@ void ANetworkPlayer::BeginPlay()
         }
     }
 
-    // CandleRoom2 Æ®¸®°Å ÀÌ¸§ Ãâ·Â
+    // CandleRoom2 Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½
     UE_LOG(LogTemp, Log, TEXT("=== FoundTriggers2 (CandleRoom2) ==="));
     for (AActor* Trigger : FoundTriggers2)
     {
@@ -176,8 +176,6 @@ void ANetworkPlayer::BeginPlay()
         UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger->GetName());
         UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger2->GetName());
     }
-
-    ActivateRandomMentalTrigger();
 }
 
 void ANetworkPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -456,21 +454,21 @@ void ANetworkPlayer::GameOver()
 {
     UE_LOG(LogTemp, Warning, TEXT("Game Over! Mental is Zero."));
 
-    // 1. Ä³¸¯ÅÍ ÀÔ·Â ºñÈ°¼ºÈ­
+    // 1. Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­
     APlayerController* PlayerController = Cast<APlayerController>(GetController());
     if (PlayerController)
     {
         DisableInput(PlayerController);
     }
 
-    // 2. È­¸é ÆäÀÌµå¾Æ¿ô (ºí·¢)
+    // 2. È­ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½Æ¿ï¿½ (ï¿½ï¿½ï¿½ï¿½)
     if (PlayerController && PlayerController->PlayerCameraManager)
     {
         // Params: FromAlpha, ToAlpha, Duration, Color, bShouldFadeAudio, bHoldWhenFinished
         PlayerController->PlayerCameraManager->StartCameraFade(
-            0.f,				 // FromAlpha (Åõ¸í)
-            1.f,				 // ToAlpha (ºÒÅõ¸í)
-            1.f,				 // Duration (2ÃÊ µ¿¾È ÆäÀÌµå)
+            0.f,				 // FromAlpha (ï¿½ï¿½ï¿½ï¿½)
+            1.f,				 // ToAlpha (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
+            1.f,				 // Duration (2ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½)
             FLinearColor::Black, // Color
             false,				 // bShouldFadeAudio
             true				 // bHoldWhenFinished
@@ -478,7 +476,7 @@ void ANetworkPlayer::GameOver()
     }
 }
 
-//°øÆ÷»óÅÂ ÁøÀÔÀÌ ¿©±â¹Û¿¡ ¾øÀ½. Á¶Á¤ÇÒ ÇÊ¿ä ÀÖÀ½. µ¥¹ÌÁö ÀÔ´Â °Íµµ DecreaseMental ÇÔ¼ö ÀÌ¿ëÇÏµµ·Ï °íÄ¡±â
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Û¿ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô´ï¿½ ï¿½Íµï¿½ DecreaseMental ï¿½Ô¼ï¿½ ï¿½Ì¿ï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½
 float ANetworkPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
     AController* EventInstigator, AActor* DamageCauser)
 {
@@ -491,14 +489,14 @@ float ANetworkPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
         return 0.0f;
     }
 
-    // µ¥¹ÌÁö¸¦ Àû¿ë
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     float AppliedDamage = FMath::Clamp(DamageAmount, 0.0f, CurrentMental);
     CurrentMental -= AppliedDamage;
 
-    // Á¤½Å·ÂÀÌ 0 ÀÌÇÏ·Î ¶³¾îÁ³À» °æ¿ì °øÆ÷ »óÅÂ ÁøÀÔ
+    // ï¿½ï¿½ï¿½Å·ï¿½ï¿½ï¿½ 0 ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     if (CurrentMental <= 0.0f)
     {
-        CurrentMental = 0.0f;  // À½¼ö ¹æÁö (ºÒÇÊ¿äÇÏ¸é »ý·« °¡´É)
+        CurrentMental = 0.0f;  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½Ê¿ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         bIsFear = true;
     }
     UpdateMentalBar();
@@ -548,7 +546,7 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
     UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers1);
     UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom2"), FoundTriggers2);
 
-    // ÇöÀç Æ®¸®°Å°¡ CandleRoom °è¿­ÀÎÁö CandleRoom2 °è¿­ÀÎÁö ÆÇº°
+    // ï¿½ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½Å°ï¿½ CandleRoom ï¿½è¿­ï¿½ï¿½ï¿½ï¿½ CandleRoom2 ï¿½è¿­ï¿½ï¿½ï¿½ï¿½ ï¿½Çºï¿½
     FName CurrentMapTag;
     if (CurrentTrigger && CurrentTrigger->Tags.Contains(FName("CandleRoom")))
     {
@@ -560,11 +558,11 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
     }
     else
     {
-        // CurrentTrigger°¡ ¾øÀ¸¸é ±âº» CandleRoomÀ¸·Î Ã³¸®
+        // CurrentTriggerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½âº» CandleRoomï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
         CurrentMapTag = FName("CandleRoom");
     }
 
-    // °°Àº ¸ÊÀÇ Æ®¸®°Åµé Áß¿¡¼­ ÇöÀç Æ®¸®°Å°¡ ¾Æ´Ñ °Í¸¸ °í¸£±â
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½Åµï¿½ ï¿½ß¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½Å°ï¿½ ï¿½Æ´ï¿½ ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     TArray<AActor*>* AllTriggers = nullptr;
 
     if (CurrentMapTag == FName("CandleRoom"))
