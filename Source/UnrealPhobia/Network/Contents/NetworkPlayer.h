@@ -78,6 +78,8 @@ public:
     void StartMentalRegen(float Duration);
     void StopMentalRegen();
 
+    void GameWin();
+
     //Attacked
     float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
         AController* EventInstigator, AActor* DamageCauser);

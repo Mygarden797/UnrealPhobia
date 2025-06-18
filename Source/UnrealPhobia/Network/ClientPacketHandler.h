@@ -28,6 +28,8 @@ enum : uint16
 	PKT_C_SPAWN_CREATURE = 1015,
 	PKT_S_TIMER = 1016,
 	PKT_S_START = 1017,
+	PKT_C_DEFEAT = 1018,
+	PKT_S_WIN = 1019,
 };
 
 // Custom Handlers
@@ -43,6 +45,7 @@ bool Handle_S_CHAT(PacketSessionRef& session, Protocol::S_CHAT& pkt);
 bool Handle_S_SPAWN_CREATURE(PacketSessionRef& session, Protocol::S_SPAWN_CREATURE& pkt);
 bool Handle_S_TIMER(PacketSessionRef& session, Protocol::S_TIMER& pkt);
 bool Handle_S_START(PacketSessionRef& session, Protocol::S_START& pkt);
+bool Handle_S_WIN(PacketSessionRef& session, Protocol::S_WIN& pkt);
 
 class ClientPacketHandler
 {
@@ -62,6 +65,7 @@ public:
 		GPacketHandler[PKT_S_SPAWN_CREATURE] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_SPAWN_CREATURE>(Handle_S_SPAWN_CREATURE, session, buffer, len); };
 		GPacketHandler[PKT_S_TIMER] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_TIMER>(Handle_S_TIMER, session, buffer, len); };
 		GPacketHandler[PKT_S_START] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_START>(Handle_S_START, session, buffer, len); };
+		GPacketHandler[PKT_S_WIN] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_WIN>(Handle_S_WIN, session, buffer, len); };
 	}
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len)
@@ -76,6 +80,7 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::C_MOVE& pkt) { return MakeSendBuffer(pkt, PKT_C_MOVE); }
 	static SendBufferRef MakeSendBuffer(Protocol::C_CHAT& pkt) { return MakeSendBuffer(pkt, PKT_C_CHAT); }
 	static SendBufferRef MakeSendBuffer(Protocol::C_SPAWN_CREATURE& pkt) { return MakeSendBuffer(pkt, PKT_C_SPAWN_CREATURE); }
+	static SendBufferRef MakeSendBuffer(Protocol::C_DEFEAT& pkt) { return MakeSendBuffer(pkt, PKT_C_DEFEAT); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

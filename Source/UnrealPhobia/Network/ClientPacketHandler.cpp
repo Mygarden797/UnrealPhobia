@@ -122,3 +122,13 @@ bool Handle_S_MATCH(PacketSessionRef& session, Protocol::S_MATCH& pkt)
     //}
     return true;
 }
+
+bool Handle_S_WIN(PacketSessionRef& session, Protocol::S_WIN& pkt)
+{
+    if (auto* GameInstance = Cast<UNetworkManager>(GWorld->GetGameInstance()))
+    {
+        GameInstance->HandleWin(pkt);
+    }
+
+    return true;
+}

@@ -115,7 +115,6 @@ void UNetworkManager::SendPacket(SendBufferRef SendBuffer)
     GameServerSession->SendPacket(SendBuffer);
 }
 
-//크리쳐 추가된 버전으로 수정해야함.
 void UNetworkManager::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool IsMine)
 {
     if (Socket == nullptr || GameServerSession == nullptr)
@@ -336,4 +335,11 @@ void UNetworkManager::LogAPIResponse(const FString& RequestType, bool bSuccess, 
     {
         UE_LOG(LogTemp, Error, TEXT("%s Failed: %s"), *RequestType, *ResponseData);
     }
+}
+
+void UNetworkManager::HandleWin(const Protocol::S_WIN& WinPkt)
+{
+    ANetworkPlayer* WinPlayer;
+    WinPlayer = Cast<ANetworkPlayer>(MyPlayer);
+    WinPlayer->GameWin();
 }

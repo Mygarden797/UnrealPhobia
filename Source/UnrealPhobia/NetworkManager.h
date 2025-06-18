@@ -82,6 +82,8 @@ public:
     void HandleTimer(const Protocol::S_TIMER& TimerPkt);
     void HandleStart(const Protocol::S_START& StartPkt);
 
+    void HandleWin(const Protocol::S_WIN& WinPkt);
+
 public:
     // GameServer
     class FSocket* Socket;

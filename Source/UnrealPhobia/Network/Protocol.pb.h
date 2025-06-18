@@ -51,6 +51,9 @@ namespace Protocol {
 class C_CHAT;
 struct C_CHATDefaultTypeInternal;
 extern C_CHATDefaultTypeInternal _C_CHAT_default_instance_;
+class C_DEFEAT;
+struct C_DEFEATDefaultTypeInternal;
+extern C_DEFEATDefaultTypeInternal _C_DEFEAT_default_instance_;
 class C_ENTER_GAME;
 struct C_ENTER_GAMEDefaultTypeInternal;
 extern C_ENTER_GAMEDefaultTypeInternal _C_ENTER_GAME_default_instance_;
@@ -102,9 +105,13 @@ extern S_STARTDefaultTypeInternal _S_START_default_instance_;
 class S_TIMER;
 struct S_TIMERDefaultTypeInternal;
 extern S_TIMERDefaultTypeInternal _S_TIMER_default_instance_;
+class S_WIN;
+struct S_WINDefaultTypeInternal;
+extern S_WINDefaultTypeInternal _S_WIN_default_instance_;
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
 template<> ::Protocol::C_CHAT* Arena::CreateMaybeMessage<::Protocol::C_CHAT>(Arena*);
+template<> ::Protocol::C_DEFEAT* Arena::CreateMaybeMessage<::Protocol::C_DEFEAT>(Arena*);
 template<> ::Protocol::C_ENTER_GAME* Arena::CreateMaybeMessage<::Protocol::C_ENTER_GAME>(Arena*);
 template<> ::Protocol::C_LEAVE_GAME* Arena::CreateMaybeMessage<::Protocol::C_LEAVE_GAME>(Arena*);
 template<> ::Protocol::C_LOGIN* Arena::CreateMaybeMessage<::Protocol::C_LOGIN>(Arena*);
@@ -122,6 +129,7 @@ template<> ::Protocol::S_SPAWN* Arena::CreateMaybeMessage<::Protocol::S_SPAWN>(A
 template<> ::Protocol::S_SPAWN_CREATURE* Arena::CreateMaybeMessage<::Protocol::S_SPAWN_CREATURE>(Arena*);
 template<> ::Protocol::S_START* Arena::CreateMaybeMessage<::Protocol::S_START>(Arena*);
 template<> ::Protocol::S_TIMER* Arena::CreateMaybeMessage<::Protocol::S_TIMER>(Arena*);
+template<> ::Protocol::S_WIN* Arena::CreateMaybeMessage<::Protocol::S_WIN>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace Protocol {
 
@@ -2888,6 +2896,242 @@ class S_START final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_Protocol_2eproto;
 };
+// -------------------------------------------------------------------
+
+class C_DEFEAT final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:Protocol.C_DEFEAT) */ {
+ public:
+  inline C_DEFEAT() : C_DEFEAT(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR C_DEFEAT(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  C_DEFEAT(const C_DEFEAT& from);
+  C_DEFEAT(C_DEFEAT&& from) noexcept
+    : C_DEFEAT() {
+    *this = ::std::move(from);
+  }
+
+  inline C_DEFEAT& operator=(const C_DEFEAT& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline C_DEFEAT& operator=(C_DEFEAT&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const C_DEFEAT& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const C_DEFEAT* internal_default_instance() {
+    return reinterpret_cast<const C_DEFEAT*>(
+               &_C_DEFEAT_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    18;
+
+  friend void swap(C_DEFEAT& a, C_DEFEAT& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(C_DEFEAT* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(C_DEFEAT* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  C_DEFEAT* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C_DEFEAT>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const C_DEFEAT& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const C_DEFEAT& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.C_DEFEAT";
+  }
+  protected:
+  explicit C_DEFEAT(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:Protocol.C_DEFEAT)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class S_WIN final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:Protocol.S_WIN) */ {
+ public:
+  inline S_WIN() : S_WIN(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR S_WIN(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  S_WIN(const S_WIN& from);
+  S_WIN(S_WIN&& from) noexcept
+    : S_WIN() {
+    *this = ::std::move(from);
+  }
+
+  inline S_WIN& operator=(const S_WIN& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline S_WIN& operator=(S_WIN&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const S_WIN& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const S_WIN* internal_default_instance() {
+    return reinterpret_cast<const S_WIN*>(
+               &_S_WIN_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    19;
+
+  friend void swap(S_WIN& a, S_WIN& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(S_WIN* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(S_WIN* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  S_WIN* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S_WIN>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const S_WIN& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const S_WIN& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.S_WIN";
+  }
+  protected:
+  explicit S_WIN(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:Protocol.S_WIN)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
 // ===================================================================
 
 
@@ -3997,9 +4241,21 @@ S_START::triggers() const {
   return _impl_.triggers_;
 }
 
+// -------------------------------------------------------------------
+
+// C_DEFEAT
+
+// -------------------------------------------------------------------
+
+// S_WIN
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
