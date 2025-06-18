@@ -256,8 +256,30 @@ struct S_STARTDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S_STARTDefaultTypeInternal _S_START_default_instance_;
+PROTOBUF_CONSTEXPR C_DEFEAT::C_DEFEAT(
+    ::_pbi::ConstantInitialized) {}
+struct C_DEFEATDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR C_DEFEATDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~C_DEFEATDefaultTypeInternal() {}
+  union {
+    C_DEFEAT _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C_DEFEATDefaultTypeInternal _C_DEFEAT_default_instance_;
+PROTOBUF_CONSTEXPR S_WIN::S_WIN(
+    ::_pbi::ConstantInitialized) {}
+struct S_WINDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR S_WINDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~S_WINDefaultTypeInternal() {}
+  union {
+    S_WIN _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S_WINDefaultTypeInternal _S_WIN_default_instance_;
 }  // namespace Protocol
-static ::_pb::Metadata file_level_metadata_Protocol_2eproto[18];
+static ::_pb::Metadata file_level_metadata_Protocol_2eproto[20];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_Protocol_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_Protocol_2eproto = nullptr;
 
@@ -391,6 +413,18 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::Protocol::S_START, _impl_.triggers_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_DEFEAT, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_WIN, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::Protocol::C_LOGIN)},
@@ -411,6 +445,8 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 107, -1, -1, sizeof(::Protocol::C_SPAWN_CREATURE)},
   { 115, -1, -1, sizeof(::Protocol::S_TIMER)},
   { 122, -1, -1, sizeof(::Protocol::S_START)},
+  { 129, -1, -1, sizeof(::Protocol::C_DEFEAT)},
+  { 135, -1, -1, sizeof(::Protocol::S_WIN)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -432,6 +468,8 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::Protocol::_C_SPAWN_CREATURE_default_instance_._instance,
   &::Protocol::_S_TIMER_default_instance_._instance,
   &::Protocol::_S_START_default_instance_._instance,
+  &::Protocol::_C_DEFEAT_default_instance_._instance,
+  &::Protocol::_S_WIN_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -457,7 +495,7 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "ectInfo\022+\n\rcreature_info\030\002 \001(\0132\024.Protoco"
   "l.ObjectInfo\"\030\n\007S_TIMER\022\r\n\005timer\030\001 \001(\004\"1"
   "\n\007S_START\022&\n\010triggers\030\001 \003(\0132\024.Protocol.O"
-  "bjectInfob\006proto3"
+  "bjectInfo\"\n\n\010C_DEFEAT\"\007\n\005S_WINb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -465,9 +503,9 @@ static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_de
 };
 static ::_pbi::once_flag descriptor_table_Protocol_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Protocol_2eproto = {
-    false, false, 897, descriptor_table_protodef_Protocol_2eproto,
+    false, false, 918, descriptor_table_protodef_Protocol_2eproto,
     "Protocol.proto",
-    &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 18,
+    &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 20,
     schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
     file_level_metadata_Protocol_2eproto, file_level_enum_descriptors_Protocol_2eproto,
     file_level_service_descriptors_Protocol_2eproto,
@@ -3696,6 +3734,86 @@ void S_START::InternalSwap(S_START* other) {
       file_level_metadata_Protocol_2eproto[17]);
 }
 
+// ===================================================================
+
+class C_DEFEAT::_Internal {
+ public:
+};
+
+C_DEFEAT::C_DEFEAT(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  // @@protoc_insertion_point(arena_constructor:Protocol.C_DEFEAT)
+}
+C_DEFEAT::C_DEFEAT(const C_DEFEAT& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  C_DEFEAT* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:Protocol.C_DEFEAT)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData C_DEFEAT::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*C_DEFEAT::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata C_DEFEAT::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
+      file_level_metadata_Protocol_2eproto[18]);
+}
+
+// ===================================================================
+
+class S_WIN::_Internal {
+ public:
+};
+
+S_WIN::S_WIN(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  // @@protoc_insertion_point(arena_constructor:Protocol.S_WIN)
+}
+S_WIN::S_WIN(const S_WIN& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  S_WIN* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:Protocol.S_WIN)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData S_WIN::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*S_WIN::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata S_WIN::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
+      file_level_metadata_Protocol_2eproto[19]);
+}
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
@@ -3770,6 +3888,14 @@ Arena::CreateMaybeMessage< ::Protocol::S_TIMER >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::Protocol::S_START*
 Arena::CreateMaybeMessage< ::Protocol::S_START >(Arena* arena) {
   return Arena::CreateMessageInternal< ::Protocol::S_START >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::C_DEFEAT*
+Arena::CreateMaybeMessage< ::Protocol::C_DEFEAT >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::C_DEFEAT >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::S_WIN*
+Arena::CreateMaybeMessage< ::Protocol::S_WIN >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::S_WIN >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

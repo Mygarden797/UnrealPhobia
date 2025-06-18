@@ -12,7 +12,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "InventoryWidget.h"
-
+#include "NetworkManager.h"
 #include "StaminaBar.h"
 #include "MentalBar.h"
 
@@ -474,6 +474,18 @@ void ANetworkPlayer::GameOver()
             true				 // bHoldWhenFinished
         );
     }
+    Protocol::C_DEFEAT Pkt;
+
+    SEND_PACKET(Pkt);
+
+    UNetworkManager* GameInstance = Cast<UNetworkManager>(GetGameInstance());
+    GameInstance->DisconnectFromGameServer();
+
+}
+
+void ANetworkPlayer::GameWin()
+{
+    UE_LOG(LogTemp, Warning, TEXT("Game Win!"));
 }
 
 //�������� ������ ����ۿ� ����. ������ �ʿ� ����. ������ �Դ� �͵� DecreaseMental �Լ� �̿��ϵ��� ��ġ��
