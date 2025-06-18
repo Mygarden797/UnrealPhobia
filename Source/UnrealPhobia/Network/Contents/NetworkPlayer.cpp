@@ -15,6 +15,7 @@
 #include "NetworkManager.h"
 #include "StaminaBar.h"
 #include "MentalBar.h"
+#include "Mental/CandleRoom.h"
 
 ANetworkPlayer::ANetworkPlayer()
 {
@@ -175,6 +176,24 @@ void ANetworkPlayer::BeginPlay()
 
         UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger->GetName());
         UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger2->GetName());
+
+        if (ACandleRoom* CandleRoom = Cast<ACandleRoom>(SelectedTrigger))
+        {
+            if (CandleRoom->CubeMesh)
+            {
+                CandleRoom->CubeMesh->SetVisibility(true);
+                UE_LOG(LogTemp, Log, TEXT("CandleRoom cube made visible"));
+            }
+        }
+
+        if (ACandleRoom* CandleRoom = Cast<ACandleRoom>(SelectedTrigger2))
+        {
+            if (CandleRoom->CubeMesh)
+            {
+                CandleRoom->CubeMesh->SetVisibility(true);
+                UE_LOG(LogTemp, Log, TEXT("CandleRoom cube made visible"));
+            }
+        }
     }
 }
 
@@ -441,6 +460,7 @@ void ANetworkPlayer::DecreaseMental()
     {
         CurrentMental -= MentalDecayRate;
         CurrentMental = FMath::Clamp(CurrentMental, 0.f, MaxMental);
+        UE_LOG(LogTemp, Log, TEXT("CurrentMental: %f"), CurrentMental);
 
         if (CurrentMental <= 0.f)
         {
@@ -605,8 +625,26 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
             CurrentTrigger->Tags.Remove(FName("Active"));
         }
 
+        if (ACandleRoom* CandleRoom = Cast<ACandleRoom>(CurrentTrigger))
+        {
+            if (CandleRoom->CubeMesh)
+            {
+                CandleRoom->CubeMesh->SetVisibility(false);
+                UE_LOG(LogTemp, Log, TEXT("CandleRoom cube made Invisible"));
+            }
+        }
+
         SelectedTrigger->Tags.AddUnique(FName("Active"));
         CurrentTrigger = SelectedTrigger;
+
+        if (ACandleRoom* CandleRoom = Cast<ACandleRoom>(SelectedTrigger))
+        {
+            if (CandleRoom->CubeMesh)
+            {
+                CandleRoom->CubeMesh->SetVisibility(true);
+                UE_LOG(LogTemp, Log, TEXT("CandleRoom cube made visible"));
+            }
+        }
 
         UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger->GetName());
     }
