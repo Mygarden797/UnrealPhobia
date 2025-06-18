@@ -9,7 +9,7 @@
 #include "Creature/CreatureState.h"
 
 
-
+const FName UBTS_Attack::LastFoundLocation(TEXT("LastFoundLocation"));
 
 UBTS_Attack::UBTS_Attack()
 {
@@ -30,9 +30,15 @@ void UBTS_Attack::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
     RETURN_IF_NULL(Blackboard)
 
     AActor* Target = Cast<AActor>(Blackboard->GetValueAsObject(TargetKey.SelectedKeyName));
+    RETURN_IF_NULL(Target);
 
     float Distance = Creature->GetDistanceTo(Target);
     UE_LOG(LogTemp, Warning, TEXT("Distance: %f"), Distance);
+
+    
+    FVector LastTargetLocation = Target->GetActorLocation();
+    Blackboard->SetValueAsVector(LastFoundLocation,LastTargetLocation);
+    
     if(Distance <= AttackRange)
     {
         Creature->SetState(ECreatureState::Attack);

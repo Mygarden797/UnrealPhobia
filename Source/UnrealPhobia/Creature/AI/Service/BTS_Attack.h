@@ -16,7 +16,7 @@ class UNREALPHOBIA_API UBTS_Attack : public UBTService
 
 	public:
 		UBTS_Attack();
-
+		static const FName LastFoundLocation;
 		UPROPERTY(EditAnywhere,Category = "Blackboard")
 		struct FBlackboardKeySelector TargetKey;
 
