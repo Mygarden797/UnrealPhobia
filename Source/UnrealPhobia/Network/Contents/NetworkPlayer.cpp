@@ -11,6 +11,7 @@
 #include "NetworkBase.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "InventoryWidget.h"
 
 #include "StaminaBar.h"
 #include "MentalBar.h"
@@ -98,14 +99,17 @@ void ANetworkPlayer::BeginPlay()
             }
         }
 
-        // Create inventory widget
         if (InventoryWidgetClass)
         {
-            InventoryWidget = CreateWidget<UUserWidget>(GetWorld(), InventoryWidgetClass);
+            InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
             if (InventoryWidget)
             {
                 InventoryWidget->AddToViewport();
             }
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Failed to load Inventory!!"));
         }
     }
 
@@ -117,13 +121,60 @@ void ANetworkPlayer::BeginPlay()
         1.0f,
         true);
 
-    // Deactivate all CandleRooms
     TArray<AActor*> FoundTriggers;
+    TArray<AActor*> FoundTriggers2;
     UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers);
+    UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom2"), FoundTriggers2);
 
+    TArray<AActor*> AvailableTriggers;
     for (AActor* Trigger : FoundTriggers)
     {
-        Trigger->Tags.Remove(FName("Active"));
+        if (Trigger != CurrentTrigger)
+        {
+            AvailableTriggers.Add(Trigger);
+        }
+    }
+
+    TArray<AActor*> AvailableTriggers2;
+    for (AActor* Trigger : FoundTriggers2)
+    {
+        if (Trigger != CurrentTrigger)
+        {
+            AvailableTriggers2.Add(Trigger);
+        }
+    }
+
+    // CandleRoom 트리거 이름 출력
+    UE_LOG(LogTemp, Log, TEXT("=== FoundTriggers (CandleRoom) ==="));
+    for (AActor* Trigger : FoundTriggers)
+    {
+        if (Trigger)
+        {
+            UE_LOG(LogTemp, Log, TEXT("Trigger Name: %s"), *Trigger->GetName());
+        }
+    }
+
+    // CandleRoom2 트리거 이름 출력
+    UE_LOG(LogTemp, Log, TEXT("=== FoundTriggers2 (CandleRoom2) ==="));
+    for (AActor* Trigger : FoundTriggers2)
+    {
+        if (Trigger)
+        {
+            UE_LOG(LogTemp, Log, TEXT("Trigger Name: %s"), *Trigger->GetName());
+        }
+    }
+
+    if (AvailableTriggers.Num() > 0)
+    {
+        int32 Index = FMath::RandRange(0, AvailableTriggers.Num() - 1);
+        int32 Index2 = FMath::RandRange(0, AvailableTriggers2.Num() - 1);
+        AActor* SelectedTrigger = AvailableTriggers[Index];
+        AActor* SelectedTrigger2 = AvailableTriggers2[Index2];
+        SelectedTrigger->Tags.AddUnique(FName("Active")); // Activate with Active Tag
+        SelectedTrigger2->Tags.AddUnique(FName("Active"));
+
+        UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger->GetName());
+        UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger2->GetName());
     }
 
     ActivateRandomMentalTrigger();
@@ -404,6 +455,27 @@ void ANetworkPlayer::DecreaseMental()
 void ANetworkPlayer::GameOver()
 {
     UE_LOG(LogTemp, Warning, TEXT("Game Over! Mental is Zero."));
+
+    // 1. 캐릭터 입력 비활성화
+    APlayerController* PlayerController = Cast<APlayerController>(GetController());
+    if (PlayerController)
+    {
+        DisableInput(PlayerController);
+    }
+
+    // 2. 화면 페이드아웃 (블랙)
+    if (PlayerController && PlayerController->PlayerCameraManager)
+    {
+        // Params: FromAlpha, ToAlpha, Duration, Color, bShouldFadeAudio, bHoldWhenFinished
+        PlayerController->PlayerCameraManager->StartCameraFade(
+            0.f,				 // FromAlpha (투명)
+            1.f,				 // ToAlpha (불투명)
+            1.f,				 // Duration (2초 동안 페이드)
+            FLinearColor::Black, // Color
+            false,				 // bShouldFadeAudio
+            true				 // bHoldWhenFinished
+        );
+    }
 }
 
 //공포상태 진입이 여기밖에 없음. 조정할 필요 있음. 데미지 입는 것도 DecreaseMental 함수 이용하도록 고치기
@@ -471,13 +543,43 @@ void ANetworkPlayer::RegenMental()
 
 void ANetworkPlayer::ActivateRandomMentalTrigger()
 {
-    TArray<AActor*> FoundTriggers;
-    UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers);
+    TArray<AActor*> FoundTriggers1;
+    TArray<AActor*> FoundTriggers2;
+    UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers1);
+    UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom2"), FoundTriggers2);
+
+    // 현재 트리거가 CandleRoom 계열인지 CandleRoom2 계열인지 판별
+    FName CurrentMapTag;
+    if (CurrentTrigger && CurrentTrigger->Tags.Contains(FName("CandleRoom")))
+    {
+        CurrentMapTag = FName("CandleRoom");
+    }
+    else if (CurrentTrigger && CurrentTrigger->Tags.Contains(FName("CandleRoom2")))
+    {
+        CurrentMapTag = FName("CandleRoom2");
+    }
+    else
+    {
+        // CurrentTrigger가 없으면 기본 CandleRoom으로 처리
+        CurrentMapTag = FName("CandleRoom");
+    }
+
+    // 같은 맵의 트리거들 중에서 현재 트리거가 아닌 것만 고르기
+    TArray<AActor*>* AllTriggers = nullptr;
+
+    if (CurrentMapTag == FName("CandleRoom"))
+    {
+        AllTriggers = &FoundTriggers1;
+    }
+    else
+    {
+        AllTriggers = &FoundTriggers2;
+    }
 
     TArray<AActor*> AvailableTriggers;
-    for (AActor* Trigger : FoundTriggers)
+    for (AActor* Trigger : *AllTriggers)
     {
-        if (Trigger != CurrentTrigger)
+        if (Trigger && Trigger != CurrentTrigger)
         {
             AvailableTriggers.Add(Trigger);
         }
@@ -487,10 +589,20 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
     {
         int32 Index = FMath::RandRange(0, AvailableTriggers.Num() - 1);
         AActor* SelectedTrigger = AvailableTriggers[Index];
-        CurrentTrigger = SelectedTrigger;
+
+        if (CurrentTrigger)
+        {
+            CurrentTrigger->Tags.Remove(FName("Active"));
+        }
+
         SelectedTrigger->Tags.AddUnique(FName("Active"));
+        CurrentTrigger = SelectedTrigger;
 
         UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger->GetName());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No available triggers found in %s"), *CurrentMapTag.ToString());
     }
 }
 

@@ -11,6 +11,7 @@
 #include "Camera/CameraComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
+#include "Network/Contents/NetworkPlayer.h"
 #include "TriggerInventory.generated.h"
 
 class ASurvivor;
@@ -57,6 +58,7 @@ public:
 private:
 	UCameraComponent *CamComp;
 	ASurvivor *Survivor;
+    ANetworkPlayer* NetworkPlayer;
 	float MaxReachDistance = 400; // 최대 습득 사거리
 	float ReachRadius = 20;		  // 습득 반경
 

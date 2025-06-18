@@ -34,13 +34,13 @@ public:
     TSubclassOf<class UUserWidget> CrosshairWidgetClass;
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<class UUserWidget> InventoryWidgetClass;
+    TSubclassOf<class UInventoryWidget> InventoryWidgetClass;
 
     UPROPERTY()
     class UUserWidget* CrosshairWidget;
 
     UPROPERTY()
-    class UUserWidget* InventoryWidget;
+    class UInventoryWidget* InventoryWidget;
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<class UStaminaBar> StaminaBarClass;
