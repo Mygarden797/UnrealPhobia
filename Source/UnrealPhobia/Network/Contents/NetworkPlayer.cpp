@@ -506,6 +506,32 @@ void ANetworkPlayer::GameOver()
 void ANetworkPlayer::GameWin()
 {
     UE_LOG(LogTemp, Warning, TEXT("Game Win!"));
+
+    APlayerController* PlayerController = Cast<APlayerController>(GetController());
+    if (PlayerController)
+    {
+        DisableInput(PlayerController);
+    }
+
+    // 2. ȭ�� ���̵�ƿ� (����)
+    if (PlayerController && PlayerController->PlayerCameraManager)
+    {
+        // Params: FromAlpha, ToAlpha, Duration, Color, bShouldFadeAudio, bHoldWhenFinished
+        PlayerController->PlayerCameraManager->StartCameraFade(
+            0.f,				 // FromAlpha (����)
+            1.f,				 // ToAlpha (������)
+            1.f,				 // Duration (2�� ���� ���̵�)
+            FLinearColor::White, // Color
+            false,				 // bShouldFadeAudio
+            true				 // bHoldWhenFinished
+        );
+    }
+    Protocol::C_DEFEAT Pkt;
+
+    SEND_PACKET(Pkt);
+
+    UNetworkManager* GameInstance = Cast<UNetworkManager>(GetGameInstance());
+    GameInstance->DisconnectFromGameServer();
 }
 
 //�������� ������ ����ۿ� ����. ������ �ʿ� ����. ������ �Դ� �͵� DecreaseMental �Լ� �̿��ϵ��� ��ġ��
