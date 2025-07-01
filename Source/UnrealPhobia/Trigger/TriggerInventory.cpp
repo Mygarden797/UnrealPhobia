@@ -11,8 +11,16 @@ UTriggerInventory::UTriggerInventory()
 	UE_LOG(LogTemp, Log, TEXT("UTriggerInventory Created"));
 	Inventory.Init(ETriggerName::None, MaxInventorySize);
 	TriggerIDs.Init(0, MaxInventorySize);
-	//Survivor = Cast<ASurvivor>(GetOwner());
-    NetworkPlayer = Cast<ANetworkPlayer>(GetOwner());
+	// Survivor = Cast<ASurvivor>(GetOwner());
+	NetworkPlayer = Cast<ANetworkPlayer>(GetOwner());
+	if (NetworkPlayer)
+	{
+		UE_LOG(LogTemp, Display, TEXT("NetworkPlayer is set"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed To Set NetworkPlayer"));
+	}
 	if (SetCameraComponent())
 	{
 		UE_LOG(LogTemp, Display, TEXT("CameraComponent is set"));
@@ -123,9 +131,9 @@ void UTriggerInventory::PickUp()
 				TriggerIDs[SelectedIndex] = 0; // ID 초기화
 			}
 		}
-		//Survivor->InventoryWidget->RefreshInventory();
-        NetworkPlayer->InventoryWidget->RefreshInventory();
-        
+		// Survivor->InventoryWidget->RefreshInventory();
+		if (NetworkPlayer)
+			NetworkPlayer->InventoryWidget->RefreshInventory();
 	}
 }
 
@@ -155,8 +163,9 @@ void UTriggerInventory::DropOff()
 			UE_LOG(LogTemp, Log, TEXT("Trigger Dropped"));
 		}
 	}
-	//Survivor->InventoryWidget->RefreshInventory();
-    NetworkPlayer->InventoryWidget->RefreshInventory();
+	// Survivor->InventoryWidget->RefreshInventory();
+	if (NetworkPlayer)
+		NetworkPlayer->InventoryWidget->RefreshInventory();
 }
 
 void UTriggerInventory::SelectSlot(int32 Index)
@@ -165,7 +174,8 @@ void UTriggerInventory::SelectSlot(int32 Index)
 	{
 		SelectedIndex = Index - 1;
 		UE_LOG(LogTemp, Log, TEXT("Slot Changed to %d"), SelectedIndex + 1);
-		//Survivor->InventoryWidget->RefreshInventory();
-        NetworkPlayer->InventoryWidget->RefreshInventory();
+		// Survivor->InventoryWidget->RefreshInventory();
+		if (NetworkPlayer)
+			NetworkPlayer->InventoryWidget->RefreshInventory();
 	}
 }

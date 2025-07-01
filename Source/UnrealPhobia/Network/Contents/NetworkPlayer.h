@@ -156,7 +156,7 @@ protected:
     float CurrentMental = 200.f;
 
     UPROPERTY(EditDefaultsOnly, Category = "Mental")
-    float MentalDecayRate = 1.f;
+    float MentalDecayRate = 0.5f;
 
     FTimerHandle MentalDecayTimerHandle;
     FTimerHandle MentalRegenTimerHandle;
