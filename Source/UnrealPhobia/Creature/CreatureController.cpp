@@ -126,8 +126,8 @@ void ACreatureController::BeginPlay()
 void ACreatureController::OnTargetDetected(AActor* Actor, FAIStimulus Stimulus)
 {
      if (!IsValid(Actor)) return;
-    ASurvivor* PlayerCheck = Cast<ASurvivor>(Actor);
-    RETURN_IF_NULL(PlayerCheck);
+    //ASurvivor* PlayerCheck = Cast<ASurvivor>(Actor);
+    //RETURN_IF_NULL(PlayerCheck);
 UE_LOG(LogTemp, Warning, TEXT("Detected Actor: %s (%s)"),
     *Actor->GetName(),
     *Actor->GetClass()->GetName());
