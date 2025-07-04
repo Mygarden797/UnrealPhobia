@@ -14,7 +14,7 @@ class UInputAction;
 	- Name				: ASurvivor
 	- Description		: Player Character
 	- Date					: 2022/05/26, Hangyeol
-	- Fixed					: ������Ʈ �߿� ���׹̳ʰ� ȸ���Ǵ� ����
+	- Fixed					: 
 */
 
 UCLASS(Blueprintable)
@@ -53,23 +53,21 @@ public:
 	UPROPERTY()
 	class UInventoryWidget *InventoryWidget;
 
-	// ĳ���� �յ� �̵�, 1D Vector
-	void MoveForward(const FInputActionValue &Value);
-	// ĳ���� �¿� �̵�, 1D Vector
-	void MoveRight(const FInputActionValue &Value);
-	// ī�޶� �̵�, 2D Vector
+    // Movement Handler, 2D
+	void Move(const FInputActionValue &Value);
+	// Camera Movement, 2D Vector
 	void Look(const FInputActionValue &Value);
 
 	// Sprint Handler
 	void Sprint(const FInputActionValue &Value);
-	// LShift�� ������ ���� �� �޸���.
+	// LShift를 꾹 누른 상태로 달리기 시작
 	void StartSprint();
-	// LShift�� ������ ���� �� �޸��⸦ �����.
+	// LShift를 해제하면 달리기를 멈춤
 	void StopSprint();
 
-	// ĳ���Ͱ� �޸��� �� ���׹̳ʰ� �����Ѵ�.
+	// 스테미나 소비
 	void LossStamina();
-	// ĳ���Ͱ� �޸��� ������ ���׹̳ʸ� ȸ���Ѵ�.
+	// 스테미나 재생
 	void RegenStamina();
 
 	// ĳ���Ͱ� ��ũ����.
@@ -101,10 +99,7 @@ protected:
 	TObjectPtr<UInputMappingContext> SurvivorMovingContext;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<UInputAction> MoveForwardAction;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<UInputAction> MoveRightAction;
+	TObjectPtr<UInputAction> MoveAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> LookAction;
@@ -121,6 +116,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category ="Movement")
+    float BaseSpeed = 300.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category ="Movement")
+    float BackwadMultiplier = 0.7f;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+    float ForwardMultiplier = 1.2f;
+
 	UPROPERTY(BlueprintReadWrite, Category = "Stamina")
 	bool bIsSprinting = false;
 	UPROPERTY(BlueprintReadWrite, Category = "Stamina")
@@ -132,6 +134,7 @@ protected:
 	bool bIsDead = false;
 
 	FRotator TargetCameraRotation;
+
 
 	// Mental 추가
 	void GameOver();
@@ -177,7 +180,6 @@ private:
 
 	float RegenStartMental = 0.f;
 	float RegenTargetAmount = 0.f;
-
 
 
 	// ��Ż ��� �߰�(25.6.1)
