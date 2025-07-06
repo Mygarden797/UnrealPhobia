@@ -64,6 +64,8 @@ public:
 	void StartSprint();
 	// LShift를 해제하면 달리기를 멈춤
 	void StopSprint();
+    // 방향에 따른 이동속도 조절 (25.07.06)
+    void UpdateDirectionWeight(FVector MoveDir);
 
 	// 스테미나 소비
 	void LossStamina();
@@ -118,10 +120,6 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category ="Movement")
     float BaseSpeed = 300.0f;
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category ="Movement")
-    float BackwadMultiplier = 0.7f;
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
-    float ForwardMultiplier = 1.2f;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Stamina")
 	bool bIsSprinting = false;
@@ -174,7 +172,6 @@ private:
 	FTimerHandle FStaminaLossHandle;
 	FTimerHandle FStaminaRegenHandle;
 	FTimerHandle FMentalTimerHandle;
-	bool bIsLossingStamina = false;
 
 	// ��Ż ��� �߰�(25.6.1)
 

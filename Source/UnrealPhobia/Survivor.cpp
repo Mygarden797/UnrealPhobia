@@ -23,7 +23,7 @@ ASurvivor::ASurvivor(const FObjectInitializer &ObjectInitializer)
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	GetCharacterMovement()->MaxWalkSpeed = BaseSpeed;
-	GetCharacterMovement()->MaxWalkSpeedCrouched = BaseSpeed * 0.66 ;
+	GetCharacterMovement()->MaxWalkSpeedCrouched = GetCharacterMovement()->MaxWalkSpeed * 0.5;
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	// CurrentStamina = MaxStamina;
 	//  UE_LOG(LogTemp, Error, TEXT("CurrentStamina, Init: %f"), CurrentStamina);
@@ -64,14 +64,14 @@ void ASurvivor::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("Failed to load Crosshair!!"));
 	}
 
-	// ��Ż����߰�(25.6.1)
+	// 멘탈 (25.6.1)
 
 	// ��Ż �ڿ� ���� Ÿ�̸�
 	GetWorldTimerManager().SetTimer(
 		MentalDecayTimerHandle,
 		this,
 		&ASurvivor::DecreaseMental,
-		1.0f, // �ʴ� 1ȸ
+		1.0f, // 초당 1씩
 		true);
 
 	// Deactivates all CandleRooms
@@ -218,38 +218,13 @@ void ASurvivor::Move(const FInputActionValue &Value)
 	const FVector2D InputVector = Value.Get<FVector2D>();
 	if (Controller)
 	{
-		const FRotator YawRotation(0, Controller->GetControlRotation().Yaw, 0);
-		const FVector Forward = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+        const FRotator YawRotation(0, Controller->GetControlRotation().Yaw, 0);
+        const FVector Forward = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
         const FVector Right = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-           
+
         FVector MoveDir = (Forward * InputVector.Y + Right * InputVector.X).GetSafeNormal();
-
-
-        float Dot = FVector::DotProduct(GetActorForwardVector(), MoveDir);
-
-        float SpeedMultiplier;
-
-        if (Dot >= 0.95f)
-        {
-            SpeedMultiplier = ForwardMultiplier;
-        }
-        else if (Dot < -0.2f)
-        {
-            SpeedMultiplier = BackwadMultiplier;
-        }
-        else
-        {
-            SpeedMultiplier = 1.0f;
-        }
-
-        GetCharacterMovement()->MaxWalkSpeed = BaseSpeed * SpeedMultiplier;
-        GetCharacterMovement()->MaxWalkSpeedCrouched = (BaseSpeed * 0.66) * SpeedMultiplier;
-        AddMovementInput(Forward, InputVector.Y);
-        AddMovementInput(Right, InputVector.X);
-
-
-        UE_LOG(LogTemp, Log, TEXT("Dot: %.3f | Speed: %f"),
-            Dot, GetCharacterMovement()->MaxWalkSpeed);
+        UpdateDirectionWeight(MoveDir);
+        AddMovementInput(MoveDir);
 	}
 	else
 	{
@@ -276,7 +251,7 @@ void ASurvivor::Look(const FInputActionValue &Value)
 
 void ASurvivor::Sprint(const FInputActionValue &Value)
 {
-	const bool DoSprint = Value.Get<bool>(); // LShift�� ������ ���� �� true
+	const bool DoSprint = Value.Get<bool>(); // True until pushing LShift
 
 	if (DoSprint && CurrentStamina > 0.f)
 	{
@@ -292,11 +267,10 @@ void ASurvivor::StartSprint()
 {
 	if (bIsCrouch)
 		return;
-	if (bIsSprinting || CurrentStamina <= 0.f) // �޸��� ���̰ų� ���׹̳� ������ ����
+	if (bIsSprinting || CurrentStamina <= 0.f)
 		return;
 
 	bIsSprinting = true;
-	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 
 	if (!GetWorldTimerManager().IsTimerActive(FStaminaLossHandle))
 	{
@@ -314,9 +288,7 @@ void ASurvivor::StartSprint()
 void ASurvivor::StopSprint()
 {
 	bIsSprinting = false;
-	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 
-	// bIsLossingStamina = false;
 	GetWorldTimerManager().ClearTimer(FStaminaLossHandle);
 
 	if (CurrentStamina < MaxStamina)
@@ -329,6 +301,40 @@ void ASurvivor::StopSprint()
 			true);
 	}
 	// UE_LOG(LogTemp, Display, TEXT("CurrentStamina, Stop: %f"), CurrentStamina);
+}
+
+void ASurvivor::UpdateDirectionWeight(FVector MoveDir)
+{
+    float Dot = FVector::DotProduct(GetActorForwardVector(), MoveDir);
+
+    float SpeedMultiplier;
+
+    if (Dot >= 0.95f)
+    {
+        SpeedMultiplier = 1.2f;
+    }
+    else if (Dot < -0.2f)
+    {
+        SpeedMultiplier = 0.8f;
+    }
+    else
+    {
+        SpeedMultiplier = 1.0f;
+    }
+    
+    if (bIsSprinting && CurrentStamina > 0.0f)
+    {
+        GetCharacterMovement()->MaxWalkSpeed = (BaseSpeed * SpeedMultiplier) * 1.5f;
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Run"));
+    }
+    else
+    {
+        GetCharacterMovement()->MaxWalkSpeed = (BaseSpeed * SpeedMultiplier);
+    }
+    GetCharacterMovement()->MaxWalkSpeedCrouched = GetCharacterMovement()->MaxWalkSpeed * 0.5f;
+
+     UE_LOG(LogTemp, Display, TEXT("Dot: %.3f | Speed: %f, %f "),
+        Dot, GetCharacterMovement()->MaxWalkSpeed, GetCharacterMovement()->MaxWalkSpeedCrouched);
 }
 
 void ASurvivor::LossStamina()
