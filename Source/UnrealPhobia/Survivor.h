@@ -13,8 +13,12 @@ class UInputAction;
 /*
 	- Name				: ASurvivor
 	- Description		: Player Character
-	- Date					: 2022/05/26, Hangyeol
-	- Fixed					: 
+	- Date					: 2025/07/06, Hangyeol
+    - todo                  : 카메라가 이동할 때 선형 보간 기능 구현
+	- Update				
+               - 시점 변환 기능 추가
+               - 이동 방식을 1D Vector 2개에서 2D Vector 하나로 변경
+               - 이동 방향에 따른 이동속도 증감 적용
 */
 
 UCLASS(Blueprintable)
@@ -57,6 +61,8 @@ public:
 	void Move(const FInputActionValue &Value);
 	// Camera Movement, 2D Vector
 	void Look(const FInputActionValue &Value);
+    // 시점 변환
+    void SwitchCameraView(const FInputActionValue &Value);
 
 	// Sprint Handler
 	void Sprint(const FInputActionValue &Value);
@@ -72,18 +78,18 @@ public:
 	// 스테미나 재생
 	void RegenStamina();
 
-	// ĳ���Ͱ� ��ũ����.
-	void SetCrouch(const FInputActionValue &value);
-		// ��Ż ��� �߰�(25.6.1)
 
+	void SetCrouch(const FInputActionValue &value);
+		
+    // 멘탈 증가 감소 (25.6.1)
 	void IncreaseMental(float Amount);
 	void DecreaseMental(float Amount);
 
-	// ȸ�� ����
+	// 멘탈 재생
 	void StartMentalRegen(float Duration);
 	void StopMentalRegen();
 
-	// ��Ż ��� �߰�(25.6.1)
+	// (25.6.1)
 
 	UPROPERTY()
 	AActor* CurrentTrigger;
@@ -105,6 +111,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> LookAction;
+
+    UPROPERTY(EditDefaultsOnly, Category = "input")
+    TObjectPtr<UInputAction> SwitchViewAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UInputAction> SprintAction;
@@ -137,19 +146,19 @@ protected:
 	// Mental 추가
 	void GameOver();
 
-	// ��Ż ��� �߰�(25.6.1)
+	// (25.6.1)
 	UPROPERTY(EditDefaultsOnly, Category = "Mental")
-	float MaxMental = 200.f; // �ִ� ��Ż ����
+	float MaxMental = 200.f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mental")
 	float CurrentMental = 200.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Mental")
-	float MentalDecayRate = 1.f; // �ʴ� 1 ����
+	float MentalDecayRate = 1.f;
 
 	FTimerHandle MentalDecayTimerHandle;
 
-	// ��Ż ȸ����
+	// 멘탈 재생
 	FTimerHandle MentalRegenTimerHandle;
 	FTimerHandle MentalRegenDurationHandle;
 	bool bIsInMentalRegenZone = false;
@@ -157,7 +166,7 @@ protected:
 	float MentalRegenTickTime = 1.f;
 	float MentalRegenPerTick = 6.f;
 
-// ��Ż ��� �߰�(25.6.1)
+// (25.6.1)
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
@@ -173,13 +182,13 @@ private:
 	FTimerHandle FStaminaRegenHandle;
 	FTimerHandle FMentalTimerHandle;
 
-	// ��Ż ��� �߰�(25.6.1)
+	// 멘탈 시스템 (25.6.1)
 
 	float RegenStartMental = 0.f;
 	float RegenTargetAmount = 0.f;
 
 
-	// ��Ż ��� �߰�(25.6.1)
+	// 스테미너 바 (25.6.1)
 	// ByeongJun 25.6.7
 	void UpdateStaminaBar();
 	void UpdateMentalBar();

@@ -14,6 +14,7 @@
 
 #include "MentalBar.h"
 #include "InventoryWidget.h"
+
 ASurvivor::ASurvivor(const FObjectInitializer &ObjectInitializer)
 {
 	// Collision Capsule Size
@@ -197,6 +198,7 @@ void ASurvivor::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	{
         EIC->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASurvivor::Move);
 		EIC->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASurvivor::Look);
+        EIC->BindAction(SwitchViewAction, ETriggerEvent::Started , this, &ASurvivor::SwitchCameraView);
 
 		EIC->BindAction(SprintAction, ETriggerEvent::Started, this, &ASurvivor::Sprint);
 		EIC->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASurvivor::Sprint);
@@ -534,13 +536,13 @@ void ASurvivor::ActivateRandomMentalTrigger()
 	}
 }
 
-void ASurvivor::SetCrouch(const FInputActionValue &value)
+void ASurvivor::SetCrouch(const FInputActionValue &Value)
 {
 	if (bIsSprinting)
 	{
 		bIsSprinting = false;
 	}
-	const bool bPressed = value.Get<bool>();
+	const bool bPressed = Value.Get<bool>();
 	if (bPressed)
 	{
 		bIsCrouch = true;
@@ -571,4 +573,9 @@ void ASurvivor::UpdateMentalBar()
 		float Percent = CurrentMental / MaxMental;
 		MentalBar->SetMentalPercent(Percent);
 	}
+}
+
+void ASurvivor::SwitchCameraView(const FInputActionValue& Value)
+{
+        SpringArm->SocketOffset.Y = -SpringArm->SocketOffset.Y;
 }
