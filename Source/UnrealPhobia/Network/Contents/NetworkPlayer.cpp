@@ -196,6 +196,16 @@ void ANetworkPlayer::BeginPlay()
             }
         }
     }
+
+    // 공격 카메라 위젯 생성
+    if (AttackCameraWidgetClass)
+    {
+        AttackCameraWidget = CreateWidget<UAttackCameraWidget>(this, AttackCameraWidgetClass);
+        if (AttackCameraWidget)
+        {
+            AttackCameraWidget->AddToViewport();
+        }
+    }
 }
 
 void ANetworkPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -705,4 +715,19 @@ void ANetworkPlayer::MakeFootprintNoiseEvent()
 {
     UE_LOG(LogTemp, Warning, TEXT("MakeFootPrintNoiseEvent is Activate"));
     UAISense_Hearing::ReportNoiseEvent(GetWorld(),GetActorLocation(),1.0f,this,FootPrintNoise,FName(TEXT("Footprint")));
+}
+
+void ANetworkPlayer::OnCreatureAttackCamera(ACreatureBase* Creature, UTextureRenderTarget2D* RenderTarget)
+{
+    if (!AttackCameraWidget || !Creature || !RenderTarget)
+    {
+        return;
+    }
+
+    // 여기 어떤 플레이어가 화면을 봐야 하는지 
+
+    // 일단 모든 플레이어에게 보여주기
+    AttackCameraWidget->ShowAttackCamera(RenderTarget, 3.0f);
+
+    UE_LOG(LogTemp, Log, TEXT("Player Controller received attack camera from %s"), *Creature->GetName());
 }

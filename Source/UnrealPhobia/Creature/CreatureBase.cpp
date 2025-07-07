@@ -7,7 +7,16 @@
 #include "Components/CapsuleComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/SceneCaptureComponent2D.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Engine/SceneCapture2D.h"
+#include "Engine/TextureRenderTarget2D.h"
+
 #include "GameFramework/CharacterMovementComponent.h"
+
+// 정적 델리게이트 정의
+FCreatureAttackCameraDelegate ACreatureBase::OnCreatureAttackCamera;
 
 // Sets default values
 ACreatureBase::ACreatureBase()
@@ -25,6 +34,29 @@ ACreatureBase::ACreatureBase()
     GetCharacterMovement()->AvoidanceConsiderationRadius = 300.f;
     GetCharacterMovement()->AvoidanceWeight = 0.5f;
 
+
+//카메라 관련
+    // 카메라 붐 컴포넌트 생성
+    CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+    CameraBoom->SetupAttachment(RootComponent);
+    CameraBoom->TargetArmLength = 400.0f; // 카메라와 캐릭터 사이의 거리
+    CameraBoom->bUsePawnControlRotation = false; // 고정 카메라로 설정
+    CameraBoom->bInheritPitch = false;
+    CameraBoom->bInheritYaw = false;
+    CameraBoom->bInheritRoll = false;
+    // 크리쳐 뒤쪽에 카메라 위치 설정 (Y축 회전 180도)
+    CameraBoom->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
+
+    // 기존 코드 유지
+    AttackCamera = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("AttackCamera"));
+    AttackCamera->SetupAttachment(CameraBoom);
+    AttackCamera->bCaptureEveryFrame = false; // 필요할 때만 캡처
+    AttackCamera->bCaptureOnMovement = false;
+    AttackCamera->bCaptureEveryFrame = false; // 필요할 때만 캡처
+    AttackCamera->bCaptureOnMovement = false;
+
+    // 렌더 타겟 생성 (블루프린트에서 설정하거나 코드에서 동적 생성)
+    AttackCameraRenderTarget = nullptr;
 }
 
 
@@ -94,7 +126,9 @@ void ACreatureBase::Attack()
 	UGameplayStatics::ApplyDamage(Target,AttackDamage,CreatureController,this,UDamageType::StaticClass());
 	CreatureAnimInstance->PlayAttackMontage();
 
-
+//카메라 관련
+    // 공격 시 카메라 활성화
+    //ActivateAttackCamera();
 }
 
 void ACreatureBase::Communicate()
@@ -112,4 +146,50 @@ void ACreatureBase::Communicate()
 	CreatureAnimInstance->PlayCommunicateMontage();
 
 
+}
+
+
+
+void ACreatureBase::ActivateAttackCamera()
+{
+    if (AttackCamera && AttackCameraRenderTarget)
+    {
+        // 카메라 활성화
+        AttackCamera->bCaptureEveryFrame = true;
+        AttackCamera->CaptureScene();
+
+        // 델리게이트 브로드캐스트 - 다른 플레이어에게 알림
+        OnCreatureAttackCamera.Broadcast(this, AttackCameraRenderTarget);
+
+        // 타이머 설정 - 일정 시간 후 비활성화
+        GetWorld()->GetTimerManager().SetTimer(
+            AttackCameraTimerHandle,
+            this,
+            &ACreatureBase::OnAttackCameraTimerEnd,
+            AttackCameraShowTime,
+            false
+        );
+
+        UE_LOG(LogTemp, Log, TEXT("Attack Camera Activated for %s"), *GetName());
+    }
+}
+
+void ACreatureBase::DeactivateAttackCamera()
+{
+    if (AttackCamera)
+    {
+        AttackCamera->bCaptureEveryFrame = false;
+        UE_LOG(LogTemp, Log, TEXT("Attack Camera Deactivated for %s"), *GetName());
+    }
+
+    // 타이머 클리어
+    if (GetWorld()->GetTimerManager().IsTimerActive(AttackCameraTimerHandle))
+    {
+        GetWorld()->GetTimerManager().ClearTimer(AttackCameraTimerHandle);
+    }
+}
+
+void ACreatureBase::OnAttackCameraTimerEnd()
+{
+    DeactivateAttackCamera();
 }

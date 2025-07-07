@@ -6,6 +6,8 @@
 #include "CoreMinimal.h"
 #include "Network/Contents/ProtoPlayer.h"
 #include "InputActionValue.h"
+#include "Creature/CreatureBase.h" // 크리쳐 베이스 헤더
+#include "AttackCameraWidget.h" // 공격 카메라 위젯 헤더
 #include "NetworkPlayer.generated.h"
 
 class USpringArmComponent;
@@ -95,6 +97,10 @@ public:
     void RegenMental();
     void ActivateRandomMentalTrigger();
 
+
+    UFUNCTION()
+    void OnCreatureAttackCamera(ACreatureBase* Creature, UTextureRenderTarget2D* RenderTarget);
+
 protected:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;
@@ -180,6 +186,15 @@ protected:
 
     // Dirty Flag Test
     FVector2D LastDesiredInput;
+
+
+    // 공격 카메라 위젯 클래스
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<UAttackCameraWidget> AttackCameraWidgetClass;
+
+    // 공격 카메라 위젯 인스턴스
+    UPROPERTY()
+    UAttackCameraWidget* AttackCameraWidget;
 
 private:
     // Stamina System
