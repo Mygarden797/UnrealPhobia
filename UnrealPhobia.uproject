@@ -17,11 +17,11 @@
 	],
 	"Plugins": [
 		{
-			"Name": "ModelingToolsEditorMode",
+			"Name": "DatasmithFBXImporter",
 			"Enabled": true
 		},
 		{
-			"Name": "DatasmithFBXImporter",
+			"Name": "ModelingToolsEditorMode",
 			"Enabled": true
 		}
 	]
