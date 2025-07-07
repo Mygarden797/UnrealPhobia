@@ -20,11 +20,11 @@ ASurvivor::ASurvivor(const FObjectInitializer &ObjectInitializer)
 	// Collision Capsule Size
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
-	GetCharacterMovement()->bOrientRotationToMovement = false; // ��Ʈ�ѷ� �������� ĳ���� ȸ��
+	GetCharacterMovement()->bOrientRotationToMovement = false;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	GetCharacterMovement()->MaxWalkSpeed = BaseSpeed;
-	GetCharacterMovement()->MaxWalkSpeedCrouched = GetCharacterMovement()->MaxWalkSpeed * 0.5;
+	GetCharacterMovement()->MaxWalkSpeedCrouched = GetCharacterMovement()->MaxWalkSpeed * 0.5f;
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	// CurrentStamina = MaxStamina;
 	//  UE_LOG(LogTemp, Error, TEXT("CurrentStamina, Init: %f"), CurrentStamina);

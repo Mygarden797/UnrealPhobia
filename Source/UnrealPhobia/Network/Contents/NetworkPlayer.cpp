@@ -27,8 +27,8 @@ ANetworkPlayer::ANetworkPlayer()
     GetCharacterMovement()->bOrientRotationToMovement = false;
     GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
     GetCharacterMovement()->bUseControllerDesiredRotation = true;
-    GetCharacterMovement()->MaxWalkSpeed = 400.f;
-    GetCharacterMovement()->MaxWalkSpeedCrouched = 200.f;
+    GetCharacterMovement()->MaxWalkSpeed = BaseSpeed;
+    GetCharacterMovement()->MaxWalkSpeedCrouched = GetCharacterMovement()->MaxWalkSpeed * 0.5f;
     GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
     GetCharacterMovement()->JumpZVelocity = 700.f;
@@ -40,15 +40,15 @@ ANetworkPlayer::ANetworkPlayer()
     // Create camera boom (pulls in towards the player if there is a collision)
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
     CameraBoom->SetupAttachment(RootComponent);
-    CameraBoom->TargetArmLength = 200.0f;
-    CameraBoom->SocketOffset = FVector(0.f, 45.f, 30.f);
+    CameraBoom->TargetArmLength = 90.0f;
+    CameraBoom->SocketOffset = FVector(10.f, 45.f, 0.f);
     CameraBoom->ProbeSize = 12.f;
-    CameraBoom->bUsePawnControlRotation = true;
+    // CameraBoom->bUsePawnControlRotation = true;
 
     // Create a follow camera
     FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
     FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-    FollowCamera->bUsePawnControlRotation = false;
+    // FollowCamera->bUsePawnControlRotation = false;
 }
 
 void ANetworkPlayer::BeginPlay()
@@ -58,15 +58,6 @@ void ANetworkPlayer::BeginPlay()
     // Initialize stats
     CurrentStamina = MaxStamina;
     CurrentMental = MaxMental;
-
-    // Setup input mapping context
-    if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
-    {
-        if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-        {
-              Subsystem->AddMappingContext(SurvivorMovingContext, 0);
-        }
-    }
 
     // Only setup UI for locally controlled players
     if (IsLocallyControlled())
@@ -212,30 +203,37 @@ void ANetworkPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-    if (UEnhancedInputComponent* EnhancedInputComp = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+    if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
     {
-        // Network movement bindings
-        EnhancedInputComp->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
-        EnhancedInputComp->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-        EnhancedInputComp->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ANetworkPlayer::Move);
-        EnhancedInputComp->BindAction(MoveAction, ETriggerEvent::Completed, this, &ANetworkPlayer::Move);
-        EnhancedInputComp->BindAction(LookAction, ETriggerEvent::Triggered, this, &ANetworkPlayer::Look);
+        if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+        {
+            Subsystem->AddMappingContext(SurvivorMovingContext, 0);
+            UE_LOG(LogTemp, Display, TEXT("Moving Key is ready"));
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to Mapping Keys"));
+    }
 
-        // Survivor-specific bindings
-        //if (MoveForwardAction)
-        //{
-        //    EnhancedInputComp->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &ANetworkPlayer::MoveForward);
-        //}
-        //if (MoveRightAction)
-        //{
-        //    EnhancedInputComp->BindAction(MoveRightAction, ETriggerEvent::Triggered, this, &ANetworkPlayer::MoveRight);
-        //}
-        EnhancedInputComp->BindAction(SprintAction, ETriggerEvent::Started, this, &ANetworkPlayer::Sprint);
-        EnhancedInputComp->BindAction(SprintAction, ETriggerEvent::Completed, this, &ANetworkPlayer::Sprint);
+    if (UEnhancedInputComponent* EIC = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+    {
+        EIC->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ANetworkPlayer::Move);
+        EIC->BindAction(LookAction, ETriggerEvent::Triggered, this, &ANetworkPlayer::Look);
+        EIC->BindAction(SwitchViewAction, ETriggerEvent::Started, this, &ANetworkPlayer::SwitchCameraView);
 
-        EnhancedInputComp->BindAction(CrouchAction, ETriggerEvent::Started, this, &ANetworkPlayer::SetCrouch);
-        EnhancedInputComp->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ANetworkPlayer::SetCrouch);
+        EIC->BindAction(SprintAction, ETriggerEvent::Started, this, &ANetworkPlayer::Sprint);
+        EIC->BindAction(SprintAction, ETriggerEvent::Completed, this, &ANetworkPlayer::Sprint);
 
+        EIC->BindAction(CrouchAction, ETriggerEvent::Started, this, &ANetworkPlayer::SetCrouch);
+        EIC->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ANetworkPlayer::SetCrouch);
+        UE_LOG(LogTemp, Display, TEXT("Key Binding is done"));
+
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to Bind Input!!"));
+        return;
     }
 }
 
@@ -288,14 +286,13 @@ void ANetworkPlayer::Move(const FInputActionValue& Value)
 
     if (Controller != nullptr)
     {
-        const FRotator Rotation = Controller->GetControlRotation();
-        const FRotator YawRotation(0, Rotation.Yaw, 0);
-
+        const FRotator YawRotation(0, Controller->GetControlRotation().Yaw, 0);
         const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
         const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-        AddMovementInput(ForwardDirection, MovementVector.Y);
-        AddMovementInput(RightDirection, MovementVector.X);
+        FVector MoveDir = (ForwardDirection * MovementVector.Y + RightDirection * MovementVector.X).GetSafeNormal();
+        UpdateDirectionWeight(MoveDir);
+        AddMovementInput(MoveDir);
 
         // Cache for network
         {
@@ -365,6 +362,8 @@ void ANetworkPlayer::Sprint(const FInputActionValue& Value)
 
 void ANetworkPlayer::StartSprint()
 {
+    if (bIsCrouch)
+        return;
     if (bIsSprinting || CurrentStamina <= 0.f)
         return;
 
@@ -400,6 +399,41 @@ void ANetworkPlayer::StopSprint()
             true);
     }
 }
+
+void ANetworkPlayer::UpdateDirectionWeight(FVector MoveDir)
+{
+    float Dot = FVector::DotProduct(GetActorForwardVector(), MoveDir);
+
+    float SpeedMultiplier;
+
+    if (Dot >= 0.95f)
+    {
+        SpeedMultiplier = 1.2f;
+    }
+    else if (Dot < -0.2f)
+    {
+        SpeedMultiplier = 0.8f;
+    }
+    else
+    {
+        SpeedMultiplier = 1.0f;
+    }
+    
+    if (bIsSprinting && CurrentStamina > 0.0f)
+    {
+        GetCharacterMovement()->MaxWalkSpeed = (BaseSpeed * SpeedMultiplier) * 1.5f;
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Run"));
+    }
+    else
+    {
+        GetCharacterMovement()->MaxWalkSpeed = (BaseSpeed * SpeedMultiplier);
+    }
+    GetCharacterMovement()->MaxWalkSpeedCrouched = GetCharacterMovement()->MaxWalkSpeed * 0.5f;
+
+     UE_LOG(LogTemp, Display, TEXT("Dot: %.3f | Speed: %f, %f "),
+        Dot, GetCharacterMovement()->MaxWalkSpeed, GetCharacterMovement()->MaxWalkSpeedCrouched);
+}
+
 
 void ANetworkPlayer::LossStamina()
 {
@@ -440,6 +474,10 @@ void ANetworkPlayer::RegenStamina()
 void ANetworkPlayer::SetCrouch(const FInputActionValue& value)
 {
     const bool bPressed = value.Get<bool>();
+    if (bIsSprinting)
+    {
+        bIsSprinting = false;
+    }
     if (bPressed)
     {
         bIsCrouch = true;
@@ -730,4 +768,9 @@ void ANetworkPlayer::OnCreatureAttackCamera(ACreatureBase* Creature, UTextureRen
     AttackCameraWidget->ShowAttackCamera(RenderTarget, 3.0f);
 
     UE_LOG(LogTemp, Log, TEXT("Player Controller received attack camera from %s"), *Creature->GetName());
+}
+
+void ANetworkPlayer::SwitchCameraView(const FInputActionValue& Value)
+{
+    CameraBoom->SocketOffset.Y = -CameraBoom->SocketOffset.Y;
 }
