@@ -45,6 +45,9 @@ ACreatureController::ACreatureController()
     CreatureHearingConfig->DetectionByAffiliation.bDetectNeutrals = true;
     CreatureHearingConfig->DetectionByAffiliation.bDetectFriendlies = true;
 
+
+    CreatureSightConfig->SetMaxAge(2.0f);
+
     //주요 감각 설정
     CreaturePerception->SetDominantSense(*CreatureSightConfig->GetSenseImplementation());
     CreaturePerception->ConfigureSense(*CreatureSightConfig);
@@ -145,6 +148,7 @@ UE_LOG(LogTemp, Warning, TEXT("Detected Actor: %s (%s)"),
         }
         else
         {
+            UE_LOG(LogTemp, Warning, TEXT("DeACtivate"));
             bIsDetected = false;
         }
     }
@@ -233,15 +237,5 @@ void ACreatureController::OnFriendDetected(AActor* Actor, FAIStimulus Stimulus)
     }
 }
 
-void ACreatureController::OnUnPossess()
-{
-    Super::OnUnPossess();
-
-    UAIPerceptionComponent* CreaturePerceptionComp = GetPerceptionComponent();
-    if (CreaturePerceptionComp)
-    {
-        CreaturePerceptionComp->OnTargetPerceptionUpdated.Clear();
-    }
-}
 
 

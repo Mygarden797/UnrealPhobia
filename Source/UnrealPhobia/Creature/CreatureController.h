@@ -39,7 +39,7 @@ class UNREALPHOBIA_API ACreatureController : public AAIController
 		ACreatureController();
 
 		virtual void OnPossess(APawn * PawnToPossess) override;  
-		virtual void OnUnPossess() override; 
+		// virtual void OnUnPossess() override; 
 
 		static const FName StartLocation; //초기 위치 표현
 		static const FName PatrolLocation; //다음 수색 장소 표현

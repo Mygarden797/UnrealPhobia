@@ -206,4 +206,11 @@ private:
     // UI Update Functions
     void UpdateStaminaBar();
     void UpdateMentalBar();
+
+/*AI Perception Hearing*/
+public:
+    UFUNCTION(BlueprintCallable)
+    void MakeFootprintNoiseEvent();
+private:
+    float FootPrintNoise = 3000.f;
 };

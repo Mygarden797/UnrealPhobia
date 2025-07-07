@@ -16,6 +16,7 @@
 #include "StaminaBar.h"
 #include "MentalBar.h"
 #include "Mental/CandleRoom.h"
+#include "Perception/AISenseConfig_Hearing.h"
 
 ANetworkPlayer::ANetworkPlayer()
 {
@@ -697,4 +698,11 @@ void ANetworkPlayer::UpdateMentalBar()
         float Percent = CurrentMental / MaxMental;
         MentalBar->SetMentalPercent(Percent);
     }
+}
+
+/* 발자국 소리 이벤트*/
+void ANetworkPlayer::MakeFootprintNoiseEvent()
+{
+    UE_LOG(LogTemp, Warning, TEXT("MakeFootPrintNoiseEvent is Activate"));
+    UAISense_Hearing::ReportNoiseEvent(GetWorld(),GetActorLocation(),1.0f,this,FootPrintNoise,FName(TEXT("Footprint")));
 }
