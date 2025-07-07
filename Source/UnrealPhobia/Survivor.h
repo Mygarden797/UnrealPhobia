@@ -140,8 +140,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Mental")
 	bool bIsDead = false;
 
-	FRotator TargetCameraRotation;
-
 
 	// Mental 추가
 	void GameOver();

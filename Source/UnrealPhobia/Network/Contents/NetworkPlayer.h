@@ -59,11 +59,14 @@ public:
     //void MoveForward(const FInputActionValue& Value);
     //void MoveRight(const FInputActionValue& Value);
     void Look(const FInputActionValue& Value);
+   // ChangeView
+    void SwitchCameraView(const FInputActionValue& Value);
 
     // Sprint Handler
     void Sprint(const FInputActionValue& Value);
     void StartSprint();
     void StopSprint();
+    void UpdateDirectionWeight(FVector MoveDir);
 
     // Stamina Functions
     void LossStamina();
@@ -115,13 +118,15 @@ protected:
 
     // Input Actions
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-    class UInputAction* JumpAction;
+    TObjectPtr<UInputAction> JumpAction;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-    class UInputAction* MoveAction;
+    TObjectPtr<UInputAction> MoveAction;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-    class UInputAction* LookAction;
+    TObjectPtr<UInputAction> LookAction;
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    TObjectPtr<UInputAction> SwitchViewAction;
 
     //UPROPERTY(EditDefaultsOnly, Category = "Input")
     //TObjectPtr<UInputAction> MoveForwardAction;
@@ -135,7 +140,11 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     TObjectPtr<UInputAction> CrouchAction;
 
+
     // State Variables
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+    float BaseSpeed = 300.0f;
+
     UPROPERTY(BlueprintReadWrite, Category = "Stamina")
     bool bIsSprinting = false;
 
