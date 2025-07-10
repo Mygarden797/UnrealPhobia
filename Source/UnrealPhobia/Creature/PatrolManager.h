@@ -23,14 +23,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditInstanceOnly,BlueprintReadWrite,Category="AI")
-	TArray<AActor*> PatrolPoints;
 
-	static APatrolManager* GetInstance(UWorld* WorldContext);
 
-	int32 GetPatrolPointsNum();
-
-private:
-	static APatrolManager* Instance;
 
 };

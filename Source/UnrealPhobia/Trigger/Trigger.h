@@ -30,7 +30,7 @@ class UNREALPHOBIA_API ATrigger : public AActor
 
 public:
 	ATrigger();
-	~ATrigger();
+    ~ATrigger();
 
 	void SetTriggerName(ETriggerName Name); // 트리거 타입 지정 함수
 
@@ -44,12 +44,14 @@ public:
 	UStaticMesh *TriggerMesh; // 트리거 메시
 
 	ATriggerSpawnPoint *TriggerSpawnPoint;
-	// 트리거 정보, 아이디 받아오는것만 public으로 해야함.
-	class Protocol::ObjectInfo *TriggerInfo;
+    //트리거 정보, 아이디 받아오는것만 public으로 해야함. 그냥 id만 정수로 관리해도 괜찮을 듯
+    class Protocol::ObjectInfo* TriggerInfo;
 
 protected:
 	virtual void BeginPlay() override;
 	void SetupTriggerMesh(); // 메시 설정
+
+
 
 public:
 	virtual void Tick(float DeltaTime) override;

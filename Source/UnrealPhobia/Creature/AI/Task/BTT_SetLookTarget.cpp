@@ -14,13 +14,14 @@ UBTT_SetLookTarget::UBTT_SetLookTarget()
 
 EBTNodeResult::Type UBTT_SetLookTarget::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+    Super::ExecuteTask(OwnerComp,NodeMemory);
     ACreatureController* CreatureController = Cast<ACreatureController>(OwnerComp.GetAIOwner()); //AIController 가져오기
     RETURN_IF_NULL2(CreatureController,EBTNodeResult::Failed)
 
 
     if(CreatureController->GetbIsDetected())
     {
-        UObject* Target = OwnerComp.GetBlackboardComponent()->GetValueAsObject(ACreatureController::Target);
+        UObject* Target = OwnerComp.GetBlackboardComponent()->GetValueAsObject(LookTargetKey.SelectedKeyName);
         RETURN_IF_NULL2(Target,EBTNodeResult::Failed)
 
         ACharacter* TargetCharacter = Cast<ACharacter>(Target);

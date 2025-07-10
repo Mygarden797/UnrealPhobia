@@ -5,11 +5,13 @@
 #include "CoreMinimal.h"
 #include "Trigger.h"
 #include "TriggerMirror.h"
+#include "Network/Contents/NetworkMirror.h"
 #include "Components/ActorComponent.h"
 #include "Network/Contents/NetworkMirror.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
+#include "Network/Contents/NetworkPlayer.h"
 #include "TriggerInventory.generated.h"
 
 class ASurvivor;
@@ -51,11 +53,12 @@ public:
 
 	int32 SelectedIndex = 0, MaxInventorySize = 2, CurrentInventorySize = 0;
 	TArray<ETriggerName> Inventory;
-	TArray<int64> TriggerIDs; // 임시로 트리거 ID 저장용, 나중에 다른 형식으로 하꾸는게...?
+    TArray<int64> TriggerIDs; // 임시로 트리거 ID 저장용, 나중에 다른 형식으로 하꾸는게...?
 
 private:
 	UCameraComponent *CamComp;
 	ASurvivor *Survivor;
+    ANetworkPlayer* NetworkPlayer;
 	float MaxReachDistance = 400; // 최대 습득 사거리
 	float ReachRadius = 20;		  // 습득 반경
 

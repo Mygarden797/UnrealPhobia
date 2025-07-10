@@ -11,7 +11,16 @@ UTriggerInventory::UTriggerInventory()
 	UE_LOG(LogTemp, Log, TEXT("UTriggerInventory Created"));
 	Inventory.Init(ETriggerName::None, MaxInventorySize);
 	TriggerIDs.Init(0, MaxInventorySize);
-	Survivor = Cast<ASurvivor>(GetOwner());
+	// Survivor = Cast<ASurvivor>(GetOwner());
+	NetworkPlayer = Cast<ANetworkPlayer>(GetOwner());
+	if (NetworkPlayer)
+	{
+		UE_LOG(LogTemp, Display, TEXT("NetworkPlayer is set"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed To Set NetworkPlayer"));
+	}
 	if (SetCameraComponent())
 	{
 		UE_LOG(LogTemp, Display, TEXT("CameraComponent is set"));
@@ -95,7 +104,7 @@ void UTriggerInventory::PickUp()
 					TriggerIDs[ValidIndex] = HitTrigger->TriggerInfo->object_id(); // 임시로 트리거 ID 저장
 				}
 
-				UE_LOG(LogTemp, Log, TEXT("You got %s! [%d/%d]"), *HitActor->GetName(), ++CurrentInventorySize, MaxInventorySize);
+				UE_LOG(LogTemp, Log, TEXT("You got %s! [%d/%d], ID : %d"), *HitActor->GetName(), ++CurrentInventorySize, MaxInventorySize, TriggerIDs[ValidIndex]);
 				if (HitTrigger->TriggerSpawnPoint)
 					HitTrigger->TriggerSpawnPoint->bCanSpawn = true;
 
@@ -119,9 +128,12 @@ void UTriggerInventory::PickUp()
 			{
 				Inventory[SelectedIndex] = ETriggerName::None;
 				CurrentInventorySize--;
+				TriggerIDs[SelectedIndex] = 0; // ID 초기화
 			}
 		}
-		Survivor->InventoryWidget->RefreshInventory();
+		// Survivor->InventoryWidget->RefreshInventory();
+		if (NetworkPlayer)
+			NetworkPlayer->InventoryWidget->RefreshInventory();
 	}
 }
 
@@ -143,13 +155,17 @@ void UTriggerInventory::DropOff()
 		if (DroppedTrigger)
 		{
 			DroppedTrigger->SetTriggerName(Inventory[SelectedIndex]);
+			DroppedTrigger->TriggerInfo->set_object_id(TriggerIDs[SelectedIndex]); // 트리거 ID 설정
 			DroppedTrigger->BaseMeshComponent->AddImpulse(DroppedTrigger->GetActorForwardVector() * 500, NAME_None, true);
 			CurrentInventorySize--;
 			Inventory[SelectedIndex] = ETriggerName::None;
+			TriggerIDs[SelectedIndex] = 0; // ID 초기화
 			UE_LOG(LogTemp, Log, TEXT("Trigger Dropped"));
 		}
 	}
-	Survivor->InventoryWidget->RefreshInventory();
+	// Survivor->InventoryWidget->RefreshInventory();
+	if (NetworkPlayer)
+		NetworkPlayer->InventoryWidget->RefreshInventory();
 }
 
 void UTriggerInventory::SelectSlot(int32 Index)
@@ -158,6 +174,8 @@ void UTriggerInventory::SelectSlot(int32 Index)
 	{
 		SelectedIndex = Index - 1;
 		UE_LOG(LogTemp, Log, TEXT("Slot Changed to %d"), SelectedIndex + 1);
-		Survivor->InventoryWidget->RefreshInventory();
+		// Survivor->InventoryWidget->RefreshInventory();
+		if (NetworkPlayer)
+			NetworkPlayer->InventoryWidget->RefreshInventory();
 	}
 }

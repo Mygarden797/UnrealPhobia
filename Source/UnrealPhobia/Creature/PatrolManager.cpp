@@ -3,9 +3,7 @@
 
 #include "Creature/PatrolManager.h"
 #include "Kismet/GameplayStatics.h"
-
-//static 특성상 타입 선언과 정의를 다시 해주어야 한다.
-APatrolManager* APatrolManager::Instance = nullptr;
+#include "Creature/Manager/WorldSpawnManager.h"
 
 // Sets default values
 APatrolManager::APatrolManager()
@@ -19,6 +17,20 @@ APatrolManager::APatrolManager()
 void APatrolManager::BeginPlay()
 {
 	Super::BeginPlay();
+	UWorldSpawnManager* SubSystem = GetWorld()->GetSubsystem<UWorldSpawnManager>();
+	if(SubSystem == nullptr)
+	{
+		UE_LOG(LogTemp, Display, TEXT("SubSystem is Null"));
+		return;
+	}
+
+	// SubSystem->SpawnCreature(FVector::ZeroVector,FRotator::ZeroRotator,UWorldSpawnManager::CreatureGrey);
+	// FVector SpawnPoint = FVector(10,10,10);
+	// FVector SpawnPoint2 = FVector(100,100,100);
+	// FVector SpawnPoint3 = FVector(50,50,50);
+	// SubSystem->SpawnCreature(SpawnPoint,FRotator::ZeroRotator,UWorldSpawnManager::CreatureGrey);
+	// SubSystem->SpawnCreature(SpawnPoint2,FRotator::ZeroRotator,UWorldSpawnManager::CreatureWhiteMask);
+	// SubSystem->SpawnCreature(SpawnPoint3,FRotator::ZeroRotator,UWorldSpawnManager::CreatureZombie);
 	
 }
 
@@ -29,18 +41,4 @@ void APatrolManager::Tick(float DeltaTime)
 
 }
 
-APatrolManager* APatrolManager::GetInstance(UWorld* WorldContext)
-{
-
-		//싱글톤 패턴으로 써야 하나, 이미 월드에 배치되는 Actor 캐릭터이기에 불러오는 방식으로 변경
-		/*지속적인 크래시 원인으로 지목되어서 싱글톤 구조를 없앴다.*/
-        Instance = Cast<APatrolManager>(UGameplayStatics::GetActorOfClass(WorldContext, APatrolManager::StaticClass()));
-
-	return Instance;
-}
-
-int32 APatrolManager::GetPatrolPointsNum()
-{
-	return PatrolPoints.Num();
-}
 

@@ -15,13 +15,13 @@ ATrigger::ATrigger()
 		ECollisionResponse::ECR_Ignore // Ignore 되도록
 	);
 
-	TriggerInfo = new Protocol::ObjectInfo();
+    TriggerInfo = new Protocol::ObjectInfo();
 }
 
 ATrigger::~ATrigger()
 {
-	delete TriggerInfo;
-	TriggerInfo = nullptr;
+    delete TriggerInfo;
+    TriggerInfo = nullptr;
 }
 
 // 트리거 종류 설정 및 메시 재적용

@@ -16,6 +16,10 @@ class UNREALPHOBIA_API UBTT_SetLookTarget : public UBTTask_BlackboardBase
 	
 	public:
 		UBTT_SetLookTarget();
+
+		UPROPERTY(EditAnywhere,Category = "Blackboard")
+		struct FBlackboardKeySelector LookTargetKey;
+	
 	protected:
 		virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);
 };

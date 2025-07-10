@@ -39,7 +39,7 @@ EBTNodeResult::Type UBTT_Chase::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
     FVector LastTargetLocation = TargetActor->GetActorLocation();
     Blackboard->SetValueAsVector(LastFoundLocation,LastTargetLocation);
 
-    CreatureController->MoveToActor(TargetActor,AcceptRadius);
+    // CreatureController->MoveToActor(TargetActor,AcceptRadius);
 
     return EBTNodeResult::Succeeded;
 

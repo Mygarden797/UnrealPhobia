@@ -15,17 +15,12 @@ ANetworkMirror::ANetworkMirror()
         ECollisionResponse::ECR_Block // Block되도록
     );
 
-    //얘도 임시
-    TriggerInfo = new Protocol::ObjectInfo();
-    CreatureInfo = new Protocol::ObjectInfo();
-
 }
 void ANetworkMirror::SetupMirrorMesh()
 {
     //임시
     FString MeshPath = TEXT("/Script/Engine.StaticMesh'/Game/Trigger/StaticMesh/SM_TriggerMirror.SM_TriggerMirror");
     // 메쉬 경로에 해당하는 UStaticMesh 객체 로드
-    //FString MeshPath = TEXT("/Game/AI/BP_CreatureGrey.BP_CreatureGrey_C");
 
     UStaticMesh* LoadedMesh = Cast<UStaticMesh>(StaticLoadObject(
         UStaticMesh::StaticClass(), // 로드할 객체의 클래스 타입 지정 (UStaticMesh)
@@ -60,39 +55,19 @@ void ANetworkMirror::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 }
 
-//소환 위치랑 trigger_id 바꿔야함.
-bool ANetworkMirror::ActivateTrigger()
-{
-    Protocol::C_SPAWN_CREATURE SpawnCreaturePkt;
-    TriggerInfo->set_object_id(1);
-    {
-        auto pos = CreatureInfo->mutable_pos_info();
-        pos->set_x(-3972.f);
-        pos->set_y(-12010.f);
-        pos->set_z(610.f);
-        pos->set_yaw(90.f);
-    }
-    SpawnCreaturePkt.mutable_trigger_info()->CopyFrom(*TriggerInfo);
-    SpawnCreaturePkt.mutable_creature_info()->CopyFrom(*CreatureInfo);
-
-    SEND_PACKET(SpawnCreaturePkt);
-    return true;
-
-}
-
 bool ANetworkMirror::ActivateTrigger(int64 trigger_id)
 {
     Protocol::C_SPAWN_CREATURE SpawnCreaturePkt;
+
+    class Protocol::ObjectInfo* TriggerInfo = SpawnCreaturePkt.mutable_trigger_info();
+    class Protocol::ObjectInfo* CreatureInfo = SpawnCreaturePkt.mutable_creature_info();
+    class Protocol::CreatureInfo* CreatureInfo_Spawn = CreatureInfo->mutable_creature_info();
     TriggerInfo->set_object_id(trigger_id);
-    {
-        auto pos = CreatureInfo->mutable_pos_info();
-        pos->set_x(-3972.f);
-        pos->set_y(-12010.f);
-        pos->set_z(610.f);
-        pos->set_yaw(90.f);
-    }
-    SpawnCreaturePkt.mutable_trigger_info()->CopyFrom(*TriggerInfo);
-    SpawnCreaturePkt.mutable_creature_info()->CopyFrom(*CreatureInfo);
+
+    //거울 location_id보고  해당 위치에 소환.
+    FString LocationIdStr = location_id.ToString();
+    int64 location_id_int = FCString::Atoi64(*LocationIdStr);
+    CreatureInfo_Spawn->set_spawn_point(location_id_int);
 
     SEND_PACKET(SpawnCreaturePkt);
     return true;

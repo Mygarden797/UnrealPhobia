@@ -39,12 +39,14 @@ class UNREALPHOBIA_API ACreatureController : public AAIController
 		ACreatureController();
 
 		virtual void OnPossess(APawn * PawnToPossess) override;  
+		// virtual void OnUnPossess() override; 
 
 		static const FName StartLocation; //초기 위치 표현
 		static const FName PatrolLocation; //다음 수색 장소 표현
 		static const FName Target; // 추적 대상 표현
 		static const FName CreatureState; //현재 몬스터 상태 표현
 		static const FName LastFoundLocation; // 마지막 발견 장소
+		static const FName Friend;
 
 		UPROPERTY(EditAnywhere,BlueprintReadWrite,Category= Creature)
 		float CreatureSightRadius;
@@ -54,6 +56,9 @@ class UNREALPHOBIA_API ACreatureController : public AAIController
 
 		UPROPERTY(EditAnywhere,BlueprintReadWrite,Category= Creature)
 		float CreaturePeripheralVisionAngleDegrees;
+
+		UPROPERTY(EditAnywhere,BlueprintReadWrite,Category= Creature)
+		float CreatureHearingRange = 2500.f;
 
 		UPROPERTY(EditAnywhere,Category=Creauture)
 		float InvestigateDistance = 50;
@@ -70,6 +75,10 @@ class UNREALPHOBIA_API ACreatureController : public AAIController
 		UFUNCTION()
 		void OnTargetDetected(AActor* Actor, FAIStimulus Stimulus);
 
+		UFUNCTION()
+		void OnFriendDetected(AActor* Actor, FAIStimulus Stimulus);
+
+
 		UPROPERTY(EditDefaultsOnly, Category = AI)
 		class UBehaviorTree* BTAsset;
 
@@ -79,6 +88,9 @@ class UNREALPHOBIA_API ACreatureController : public AAIController
 
 
 		bool bIsDetected = false;
+
+		UPROPERTY(EditDefaultsOnly, Category = Friend)
+		TSet<ACreatureBase*> FriendList; 
 
 
 };
