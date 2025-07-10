@@ -18,7 +18,7 @@
 #include "Mental/CandleRoom.h"
 #include "Perception/AISenseConfig_Hearing.h"
 
-ANetworkPlayer::ANetworkPlayer()
+ANetworkPlayer::ANetworkPlayer(const FObjectInitializer& ObjectInitializer)
 {
     // Set collision capsule size
     GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -43,12 +43,12 @@ ANetworkPlayer::ANetworkPlayer()
     CameraBoom->TargetArmLength = 90.0f;
     CameraBoom->SocketOffset = FVector(10.f, 45.f, 0.f);
     CameraBoom->ProbeSize = 12.f;
-    // CameraBoom->bUsePawnControlRotation = true;
+    CameraBoom->bUsePawnControlRotation = true;
 
     // Create a follow camera
     FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
     FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-    // FollowCamera->bUsePawnControlRotation = false;
+    FollowCamera->bUsePawnControlRotation = false;
 }
 
 void ANetworkPlayer::BeginPlay()
@@ -191,7 +191,7 @@ void ANetworkPlayer::BeginPlay()
     // 공격 카메라 위젯 생성
     if (AttackCameraWidgetClass)
     {
-        AttackCameraWidget = CreateWidget<UAttackCameraWidget>(this, AttackCameraWidgetClass);
+        AttackCameraWidget = CreateWidget<UAttackCameraWidget>(GetWorld(), AttackCameraWidgetClass);
         if (AttackCameraWidget)
         {
             AttackCameraWidget->AddToViewport();
@@ -317,7 +317,7 @@ void ANetworkPlayer::Look(const FInputActionValue& Value)
     if (Controller != nullptr)
     {
         AddControllerYawInput(LookAxisVector.X);
-        AddControllerPitchInput(LookAxisVector.Y);
+        AddControllerPitchInput(LookAxisVector.Y * -1);
     }
 }
 
@@ -422,7 +422,7 @@ void ANetworkPlayer::UpdateDirectionWeight(FVector MoveDir)
     if (bIsSprinting && CurrentStamina > 0.0f)
     {
         GetCharacterMovement()->MaxWalkSpeed = (BaseSpeed * SpeedMultiplier) * 1.5f;
-        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Run"));
+        // GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Run"));
     }
     else
     {

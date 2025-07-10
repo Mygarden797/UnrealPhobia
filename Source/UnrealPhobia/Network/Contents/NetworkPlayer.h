@@ -27,7 +27,7 @@ class UNREALPHOBIA_API ANetworkPlayer : public AProtoPlayer
     GENERATED_BODY()
 
 public:
-    ANetworkPlayer();
+    ANetworkPlayer(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -123,9 +123,6 @@ protected:
     TObjectPtr<UInputMappingContext> SurvivorMovingContext;
 
     // Input Actions
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-    TObjectPtr<UInputAction> JumpAction;
-
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
     TObjectPtr<UInputAction> MoveAction;
 
