@@ -96,7 +96,7 @@ public:
 	void DecreaseMental();
 	void RegenMental();
 	void ActivateRandomMentalTrigger();
-
+    
 protected:
 	virtual void BeginPlay() override;
 
@@ -126,6 +126,20 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
+
+    FTimerHandle CameraLerpTimer;
+    FVector StartOffset;
+    FVector EndOffset;
+    float CameraLerpDuration = 0.1f;
+    float LerpElapsed = 0.0f;
+    float LerpStepTime = 0.01f;
+    bool bIsLerping = false;
+
+    // Move Camera Smoothly 
+    void StartCameraLerp(const FVector& NewOffset);
+    void StepCameraLerp();
+    void UpdateCameraLag();
+
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category ="Movement")
     float BaseSpeed = 300.0f;

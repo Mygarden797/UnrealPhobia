@@ -44,6 +44,8 @@ ANetworkPlayer::ANetworkPlayer(const FObjectInitializer& ObjectInitializer)
     CameraBoom->SocketOffset = FVector(10.f, 45.f, 0.f);
     CameraBoom->ProbeSize = 12.f;
     CameraBoom->bUsePawnControlRotation = true;
+    CameraBoom->bEnableCameraLag = true;
+    CameraBoom->bUseCameraLagSubstepping = true;
 
     // Create a follow camera
     FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -368,6 +370,7 @@ void ANetworkPlayer::StartSprint()
         return;
 
     bIsSprinting = true;
+    UpdateCameraLag();
     GetCharacterMovement()->MaxWalkSpeed = 900.f;
 
     if (!GetWorldTimerManager().IsTimerActive(FStaminaLossHandle))
@@ -385,6 +388,7 @@ void ANetworkPlayer::StartSprint()
 void ANetworkPlayer::StopSprint()
 {
     bIsSprinting = false;
+    UpdateCameraLag();
     GetCharacterMovement()->MaxWalkSpeed = 400.f;
 
     GetWorldTimerManager().ClearTimer(FStaminaLossHandle);
@@ -474,6 +478,7 @@ void ANetworkPlayer::RegenStamina()
 void ANetworkPlayer::SetCrouch(const FInputActionValue& value)
 {
     const bool bPressed = value.Get<bool>();
+
     if (bIsSprinting)
     {
         bIsSprinting = false;
@@ -481,11 +486,13 @@ void ANetworkPlayer::SetCrouch(const FInputActionValue& value)
     if (bPressed)
     {
         bIsCrouch = true;
+        UpdateCameraLag();
         Crouch();
     }
     else
     {
         bIsCrouch = false;
+        UpdateCameraLag();
         UnCrouch();
     }
 }
@@ -772,5 +779,58 @@ void ANetworkPlayer::OnCreatureAttackCamera(ACreatureBase* Creature, UTextureRen
 
 void ANetworkPlayer::SwitchCameraView(const FInputActionValue& Value)
 {
-    CameraBoom->SocketOffset.Y = -CameraBoom->SocketOffset.Y;
+    float ChangedY = -CameraBoom->SocketOffset.Y;
+    StartCameraLerp(FVector(0, ChangedY, CameraBoom->SocketOffset.Z));
+}
+
+// 상황에 따라 Duration과 NewOffset 조절
+// Duration이 너무 높거나 NewOffset이 SpringArm->SocketOffset+32처럼 고정값이 아니면 시점이 무너질 수 있음
+void ANetworkPlayer::StartCameraLerp(const FVector& NewOffset)
+{
+    if (bIsLerping)
+    {
+        GetWorld()->GetTimerManager().ClearTimer(CameraLerpTimer);
+    }
+    
+    StartOffset = CameraBoom->SocketOffset;
+    EndOffset = NewOffset;
+    LerpElapsed = 0.0f;
+    bIsLerping = true;
+
+    GetWorld()->GetTimerManager().SetTimer(CameraLerpTimer, this, &ANetworkPlayer::StepCameraLerp, LerpStepTime, true);
+}
+
+void ANetworkPlayer::StepCameraLerp()
+{
+    LerpElapsed += LerpStepTime;
+    // float Alpha = FMath::Clamp(LerpElapsed / CameraLerpDuration, 0.0f, 1.0f);
+    float EasedAlpha = FMath::InterpEaseInOut(0.0f, 1.0f, FMath::Clamp(LerpElapsed / CameraLerpDuration, 0.0f, 1.0f), 2.0f);
+
+    FVector NewOffset = FMath::Lerp(StartOffset, EndOffset, EasedAlpha);
+    CameraBoom->SocketOffset = NewOffset;
+
+    if (EasedAlpha >= 1.0f)
+    {
+        GetWorld()->GetTimerManager().ClearTimer(CameraLerpTimer);
+        bIsLerping = false;
+    }
+}
+
+void ANetworkPlayer::UpdateCameraLag()
+{
+    if (bIsSprinting)
+    {
+        CameraBoom->CameraLagSpeed = 15.f;
+        CameraBoom->CameraLagSpeed = 20.f;
+    }
+    else if (bIsCrouch)
+    {
+        CameraBoom->CameraLagSpeed = 6.f;
+        CameraBoom->CameraLagMaxDistance = 35.f;
+    }
+    else
+    {
+        CameraBoom->CameraLagSpeed = 9.f;
+        CameraBoom->CameraLagMaxDistance = 30.f;
+    }
 }

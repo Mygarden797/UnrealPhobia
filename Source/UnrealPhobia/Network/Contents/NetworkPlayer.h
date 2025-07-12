@@ -110,10 +110,23 @@ protected:
 
     // Camera Components
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-    class USpringArmComponent* CameraBoom;
+    TObjectPtr<USpringArmComponent> CameraBoom;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-    class UCameraComponent* FollowCamera;
+    TObjectPtr<UCameraComponent> FollowCamera;
+
+    FTimerHandle CameraLerpTimer;
+    FVector StartOffset;
+    FVector EndOffset;
+    float CameraLerpDuration = 0.1f;
+    float LerpElapsed = 0.0f;
+    float LerpStepTime = 0.01f;
+    bool bIsLerping = false;
+
+    // Move Camera Smoothly 
+    void StartCameraLerp(const FVector& NewOffset);
+    void StepCameraLerp();
+    void UpdateCameraLag();
 
     //// Enhanced Input Components
     //UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
