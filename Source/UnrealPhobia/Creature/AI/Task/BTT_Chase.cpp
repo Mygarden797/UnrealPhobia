@@ -5,6 +5,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Creature/CreatureBase.h"
 #include "Creature/CreatureController.h"
+#include "NavigationSystem.h"
 
 
 
@@ -37,7 +38,16 @@ EBTNodeResult::Type UBTT_Chase::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
 
     //BlackBoard의 LastFoundLocation에 Target의 위치 저장
     FVector LastTargetLocation = TargetActor->GetActorLocation();
-    Blackboard->SetValueAsVector(LastFoundLocation,LastTargetLocation);
+    FNavLocation ProjectedLocation;
+    //2025.07.15 LastFoundLocation이 네비 메쉬위에 있도록 하기 위한 장치
+    UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
+    if (NavSys && NavSys->ProjectPointToNavigation(LastTargetLocation, ProjectedLocation, FVector(50, 50, 200))) {
+        
+        Blackboard->SetValueAsVector(LastFoundLocation, ProjectedLocation.Location);
+    } else {
+        
+        Blackboard->SetValueAsVector(LastFoundLocation, LastTargetLocation);
+    }
 
     // CreatureController->MoveToActor(TargetActor,AcceptRadius);
 

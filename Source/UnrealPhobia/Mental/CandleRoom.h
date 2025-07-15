@@ -2,10 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Mental/Candle.h"
 #include "CandleRoom.generated.h"
 
 class UBoxComponent;
-class UStaticMeshComponent;
 
 UCLASS()
 class UNREALPHOBIA_API ACandleRoom : public AActor
@@ -14,9 +14,10 @@ class UNREALPHOBIA_API ACandleRoom : public AActor
 
 public:
 	ACandleRoom();
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* CubeMesh;
-	
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "CandleRoom")
+	TArray<TObjectPtr<ACandle>> AssociatedCandles;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -32,7 +33,6 @@ protected:
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	                  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	// 회복 수치 설정
 	UPROPERTY(EditAnywhere, Category = "Mental Regen")
 	float RegenPerTick = 6.f;
 
@@ -41,7 +41,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Mental Regen")
 	float RegenTotalAmount = 60.f;
-
-public:
-
 };

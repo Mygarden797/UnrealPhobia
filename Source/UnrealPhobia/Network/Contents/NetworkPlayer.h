@@ -2,12 +2,11 @@
 
 #pragma once
 
-
 #include "CoreMinimal.h"
 #include "Network/Contents/ProtoPlayer.h"
 #include "InputActionValue.h"
-#include "Creature/CreatureBase.h" // Å©¸®ÃÄ º£ÀÌ½º Çì´õ
-#include "AttackCameraWidget.h" // °ø°Ý Ä«¸Þ¶ó À§Á¬ Çì´õ
+#include "Creature/CreatureBase.h" // Å©ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½
+#include "AttackCameraWidget.h"    // ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 #include "NetworkPlayer.generated.h"
 
 class USpringArmComponent;
@@ -27,22 +26,34 @@ class UNREALPHOBIA_API ANetworkPlayer : public AProtoPlayer
     GENERATED_BODY()
 
 public:
-    ANetworkPlayer();
+    ANetworkPlayer(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-    virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+    virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
 
     // UI Components
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<class UUserWidget> CrosshairWidgetClass;
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
+    TSubclassOf<class UUserWidget> GameOverWidgetClass;
+
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
+    TSubclassOf<class UUserWidget> GameWinWidgetClass;
+
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<class UInventoryWidget> InventoryWidgetClass;
 
     UPROPERTY()
-    class UUserWidget* CrosshairWidget;
+    class UUserWidget *CrosshairWidget;
 
     UPROPERTY()
-    class UInventoryWidget* InventoryWidget;
+    class UUserWidget *GameOverWidget;
+
+    UPROPERTY()
+    class UUserWidget *GameWinWidget;
+
+    UPROPERTY()
+    class UInventoryWidget *InventoryWidget;
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<class UStaminaBar> StaminaBarClass;
@@ -51,28 +62,31 @@ public:
     TSubclassOf<class UMentalBar> MentalBarClass;
 
     UPROPERTY()
-    class UStaminaBar* StaminaBar;
+    class UStaminaBar *StaminaBar;
 
     UPROPERTY()
-    class UMentalBar* MentalBar;
+    class UMentalBar *MentalBar;
 
     // Movement Functions
-    void Move(const FInputActionValue& Value);
-    //void MoveForward(const FInputActionValue& Value);
-    //void MoveRight(const FInputActionValue& Value);
-    void Look(const FInputActionValue& Value);
+    void Move(const FInputActionValue &Value);
+    // void MoveForward(const FInputActionValue& Value);
+    // void MoveRight(const FInputActionValue& Value);
+    void Look(const FInputActionValue &Value);
+    // ChangeView
+    void SwitchCameraView(const FInputActionValue &Value);
 
     // Sprint Handler
-    void Sprint(const FInputActionValue& Value);
+    void Sprint(const FInputActionValue &Value);
     void StartSprint();
     void StopSprint();
+    void UpdateDirectionWeight(FVector MoveDir);
 
     // Stamina Functions
     void LossStamina();
     void RegenStamina();
 
     // Crouch Function
-    void SetCrouch(const FInputActionValue& value);
+    void SetCrouch(const FInputActionValue &value);
 
     // Mental Functions
     void IncreaseMental(float Amount);
@@ -82,24 +96,23 @@ public:
 
     void GameWin();
 
-    //Attacked
-    float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
-        AController* EventInstigator, AActor* DamageCauser);
+    // Attacked
+    float TakeDamage(float DamageAmount, FDamageEvent const &DamageEvent,
+                     AController *EventInstigator, AActor *DamageCauser);
 
     /** Returns CameraBoom subobject **/
-    FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+    FORCEINLINE class USpringArmComponent *GetCameraBoom() const { return CameraBoom; }
     /** Returns FollowCamera subobject **/
-    FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+    FORCEINLINE class UCameraComponent *GetFollowCamera() const { return FollowCamera; }
 
     UPROPERTY()
-    AActor* CurrentTrigger;
+    AActor *CurrentTrigger;
     void DecreaseMental();
     void RegenMental();
     void ActivateRandomMentalTrigger();
 
-
     UFUNCTION()
-    void OnCreatureAttackCamera(ACreatureBase* Creature, UTextureRenderTarget2D* RenderTarget);
+    void OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRenderTarget2D *RenderTarget);
 
 protected:
     virtual void BeginPlay() override;
@@ -107,33 +120,45 @@ protected:
 
     // Camera Components
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-    class USpringArmComponent* CameraBoom;
+    TObjectPtr<USpringArmComponent> CameraBoom;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-    class UCameraComponent* FollowCamera;
+    TObjectPtr<UCameraComponent> FollowCamera;
+
+    FTimerHandle CameraLerpTimer;
+    FVector StartOffset;
+    FVector EndOffset;
+    float CameraLerpDuration = 0.1f;
+    float LerpElapsed = 0.0f;
+    float LerpStepTime = 0.01f;
+    bool bIsLerping = false;
+
+    // Move Camera Smoothly 
+    void StartCameraLerp(const FVector& NewOffset);
+    void StepCameraLerp();
+    void UpdateCameraLag();
 
     //// Enhanced Input Components
-    //UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-    //class UInputMappingContext* DefaultMappingContext;
+    // UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+    // class UInputMappingContext* DefaultMappingContext;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     TObjectPtr<UInputMappingContext> SurvivorMovingContext;
 
     // Input Actions
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-    class UInputAction* JumpAction;
+    TObjectPtr<UInputAction> MoveAction;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-    class UInputAction* MoveAction;
+    TObjectPtr<UInputAction> LookAction;
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    TObjectPtr<UInputAction> SwitchViewAction;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-    class UInputAction* LookAction;
+    // UPROPERTY(EditDefaultsOnly, Category = "Input")
+    // TObjectPtr<UInputAction> MoveForwardAction;
 
-    //UPROPERTY(EditDefaultsOnly, Category = "Input")
-    //TObjectPtr<UInputAction> MoveForwardAction;
-
-    //UPROPERTY(EditDefaultsOnly, Category = "Input")
-    //TObjectPtr<UInputAction> MoveRightAction;
+    // UPROPERTY(EditDefaultsOnly, Category = "Input")
+    // TObjectPtr<UInputAction> MoveRightAction;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     TObjectPtr<UInputAction> SprintAction;
@@ -142,6 +167,9 @@ protected:
     TObjectPtr<UInputAction> CrouchAction;
 
     // State Variables
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+    float BaseSpeed = 300.0f;
+
     UPROPERTY(BlueprintReadWrite, Category = "Stamina")
     bool bIsSprinting = false;
 
@@ -174,7 +202,6 @@ protected:
 
     void GameOver();
 
-
     // Network-related variables
     const float MOVE_PACKET_SEND_DELAY = 0.2f;
     float MovePacketSendTimer = MOVE_PACKET_SEND_DELAY;
@@ -187,14 +214,13 @@ protected:
     // Dirty Flag Test
     FVector2D LastDesiredInput;
 
-
-    // °ø°Ý Ä«¸Þ¶ó À§Á¬ Å¬·¡½º
+    // ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
     TSubclassOf<UAttackCameraWidget> AttackCameraWidgetClass;
 
-    // °ø°Ý Ä«¸Þ¶ó À§Á¬ ÀÎ½ºÅÏ½º
+    // ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½
     UPROPERTY()
-    UAttackCameraWidget* AttackCameraWidget;
+    UAttackCameraWidget *AttackCameraWidget;
 
 private:
     // Stamina System
@@ -221,4 +247,12 @@ private:
     // UI Update Functions
     void UpdateStaminaBar();
     void UpdateMentalBar();
+
+    /*AI Perception Hearing*/
+public:
+    UFUNCTION(BlueprintCallable)
+    void MakeFootprintNoiseEvent();
+
+private:
+    float FootPrintNoise = 3000.f;
 };
