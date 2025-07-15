@@ -18,7 +18,7 @@
 #include "Mental/CandleRoom.h"
 #include "Perception/AISenseConfig_Hearing.h"
 
-ANetworkPlayer::ANetworkPlayer(const FObjectInitializer& ObjectInitializer)
+ANetworkPlayer::ANetworkPlayer(const FObjectInitializer &ObjectInitializer)
 {
     // Set collision capsule size
     GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -139,7 +139,7 @@ void ANetworkPlayer::BeginPlay()
         }
     }
 
-    // CandleRoom Ʈ���� �̸� ���
+    // CandleRoom Ʈ ̸
     UE_LOG(LogTemp, Log, TEXT("=== FoundTriggers (CandleRoom) ==="));
     for (AActor *Trigger : FoundTriggers)
     {
@@ -149,7 +149,7 @@ void ANetworkPlayer::BeginPlay()
         }
     }
 
-    // CandleRoom2 Ʈ���� �̸� ���
+    // CandleRoom2 Ʈ ̸
     UE_LOG(LogTemp, Log, TEXT("=== FoundTriggers2 (CandleRoom2) ==="));
     for (AActor *Trigger : FoundTriggers2)
     {
@@ -173,20 +173,26 @@ void ANetworkPlayer::BeginPlay()
 
         if (ACandleRoom *CandleRoom = Cast<ACandleRoom>(SelectedTrigger))
         {
-            if (CandleRoom->CubeMesh)
+            for (const auto &Candle : CandleRoom->AssociatedCandles)
             {
-                CandleRoom->CubeMesh->SetVisibility(true);
-                UE_LOG(LogTemp, Log, TEXT("CandleRoom cube made visible"));
+                if (Candle)
+                {
+                    Candle->SetFlameActive(true);
+                }
             }
+            UE_LOG(LogTemp, Log, TEXT("Candle flames turned ON for: %s"), *SelectedTrigger->GetName());
         }
 
         if (ACandleRoom *CandleRoom = Cast<ACandleRoom>(SelectedTrigger2))
         {
-            if (CandleRoom->CubeMesh)
+            for (const auto &Candle : CandleRoom->AssociatedCandles)
             {
-                CandleRoom->CubeMesh->SetVisibility(true);
-                UE_LOG(LogTemp, Log, TEXT("CandleRoom cube made visible"));
+                if (Candle)
+                {
+                    Candle->SetFlameActive(true);
+                }
             }
+            UE_LOG(LogTemp, Log, TEXT("Candle flames turned ON for: %s"), *SelectedTrigger2->GetName());
         }
     }
 
@@ -570,7 +576,7 @@ void ANetworkPlayer::GameWin()
     GameInstance->DisconnectFromGameServer();
 }
 
-// �������� ������ ����ۿ� ����. ������ �ʿ� ����. ������ �Դ� �͵� DecreaseMental �Լ� �̿��ϵ��� ��ġ��
+//  ۿ .  ʿ .  Դ ͵ DecreaseMental Լ ̿ϵ ġ
 float ANetworkPlayer::TakeDamage(float DamageAmount, FDamageEvent const &DamageEvent,
                                  AController *EventInstigator, AActor *DamageCauser)
 {
@@ -583,11 +589,11 @@ float ANetworkPlayer::TakeDamage(float DamageAmount, FDamageEvent const &DamageE
         return 0.0f;
     }
 
-    // �������� ����
+    //
     float AppliedDamage = FMath::Clamp(DamageAmount, 0.0f, CurrentMental);
     CurrentMental -= AppliedDamage;
 
-    // ���ŷ��� 0 ���Ϸ� �������� ��� ���� ���� ����
+    // ŷ 0 Ϸ
     if (CurrentMental <= 0.0f)
     {
         CurrentMental = 0.0f; // ���� ���� (���ʿ��ϸ� ���� ����)
@@ -638,7 +644,7 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
     UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers1);
     UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom2"), FoundTriggers2);
 
-    // ���� Ʈ���Ű� CandleRoom �迭���� CandleRoom2 �迭���� �Ǻ�
+    //  ƮŰ CandleRoom 迭 CandleRoom2 迭 Ǻ
     FName CurrentMapTag;
     if (CurrentTrigger && CurrentTrigger->Tags.Contains(FName("CandleRoom")))
     {
@@ -650,7 +656,7 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
     }
     else
     {
-        // CurrentTrigger�� ������ �⺻ CandleRoom���� ó��
+        // CurrentTrigger  ⺻ CandleRoom ó
         CurrentMapTag = FName("CandleRoom");
     }
 
@@ -687,11 +693,14 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
 
         if (ACandleRoom *CandleRoom = Cast<ACandleRoom>(CurrentTrigger))
         {
-            if (CandleRoom->CubeMesh)
+            for (const auto &Candle : CandleRoom->AssociatedCandles)
             {
-                CandleRoom->CubeMesh->SetVisibility(false);
-                UE_LOG(LogTemp, Log, TEXT("CandleRoom cube made Invisible"));
+                if (Candle)
+                {
+                    Candle->SetFlameActive(false);
+                }
             }
+            UE_LOG(LogTemp, Log, TEXT("Candle flames turned OFF for: %s"), *CurrentTrigger->GetName());
         }
 
         SelectedTrigger->Tags.AddUnique(FName("Active"));
@@ -699,11 +708,14 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
 
         if (ACandleRoom *CandleRoom = Cast<ACandleRoom>(SelectedTrigger))
         {
-            if (CandleRoom->CubeMesh)
+            for (const auto &Candle : CandleRoom->AssociatedCandles)
             {
-                CandleRoom->CubeMesh->SetVisibility(true);
-                UE_LOG(LogTemp, Log, TEXT("CandleRoom cube made visible"));
+                if (Candle)
+                {
+                    Candle->SetFlameActive(true);
+                }
             }
+            UE_LOG(LogTemp, Log, TEXT("Candle flame turned ON for: %s"), *SelectedTrigger->GetName());
         }
 
         UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger->GetName());
@@ -763,13 +775,13 @@ void ANetworkPlayer::SwitchCameraView(const FInputActionValue &Value)
 
 // 상황에 따라 Duration과 NewOffset 조절
 // Duration이 너무 높거나 NewOffset이 SpringArm->SocketOffset+32처럼 고정값이 아니면 시점이 무너질 수 있음
-void ANetworkPlayer::StartCameraLerp(const FVector& NewOffset)
+void ANetworkPlayer::StartCameraLerp(const FVector &NewOffset)
 {
     if (bIsLerping)
     {
         GetWorld()->GetTimerManager().ClearTimer(CameraLerpTimer);
     }
-    
+
     StartOffset = CameraBoom->SocketOffset;
     EndOffset = NewOffset;
     LerpElapsed = 0.0f;
