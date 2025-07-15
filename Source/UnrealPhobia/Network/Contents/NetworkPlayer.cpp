@@ -16,6 +16,11 @@
 #include "StaminaBar.h"
 #include "MentalBar.h"
 #include "Mental/CandleRoom.h"
+<<<<<<< Updated upstream
+=======
+#include "Creature/CreatureBase.h"
+#include "Perception/AISenseConfig_Hearing.h"
+>>>>>>> Stashed changes
 
 ANetworkPlayer::ANetworkPlayer()
 {
@@ -205,6 +210,8 @@ void ANetworkPlayer::BeginPlay()
             AttackCameraWidget->AddToViewport();
         }
     }
+    // 크리쳐 공격 카메라 델리게이트 바인딩
+    ACreatureBase::OnCreatureAttackCamera.AddUObject(this, &ANetworkPlayer::OnCreatureAttackCamera);
 }
 
 void ANetworkPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -254,10 +261,22 @@ void ANetworkPlayer::Tick(float DeltaTime)
         }
 
         // State information
-        if (DesiredInput == FVector2D::Zero())
-            SetMoveState(Protocol::MOVE_STATE_IDLE);
+        //if (DesiredInput == FVector2D::Zero())
+        //    SetMoveState(Protocol::MOVE_STATE_IDLE);
+        //else
+        //    SetMoveState(Protocol::MOVE_STATE_RUN);
+        if (bIsCrouch)
+        {
+            SetMoveState(Protocol::MOVE_STATE_CROUCH);
+        }
         else
-            SetMoveState(Protocol::MOVE_STATE_RUN);
+        {
+            if (DesiredInput == FVector2D::Zero())
+                SetMoveState(Protocol::MOVE_STATE_IDLE);
+            else
+                SetMoveState(Protocol::MOVE_STATE_RUN);
+        }
+
 
         MovePacketSendTimer -= DeltaTime;
 

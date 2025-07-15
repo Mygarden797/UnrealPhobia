@@ -52,8 +52,7 @@ ACreatureBase::ACreatureBase()
     AttackCamera->SetupAttachment(CameraBoom);
     AttackCamera->bCaptureEveryFrame = false; // 필요할 때만 캡처
     AttackCamera->bCaptureOnMovement = false;
-    AttackCamera->bCaptureEveryFrame = false; // 필요할 때만 캡처
-    AttackCamera->bCaptureOnMovement = false;
+
 
     // 렌더 타겟 생성 (블루프린트에서 설정하거나 코드에서 동적 생성)
     AttackCameraRenderTarget = nullptr;
@@ -128,7 +127,7 @@ void ACreatureBase::Attack()
 
 //카메라 관련
     // 공격 시 카메라 활성화
-    //ActivateAttackCamera();
+    ActivateAttackCamera();
 }
 
 void ACreatureBase::Communicate()

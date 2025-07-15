@@ -32,11 +32,18 @@ void UAttackCameraWidget::ShowAttackCamera(UTextureRenderTarget2D* RenderTarget,
         return;
     }
 
+    // À§Á¬ Ç¥½Ã
+    SetVisibility(ESlateVisibility::Visible);
+
+    // ·»´õ Å¸°Ù Á¤º¸ »ó¼¼ È®ÀÎ
+    //UE_LOG(LogTemp, Warning, TEXT("=== RenderTarget Analysis ==="));
+    //UE_LOG(LogTemp, Warning, TEXT("Size: %dx%d"), RenderTarget->SizeX, RenderTarget->SizeY);
+    //UE_LOG(LogTemp, Warning, TEXT("Format: %d"), (int32)RenderTarget->RenderTargetFormat);
+    //UE_LOG(LogTemp, Warning, TEXT("Resource Valid: %s"), RenderTarget->GetResource() ? TEXT("TRUE") : TEXT("FALSE"));
+
     // ·»´õ Å¸°ÙÀ» ¸ÓÅÍ¸®¾ó¿¡ ¼³Á¤
     DynamicMaterial->SetTextureParameterValue(TEXT("RenderTarget"), RenderTarget);
 
-    // À§Á¬ Ç¥½Ã
-    SetVisibility(ESlateVisibility::Visible);
 
     // ÀÚµ¿ ¼û±è Å¸ÀÌ¸Ó ¼³Á¤
     if (ShowTime > 0.0f)
