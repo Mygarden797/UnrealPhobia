@@ -137,7 +137,7 @@ void ANetworkPlayer::BeginPlay()
         }
     }
 
-    // CandleRoom Ʈ���� �̸� ���
+    // CandleRoom Ʈ ̸ 
     UE_LOG(LogTemp, Log, TEXT("=== FoundTriggers (CandleRoom) ==="));
     for (AActor* Trigger : FoundTriggers)
     {
@@ -147,7 +147,7 @@ void ANetworkPlayer::BeginPlay()
         }
     }
 
-    // CandleRoom2 Ʈ���� �̸� ���
+    // CandleRoom2 Ʈ ̸ 
     UE_LOG(LogTemp, Log, TEXT("=== FoundTriggers2 (CandleRoom2) ==="));
     for (AActor* Trigger : FoundTriggers2)
     {
@@ -171,20 +171,26 @@ void ANetworkPlayer::BeginPlay()
 
         if (ACandleRoom* CandleRoom = Cast<ACandleRoom>(SelectedTrigger))
         {
-            if (CandleRoom->CubeMesh)
+            for (const auto& Candle : CandleRoom->AssociatedCandles)
             {
-                CandleRoom->CubeMesh->SetVisibility(true);
-                UE_LOG(LogTemp, Log, TEXT("CandleRoom cube made visible"));
+                if (Candle)
+                {
+                    Candle->SetFlameActive(true);
+                }
             }
+            UE_LOG(LogTemp, Log, TEXT("Candle flames turned ON for: %s"), *SelectedTrigger->GetName());
         }
 
         if (ACandleRoom* CandleRoom = Cast<ACandleRoom>(SelectedTrigger2))
         {
-            if (CandleRoom->CubeMesh)
+            for (const auto& Candle : CandleRoom->AssociatedCandles)
             {
-                CandleRoom->CubeMesh->SetVisibility(true);
-                UE_LOG(LogTemp, Log, TEXT("CandleRoom cube made visible"));
+                if (Candle)
+                {
+                    Candle->SetFlameActive(true);
+                }
             }
+            UE_LOG(LogTemp, Log, TEXT("Candle flames turned ON for: %s"), *SelectedTrigger2->GetName());
         }
     }
 
@@ -430,7 +436,7 @@ void ANetworkPlayer::UpdateDirectionWeight(FVector MoveDir)
     }
     GetCharacterMovement()->MaxWalkSpeedCrouched = GetCharacterMovement()->MaxWalkSpeed * 0.5f;
 
-     UE_LOG(LogTemp, Display, TEXT("Dot: %.3f | Speed: %f, %f "),
+     UE_LOG(LogTemp, Display, TEXT("Dot: %.3f | Speed: %f, %f "), 
         Dot, GetCharacterMovement()->MaxWalkSpeed, GetCharacterMovement()->MaxWalkSpeedCrouched);
 }
 
@@ -523,21 +529,21 @@ void ANetworkPlayer::GameOver()
 {
     UE_LOG(LogTemp, Warning, TEXT("Game Over! Mental is Zero."));
 
-    // 1. ĳ���� �Է� ��Ȱ��ȭ
+    // 1. ĳ Է Ȱȭ
     APlayerController* PlayerController = Cast<APlayerController>(GetController());
     if (PlayerController)
     {
         DisableInput(PlayerController);
     }
 
-    // 2. ȭ�� ���̵�ƿ� (����)
+    // 2. ȭ ̵ƿ ()
     if (PlayerController && PlayerController->PlayerCameraManager)
     {
         // Params: FromAlpha, ToAlpha, Duration, Color, bShouldFadeAudio, bHoldWhenFinished
         PlayerController->PlayerCameraManager->StartCameraFade(
-            0.f,				 // FromAlpha (����)
-            1.f,				 // ToAlpha (������)
-            1.f,				 // Duration (2�� ���� ���̵�)
+            0.f,				 // FromAlpha ()
+            1.f,				 // ToAlpha ()
+            1.f,				 // Duration (2  ̵)
             FLinearColor::Black, // Color
             false,				 // bShouldFadeAudio
             true				 // bHoldWhenFinished
@@ -562,14 +568,14 @@ void ANetworkPlayer::GameWin()
         DisableInput(PlayerController);
     }
 
-    // 2. ȭ�� ���̵�ƿ� (����)
+    // 2. ȭ ̵ƿ ()
     if (PlayerController && PlayerController->PlayerCameraManager)
     {
         // Params: FromAlpha, ToAlpha, Duration, Color, bShouldFadeAudio, bHoldWhenFinished
         PlayerController->PlayerCameraManager->StartCameraFade(
-            0.f,				 // FromAlpha (����)
-            1.f,				 // ToAlpha (������)
-            1.f,				 // Duration (2�� ���� ���̵�)
+            0.f,				 // FromAlpha ()
+            1.f,				 // ToAlpha ()
+            1.f,				 // Duration (2  ̵)
             FLinearColor::White, // Color
             false,				 // bShouldFadeAudio
             true				 // bHoldWhenFinished
@@ -583,7 +589,7 @@ void ANetworkPlayer::GameWin()
     GameInstance->DisconnectFromGameServer();
 }
 
-//�������� ������ ����ۿ� ����. ������ �ʿ� ����. ������ �Դ� �͵� DecreaseMental �Լ� �̿��ϵ��� ��ġ��
+//  ۿ .  ʿ .  Դ ͵ DecreaseMental Լ ̿ϵ ġ
 float ANetworkPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
     AController* EventInstigator, AActor* DamageCauser)
 {
@@ -596,14 +602,14 @@ float ANetworkPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
         return 0.0f;
     }
 
-    // �������� ����
+    //  
     float AppliedDamage = FMath::Clamp(DamageAmount, 0.0f, CurrentMental);
     CurrentMental -= AppliedDamage;
 
-    // ���ŷ��� 0 ���Ϸ� �������� ��� ���� ���� ����
+    // ŷ 0 Ϸ     
     if (CurrentMental <= 0.0f)
     {
-        CurrentMental = 0.0f;  // ���� ���� (���ʿ��ϸ� ���� ����)
+        CurrentMental = 0.0f;  //   (ʿϸ  )
         bIsFear = true;
     }
     UpdateMentalBar();
@@ -653,7 +659,7 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
     UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers1);
     UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom2"), FoundTriggers2);
 
-    // ���� Ʈ���Ű� CandleRoom �迭���� CandleRoom2 �迭���� �Ǻ�
+    //  ƮŰ CandleRoom 迭 CandleRoom2 迭 Ǻ
     FName CurrentMapTag;
     if (CurrentTrigger && CurrentTrigger->Tags.Contains(FName("CandleRoom")))
     {
@@ -665,11 +671,11 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
     }
     else
     {
-        // CurrentTrigger�� ������ �⺻ CandleRoom���� ó��
+        // CurrentTrigger  ⺻ CandleRoom ó
         CurrentMapTag = FName("CandleRoom");
     }
 
-    // ���� ���� Ʈ���ŵ� �߿��� ���� Ʈ���Ű� �ƴ� �͸� ������
+    //   Ʈŵ ߿  ƮŰ ƴ ͸ 
     TArray<AActor*>* AllTriggers = nullptr;
 
     if (CurrentMapTag == FName("CandleRoom"))
@@ -702,11 +708,14 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
 
         if (ACandleRoom* CandleRoom = Cast<ACandleRoom>(CurrentTrigger))
         {
-            if (CandleRoom->CubeMesh)
+            for (const auto& Candle : CandleRoom->AssociatedCandles)
             {
-                CandleRoom->CubeMesh->SetVisibility(false);
-                UE_LOG(LogTemp, Log, TEXT("CandleRoom cube made Invisible"));
+                if (Candle)
+                {
+                    Candle->SetFlameActive(false);
+                }
             }
+            UE_LOG(LogTemp, Log, TEXT("Candle flames turned OFF for: %s"), *CurrentTrigger->GetName());
         }
 
         SelectedTrigger->Tags.AddUnique(FName("Active"));
@@ -714,11 +723,14 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
 
         if (ACandleRoom* CandleRoom = Cast<ACandleRoom>(SelectedTrigger))
         {
-            if (CandleRoom->CubeMesh)
+            for (const auto& Candle : CandleRoom->AssociatedCandles)
             {
-                CandleRoom->CubeMesh->SetVisibility(true);
-                UE_LOG(LogTemp, Log, TEXT("CandleRoom cube made visible"));
+                if (Candle)
+                {
+                    Candle->SetFlameActive(true);
+                }
             }
+            UE_LOG(LogTemp, Log, TEXT("Candle flame turned ON for: %s"), *SelectedTrigger->GetName());
         }
 
         UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger->GetName());
