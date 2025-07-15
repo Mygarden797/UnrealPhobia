@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Creature/CreatureState.h"
-
 #include "CreatureBase.generated.h"
 
 //크리처 상탱 변경을 위한 델리게이트
@@ -88,7 +87,10 @@ private:
 	float AttackDamage = 10;
 
 
+
+
 //카메라 관련
     // 공격 카메라 비활성화 타이머 콜백
     void OnAttackCameraTimerEnd();
+
 };
