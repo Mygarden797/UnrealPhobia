@@ -35,6 +35,8 @@ ASurvivor::ASurvivor(const FObjectInitializer &ObjectInitializer)
 	SpringArm->SocketOffset = FVector(10.f, 45.f, 0.f);
 	SpringArm->ProbeSize = 12.f;
 	// SpringArm->bUsePawnControlRotation = true;
+    SpringArm->bEnableCameraLag = true;
+    SpringArm->bUseCameraLagSubstepping = true;
 
 	// SpringArm 생성 및 고정
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -273,6 +275,7 @@ void ASurvivor::StartSprint()
 		return;
 
 	bIsSprinting = true;
+    UpdateCameraLag();
 
 	if (!GetWorldTimerManager().IsTimerActive(FStaminaLossHandle))
 	{
@@ -290,6 +293,7 @@ void ASurvivor::StartSprint()
 void ASurvivor::StopSprint()
 {
 	bIsSprinting = false;
+    UpdateCameraLag();
 
 	GetWorldTimerManager().ClearTimer(FStaminaLossHandle);
 
@@ -546,11 +550,13 @@ void ASurvivor::SetCrouch(const FInputActionValue &Value)
 	if (bPressed)
 	{
 		bIsCrouch = true;
+        UpdateCameraLag();
 		Crouch();
 	}
 	else
 	{
 		bIsCrouch = false;
+        UpdateCameraLag();
 		UnCrouch();
 	}
 }
@@ -577,5 +583,58 @@ void ASurvivor::UpdateMentalBar()
 
 void ASurvivor::SwitchCameraView(const FInputActionValue& Value)
 {
-        SpringArm->SocketOffset.Y = -SpringArm->SocketOffset.Y;
+        float ChangedY = -SpringArm->SocketOffset.Y;
+        StartCameraLerp(FVector(0, ChangedY, SpringArm->SocketOffset.Z));
+}
+
+// 상황에 따라 Duration과 NewOffset 조절
+// Duration이 너무 높거나 NewOffset이 SpringArm->SocketOffset+32처럼 고정값이 아니면 시점이 무너질 수 있음
+void ASurvivor::StartCameraLerp(const FVector& NewOffset)
+{
+    if (bIsLerping)
+    {
+        GetWorld()->GetTimerManager().ClearTimer(CameraLerpTimer);
+    }
+
+    StartOffset = SpringArm->SocketOffset;
+    EndOffset = NewOffset;
+    LerpElapsed = 0.0f;
+    bIsLerping = true;
+
+    GetWorld()->GetTimerManager().SetTimer(CameraLerpTimer, this, &ASurvivor::StepCameraLerp, LerpStepTime, true);
+}
+
+void ASurvivor::StepCameraLerp()
+{
+    LerpElapsed += LerpStepTime;
+    // float Alpha = FMath::Clamp(LerpElapsed / CameraLerpDuration, 0.0f, 1.0f);
+    float EasedAlpha = FMath::InterpEaseInOut(0.0f, 1.0f, FMath::Clamp(LerpElapsed / CameraLerpDuration, 0.0f, 1.0f), 2.0f);
+
+    FVector NewOffset = FMath::Lerp(StartOffset, EndOffset, EasedAlpha);
+    SpringArm->SocketOffset = NewOffset;
+
+    if (EasedAlpha >= 1.0f)
+    {
+        GetWorld()->GetTimerManager().ClearTimer(CameraLerpTimer);
+        bIsLerping = false;
+    }
+}
+
+void ASurvivor::UpdateCameraLag()
+{
+    if (bIsSprinting)
+    {
+        SpringArm->CameraLagSpeed = 15.f;
+        SpringArm->CameraLagSpeed = 20.f;
+    }
+    else if (bIsCrouch)
+    {
+        SpringArm->CameraLagSpeed = 6.f;
+        SpringArm->CameraLagMaxDistance = 35.f;
+    }
+    else
+    {
+        SpringArm->CameraLagSpeed = 9.f;
+        SpringArm->CameraLagMaxDistance = 30.f;
+    }
 }
