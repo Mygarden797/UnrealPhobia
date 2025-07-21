@@ -439,8 +439,8 @@ void ANetworkPlayer::UpdateDirectionWeight(FVector MoveDir)
     }
     GetCharacterMovement()->MaxWalkSpeedCrouched = GetCharacterMovement()->MaxWalkSpeed * 0.5f;
 
-    UE_LOG(LogTemp, Display, TEXT("Dot: %.3f | Speed: %f, %f "),
-           Dot, GetCharacterMovement()->MaxWalkSpeed, GetCharacterMovement()->MaxWalkSpeedCrouched);
+    // UE_LOG(LogTemp, Display, TEXT("Dot: %.3f | Speed: %f, %f "),
+    //       Dot, GetCharacterMovement()->MaxWalkSpeed, GetCharacterMovement()->MaxWalkSpeedCrouched);
 }
 
 void ANetworkPlayer::LossStamina()
@@ -520,7 +520,7 @@ void ANetworkPlayer::DecreaseMental()
     {
         CurrentMental -= MentalDecayRate;
         CurrentMental = FMath::Clamp(CurrentMental, 0.f, MaxMental);
-        UE_LOG(LogTemp, Log, TEXT("CurrentMental: %f"), CurrentMental);
+        // UE_LOG(LogTemp, Log, TEXT("CurrentMental: %f"), CurrentMental);
 
         if (CurrentMental <= 0.f)
         {

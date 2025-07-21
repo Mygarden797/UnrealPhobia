@@ -71,6 +71,10 @@ class UNREALPHOBIA_API ACreatureController : public AAIController
 		virtual void PostInitializeComponents() override;
 		virtual void BeginPlay() override;
 
+        // 발각 효과음 변수
+        UPROPERTY(EditAnywhere, Category = "SFX")
+        USoundBase* DetectSFX;
+
 	private:
 		UFUNCTION()
 		void OnTargetDetected(AActor* Actor, FAIStimulus Stimulus);

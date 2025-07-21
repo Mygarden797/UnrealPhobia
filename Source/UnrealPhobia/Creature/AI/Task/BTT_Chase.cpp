@@ -6,6 +6,8 @@
 #include "Creature/CreatureBase.h"
 #include "Creature/CreatureController.h"
 #include "NavigationSystem.h"
+#include "Kismet/GameplayStatics.h"
+#include "UnrealPhobia/Managers/SoundManager.h"
 
 
 
@@ -47,6 +49,15 @@ EBTNodeResult::Type UBTT_Chase::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
     } else {
         
         Blackboard->SetValueAsVector(LastFoundLocation, LastTargetLocation);
+    }
+
+    if (UWorld* World = CreatureController->GetWorld())
+    {
+        auto* SoundMgr = World->GetGameInstance()->GetSubsystem<USoundManager>();
+        if (SoundMgr && CreatureController->DetectSFX)
+        {
+            SoundMgr->PlaySFX2D(CreatureController->DetectSFX);
+        }
     }
 
     // CreatureController->MoveToActor(TargetActor,AcceptRadius);
