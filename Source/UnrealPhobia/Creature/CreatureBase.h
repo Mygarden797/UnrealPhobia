@@ -13,6 +13,8 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FCreatureStateChangedDelegate, ECreatureSta
 // 크리쳐 공격 시 카메라 전환을 위한 델리게이트 (크리쳐, 렌더 타겟)
 DECLARE_MULTICAST_DELEGATE_TwoParams(FCreatureAttackCameraDelegate, ACreatureBase*, UTextureRenderTarget2D*);
 
+
+
 UCLASS()
 class UNREALPHOBIA_API ACreatureBase : public ACharacter
 {
