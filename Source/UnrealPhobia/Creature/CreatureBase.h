@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Creature/CreatureState.h"
+#include "Creature/CreatureDataAsset.h"
+#include "Creature/Animation/CreatureAnimationDataAsset.h"
 #include "CreatureBase.generated.h"
 
 //크리처 상탱 변경을 위한 델리게이트
@@ -86,7 +88,18 @@ public:
 private:
 	float AttackDamage = 10;
 
+//크리쳐 데이터
+protected:
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Creature")
+    UCreatureDataAsset* CreatureData;
 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Creature")
+    UCreatureAnimationDataAsset* CreatureAnimationData;
+
+public:
+    UCreatureDataAsset* GetCreatureData() const { return CreatureData; }
+
+    UCreatureAnimationDataAsset* GetCreatureAnimationData() const { return CreatureAnimationData; }
 
 
 //카메라 관련

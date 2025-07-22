@@ -20,6 +20,7 @@ EBTNodeResult::Type UBTT_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
     ACreatureBase* Creature = Cast<ACreatureBase>(CreatureController->GetPawn());
     RETURN_IF_NULL2(Creature,EBTNodeResult::Failed);
 
+    //애니메이션 재생
     Creature->Attack();
 
     return EBTNodeResult::Succeeded;

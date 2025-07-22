@@ -26,13 +26,16 @@ EBTNodeResult::Type UBTT_Investigate::ExecuteTask(UBehaviorTreeComponent& OwnerC
 
     UNavigationSystemV1* NaviSystem = UNavigationSystemV1::GetNavigationSystem(Creature->GetWorld());
     RETURN_IF_NULL2(NaviSystem,EBTNodeResult::Failed);
+
+    UCreatureDataAsset* CreatureData = Creature->GetCreatureData();
+    RETURN_IF_NULL2(Creature,EBTNodeResult::Failed);
     
     //StartLocation, 시작 위치 불러오기
     FVector LastFoundLocation = OwnerComp.GetBlackboardComponent()->GetValueAsVector(ACreatureController::LastFoundLocation);
 
     FNavLocation NextPatrol;
     //주변 거리를 짧게 하여 조사 시작
-    if(NaviSystem->GetRandomPointInNavigableRadius(LastFoundLocation,CreatureController->PatrolDistance,NextPatrol))
+    if(NaviSystem->GetRandomPointInNavigableRadius(LastFoundLocation,CreatureData->InvestigateDistance,NextPatrol))
     {
         OwnerComp.GetBlackboardComponent()->SetValueAsVector(ACreatureController::PatrolLocation,NextPatrol.Location);
 

@@ -16,10 +16,13 @@ class UNREALPHOBIA_API UCreatureAnimationDataAsset : public UDataAsset
 
 	public:
 		//속도와 방향에 따라 따로 걷기 위한 클래스
-		UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category = Animation)
 		UBlendSpace* MovementBlendspace;
 
-		UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category = Animation)
 		UAnimMontage* AttackMontage;
+
+		UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = Animation)
+		UAnimMontage* CommunicateMontage;
 	
 };

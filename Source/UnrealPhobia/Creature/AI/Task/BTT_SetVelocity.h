@@ -19,7 +19,5 @@ class UNREALPHOBIA_API UBTT_SetVelocity : public UBTTaskNode
 
 		virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);
 
-		UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = Creature)
-		float Speed;
 	
 };
