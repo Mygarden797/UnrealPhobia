@@ -115,8 +115,4 @@ public:
     // 공격 카메라 비활성화 타이머 콜백
     void OnAttackCameraTimerEnd();
 
-    // 카메라 관련
-    //  공격 카메라 비활성화 타이머 콜백
-    void
-    OnAttackCameraTimerEnd();
 };
