@@ -64,6 +64,7 @@ bool ANetworkMirror::ActivateTrigger(int64 trigger_id)
     class Protocol::CreatureInfo* CreatureInfo_Spawn = CreatureInfo->mutable_creature_info();
     TriggerInfo->set_object_id(trigger_id);
 
+
     //거울 location_id보고  해당 위치에 소환.
     FString LocationIdStr = location_id.ToString();
     int64 location_id_int = FCString::Atoi64(*LocationIdStr);

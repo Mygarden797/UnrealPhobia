@@ -144,7 +144,11 @@ void UNetworkManager::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool I
     }
     else
     {
-        AProtoPlayer* Player = Cast<AProtoPlayer>(World->SpawnActor(OtherPlayerClass, &SpawnLocation));
+        // 또는 충돌 처리 옵션 추가
+        FActorSpawnParameters SpawnParams;
+        SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+        AProtoPlayer* Player = World->SpawnActor<AProtoPlayer>(OtherPlayerClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+        //AProtoPlayer* Player = Cast<AProtoPlayer>(World->SpawnActor(OtherPlayerClass, &SpawnLocation));
         Player->SetPlayerInfo(ObjectInfo.pos_info());
         Players.Add(ObjectInfo.object_id(), Player);
     }

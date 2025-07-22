@@ -155,12 +155,13 @@ enum MoveState : int {
   MOVE_STATE_RUN = 2,
   MOVE_STATE_JUMP = 3,
   MOVE_STATE_TRIGGER = 4,
+  MOVE_STATE_CROUCH = 5,
   MoveState_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   MoveState_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool MoveState_IsValid(int value);
 constexpr MoveState MoveState_MIN = MOVE_STATE_NONE;
-constexpr MoveState MoveState_MAX = MOVE_STATE_TRIGGER;
+constexpr MoveState MoveState_MAX = MOVE_STATE_CROUCH;
 constexpr int MoveState_ARRAYSIZE = MoveState_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MoveState_descriptor();
@@ -202,6 +203,32 @@ inline bool Team_Parse(
     ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, Team* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<Team>(
     Team_descriptor(), name, value);
+}
+enum CreatureType : int {
+  CREATURE_TYPE_NONE = 0,
+  CREATURE_TYPE_Grey = 1,
+  CREATURE_TYPE_A = 2,
+  CreatureType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  CreatureType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool CreatureType_IsValid(int value);
+constexpr CreatureType CreatureType_MIN = CREATURE_TYPE_NONE;
+constexpr CreatureType CreatureType_MAX = CREATURE_TYPE_A;
+constexpr int CreatureType_ARRAYSIZE = CreatureType_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* CreatureType_descriptor();
+template<typename T>
+inline const std::string& CreatureType_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, CreatureType>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function CreatureType_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    CreatureType_descriptor(), enum_t_value);
+}
+inline bool CreatureType_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, CreatureType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<CreatureType>(
+    CreatureType_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -254,6 +281,11 @@ template <> struct is_proto_enum< ::Protocol::Team> : ::std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::Team>() {
   return ::Protocol::Team_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::CreatureType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::CreatureType>() {
+  return ::Protocol::CreatureType_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

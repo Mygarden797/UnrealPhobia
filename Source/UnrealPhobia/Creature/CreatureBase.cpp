@@ -37,21 +37,23 @@ ACreatureBase::ACreatureBase()
     //  카메라 붐 컴포넌트 생성
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
     CameraBoom->SetupAttachment(RootComponent);
-    CameraBoom->TargetArmLength = 400.0f;        // 카메라와 캐릭터 사이의 거리
-    CameraBoom->bUsePawnControlRotation = false; // 고정 카메라로 설정
-    CameraBoom->bInheritPitch = false;
-    CameraBoom->bInheritYaw = false;
-    CameraBoom->bInheritRoll = false;
+    CameraBoom->TargetArmLength = 400.0f;
+
+    // 크리쳐의 회전을 따라가도록 설정
+    CameraBoom->bUsePawnControlRotation = true;  // false에서 true로 변경
+    CameraBoom->bInheritPitch = true;            // false에서 true로 변경
+    CameraBoom->bInheritYaw = true;              // false에서 true로 변경
+    CameraBoom->bInheritRoll = false;            // 롤은 그대로 false
+
     // 크리쳐 뒤쪽에 카메라 위치 설정 (Y축 회전 180도)
     CameraBoom->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
 
-    // 기존 코드 유지
+    // AttackCamera 설정
     AttackCamera = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("AttackCamera"));
     AttackCamera->SetupAttachment(CameraBoom);
-    AttackCamera->bCaptureEveryFrame = false; // 필요할 때만 캡처
+    AttackCamera->bCaptureEveryFrame = false;
     AttackCamera->bCaptureOnMovement = false;
-    AttackCamera->bCaptureEveryFrame = false; // 필요할 때만 캡처
-    AttackCamera->bCaptureOnMovement = false;
+
 
     // 렌더 타겟 생성 (블루프린트에서 설정하거나 코드에서 동적 생성)
     AttackCameraRenderTarget = nullptr;
