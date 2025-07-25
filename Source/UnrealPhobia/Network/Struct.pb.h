@@ -839,6 +839,7 @@ class TriggerInfo final :
   enum : int {
     kObjectIdFieldNumber = 1,
     kTriggerLidFieldNumber = 2,
+    kTriggerTypeFieldNumber = 3,
   };
   // uint64 object_id = 1;
   void clear_object_id();
@@ -858,6 +859,15 @@ class TriggerInfo final :
   void _internal_set_trigger_lid(uint64_t value);
   public:
 
+  // .Protocol.TriggerType trigger_type = 3;
+  void clear_trigger_type();
+  ::Protocol::TriggerType trigger_type() const;
+  void set_trigger_type(::Protocol::TriggerType value);
+  private:
+  ::Protocol::TriggerType _internal_trigger_type() const;
+  void _internal_set_trigger_type(::Protocol::TriggerType value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.TriggerInfo)
  private:
   class _Internal;
@@ -868,6 +878,7 @@ class TriggerInfo final :
   struct Impl_ {
     uint64_t object_id_;
     uint64_t trigger_lid_;
+    int trigger_type_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -998,6 +1009,7 @@ class CreatureInfo final :
   enum : int {
     kObjectIdFieldNumber = 1,
     kSpawnPointFieldNumber = 2,
+    kCreatureTypeFieldNumber = 3,
   };
   // uint64 object_id = 1;
   void clear_object_id();
@@ -1017,6 +1029,15 @@ class CreatureInfo final :
   void _internal_set_spawn_point(uint64_t value);
   public:
 
+  // .Protocol.CreatureType creature_type = 3;
+  void clear_creature_type();
+  ::Protocol::CreatureType creature_type() const;
+  void set_creature_type(::Protocol::CreatureType value);
+  private:
+  ::Protocol::CreatureType _internal_creature_type() const;
+  void _internal_set_creature_type(::Protocol::CreatureType value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.CreatureInfo)
  private:
   class _Internal;
@@ -1027,6 +1048,7 @@ class CreatureInfo final :
   struct Impl_ {
     uint64_t object_id_;
     uint64_t spawn_point_;
+    int creature_type_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1735,6 +1757,26 @@ inline void TriggerInfo::set_trigger_lid(uint64_t value) {
   // @@protoc_insertion_point(field_set:Protocol.TriggerInfo.trigger_lid)
 }
 
+// .Protocol.TriggerType trigger_type = 3;
+inline void TriggerInfo::clear_trigger_type() {
+  _impl_.trigger_type_ = 0;
+}
+inline ::Protocol::TriggerType TriggerInfo::_internal_trigger_type() const {
+  return static_cast< ::Protocol::TriggerType >(_impl_.trigger_type_);
+}
+inline ::Protocol::TriggerType TriggerInfo::trigger_type() const {
+  // @@protoc_insertion_point(field_get:Protocol.TriggerInfo.trigger_type)
+  return _internal_trigger_type();
+}
+inline void TriggerInfo::_internal_set_trigger_type(::Protocol::TriggerType value) {
+  
+  _impl_.trigger_type_ = value;
+}
+inline void TriggerInfo::set_trigger_type(::Protocol::TriggerType value) {
+  _internal_set_trigger_type(value);
+  // @@protoc_insertion_point(field_set:Protocol.TriggerInfo.trigger_type)
+}
+
 // -------------------------------------------------------------------
 
 // CreatureInfo
@@ -1777,6 +1819,26 @@ inline void CreatureInfo::_internal_set_spawn_point(uint64_t value) {
 inline void CreatureInfo::set_spawn_point(uint64_t value) {
   _internal_set_spawn_point(value);
   // @@protoc_insertion_point(field_set:Protocol.CreatureInfo.spawn_point)
+}
+
+// .Protocol.CreatureType creature_type = 3;
+inline void CreatureInfo::clear_creature_type() {
+  _impl_.creature_type_ = 0;
+}
+inline ::Protocol::CreatureType CreatureInfo::_internal_creature_type() const {
+  return static_cast< ::Protocol::CreatureType >(_impl_.creature_type_);
+}
+inline ::Protocol::CreatureType CreatureInfo::creature_type() const {
+  // @@protoc_insertion_point(field_get:Protocol.CreatureInfo.creature_type)
+  return _internal_creature_type();
+}
+inline void CreatureInfo::_internal_set_creature_type(::Protocol::CreatureType value) {
+  
+  _impl_.creature_type_ = value;
+}
+inline void CreatureInfo::set_creature_type(::Protocol::CreatureType value) {
+  _internal_set_creature_type(value);
+  // @@protoc_insertion_point(field_set:Protocol.CreatureInfo.creature_type)
 }
 
 #ifdef __GNUC__

@@ -8,7 +8,7 @@
 
 UBTT_SetVelocity::UBTT_SetVelocity()
 {
-    NodeName = TEXT("SetVelocity");
+    NodeName = TEXT("SetWalkVelocity");
 }
 
 EBTNodeResult::Type UBTT_SetVelocity::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -21,7 +21,10 @@ EBTNodeResult::Type UBTT_SetVelocity::ExecuteTask(UBehaviorTreeComponent& OwnerC
     ACreatureBase* Creature = Cast<ACreatureBase>(CreatureController->GetPawn());
     RETURN_IF_NULL2(Creature,EBTNodeResult::Failed);
 
-    Creature->GetCharacterMovement()->MaxWalkSpeed = Speed;
+    UCreatureDataAsset* CreatureData = Creature->GetCreatureData();
+    RETURN_IF_NULL2(CreatureData,EBTNodeResult::Failed)
+
+    Creature->GetCharacterMovement()->MaxWalkSpeed = CreatureData->WalkSpeed;
     
     return EBTNodeResult::Succeeded;
 

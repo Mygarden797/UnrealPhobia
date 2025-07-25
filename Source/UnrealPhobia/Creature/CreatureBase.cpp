@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CreatureBase.h"
 #include "Creature/CreatureController.h"
 #include "Creature/Animation/CreatureAnimInstance.h"
@@ -21,134 +20,182 @@ FCreatureAttackCameraDelegate ACreatureBase::OnCreatureAttackCamera;
 // Sets default values
 ACreatureBase::ACreatureBase()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-	//폰의 이름으로 프리셋 설정
-	GetCapsuleComponent()-> SetCollisionProfileName("Pawn");
-	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	//레벨에 직접 배치되거나 런타임에 스폰 시에 자동 소유
-	State = ECreatureState::Idle;
+    // Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+    PrimaryActorTick.bCanEverTick = true;
+    // 폰의 이름으로 프리셋 설정
+    GetCapsuleComponent()->SetCollisionProfileName("Pawn");
+    AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+    // 레벨에 직접 배치되거나 런타임에 스폰 시에 자동 소유
+    State = ECreatureState::Idle;
 
-	    /*캐릭터 간의 회피 기능 설정*/
-    GetCharacterMovement()->bUseRVOAvoidance = true;    
+    /*캐릭터 간의 회피 기능 설정*/
+    GetCharacterMovement()->bUseRVOAvoidance = true;
     GetCharacterMovement()->AvoidanceConsiderationRadius = 300.f;
     GetCharacterMovement()->AvoidanceWeight = 0.5f;
 
-
-//카메라 관련
-    // 카메라 붐 컴포넌트 생성
+    // 카메라 관련
+    //  카메라 붐 컴포넌트 생성
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
     CameraBoom->SetupAttachment(RootComponent);
-    CameraBoom->TargetArmLength = 400.0f; // 카메라와 캐릭터 사이의 거리
-    CameraBoom->bUsePawnControlRotation = false; // 고정 카메라로 설정
-    CameraBoom->bInheritPitch = false;
-    CameraBoom->bInheritYaw = false;
-    CameraBoom->bInheritRoll = false;
+    CameraBoom->TargetArmLength = 400.0f;
+
+    // 크리쳐의 회전을 따라가도록 설정
+    CameraBoom->bUsePawnControlRotation = true;  // false에서 true로 변경
+    CameraBoom->bInheritPitch = true;            // false에서 true로 변경
+    CameraBoom->bInheritYaw = true;              // false에서 true로 변경
+    CameraBoom->bInheritRoll = false;            // 롤은 그대로 false
+
     // 크리쳐 뒤쪽에 카메라 위치 설정 (Y축 회전 180도)
     CameraBoom->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
 
-    // 기존 코드 유지
+    // AttackCamera 설정
     AttackCamera = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("AttackCamera"));
     AttackCamera->SetupAttachment(CameraBoom);
-    AttackCamera->bCaptureEveryFrame = false; // 필요할 때만 캡처
+    AttackCamera->bCaptureEveryFrame = false;
     AttackCamera->bCaptureOnMovement = false;
-    AttackCamera->bCaptureEveryFrame = false; // 필요할 때만 캡처
-    AttackCamera->bCaptureOnMovement = false;
+
 
     // 렌더 타겟 생성 (블루프린트에서 설정하거나 코드에서 동적 생성)
     AttackCameraRenderTarget = nullptr;
 }
 
-
-
 // Called when the game starts or when spawned
 void ACreatureBase::BeginPlay()
 {
-	Super::BeginPlay();
-	SetState(State);
-	
+    Super::BeginPlay();
+    SetState(State);
 }
-
-
 
 // Called every frame
 void ACreatureBase::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
-
+    Super::Tick(DeltaTime);
 }
 
 // Called to bind functionality to input
-void ACreatureBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ACreatureBase::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-//새로운 상태로 설정하는 함수
+// 새로운 상태로 설정하는 함수
 void ACreatureBase::SetState(ECreatureState NewState)
 {
-	// UE_LOG(LogTemp, Warning, TEXT("SetState called with %d"), (uint8)NewState);
-	//새 상태와 예전 상태를 저장
-	ECreatureState OldState = State;
-	State = NewState;
+    // UE_LOG(LogTemp, Warning, TEXT("SetState called with %d"), (uint8)NewState);
+    // 새 상태와 예전 상태를 저장
+    ECreatureState OldState = State;
+    State = NewState;
 
-	ACreatureController* CreatureController = Cast<ACreatureController>(GetController());
-	//블랙보드 함수 설정
-	if (CreatureController && CreatureController->GetBlackboardComponent())
-	{
-		// UE_LOG(LogTemp, Warning, TEXT("Setting Blackboard State to %d"), uint8(State));
-		CreatureController->GetBlackboardComponent()->SetValueAsEnum(ACreatureController::CreatureState, uint8(State));
-	}
-	else
-	{
-		// UE_LOG(LogTemp, Error, TEXT("CreatureController or BlackboardComponent is null!"));
-	}
-	//델리게이트 함수 발동
-	OnCreatureStateChanged.Broadcast(OldState, NewState);
-
+    ACreatureController *CreatureController = Cast<ACreatureController>(GetController());
+    // 블랙보드 함수 설정
+    if (CreatureController && CreatureController->GetBlackboardComponent())
+    {
+        // UE_LOG(LogTemp, Warning, TEXT("Setting Blackboard State to %d"), uint8(State));
+        CreatureController->GetBlackboardComponent()->SetValueAsEnum(ACreatureController::CreatureState, uint8(State));
+    }
+    else
+    {
+        // UE_LOG(LogTemp, Error, TEXT("CreatureController or BlackboardComponent is null!"));
+    }
+    // 델리게이트 함수 발동
+    OnCreatureStateChanged.Broadcast(OldState, NewState);
 }
 
 void ACreatureBase::Attack()
 {
-	UCreatureAnimInstance* CreatureAnimInstance = Cast<UCreatureAnimInstance>(GetMesh()->GetAnimInstance());
-	RETURN_IF_NULL(CreatureAnimInstance)
-	// UE_LOG(LogTemp, Display, TEXT("ACreatureBase is Activate"));
-	ACreatureController* CreatureController = Cast<ACreatureController>(GetController());
-	RETURN_IF_NULL(CreatureController)
+    UCreatureAnimInstance *CreatureAnimInstance = Cast<UCreatureAnimInstance>(GetMesh()->GetAnimInstance());
+    RETURN_IF_NULL(CreatureAnimInstance)
+    // UE_LOG(LogTemp, Display, TEXT("ACreatureBase is Activate"));
+    ACreatureController *CreatureController = Cast<ACreatureController>(GetController());
+    RETURN_IF_NULL(CreatureController)
 
-	UBlackboardComponent* Blackboard = CreatureController->GetBlackboardComponent();
-	RETURN_IF_NULL(Blackboard)
+    UBlackboardComponent *Blackboard = CreatureController->GetBlackboardComponent();
+    RETURN_IF_NULL(Blackboard)
 
-	AActor* Target = Cast<AActor>(Blackboard->GetValueAsObject(ACreatureController::Target));
-	RETURN_IF_NULL(Target)
+    AttackTarget = Cast<AActor>(Blackboard->GetValueAsObject(ACreatureController::Target));
+    RETURN_IF_NULL(AttackTarget)
 
-	UGameplayStatics::ApplyDamage(Target,AttackDamage,CreatureController,this,UDamageType::StaticClass());
-	CreatureAnimInstance->PlayAttackMontage();
+    LocateTargetCamera();
+    UGameplayStatics::ApplyDamage(AttackTarget, AttackDamage, CreatureController, this, UDamageType::StaticClass());
+    CreatureAnimInstance->PlayAttackMontage();
 
-//카메라 관련
-    // 공격 시 카메라 활성화
-    //ActivateAttackCamera();
+    FTimerHandle TimerHandle;
+    GetWorld()->GetTimerManager().SetTimer(
+        TimerHandle,
+        this,
+        &ACreatureBase::RevertTargetCamera, // 몽타주 끝났을 때 실행할 함수
+        2.0f,
+        false);
+
+    //  카메라 관련
+    //   공격 시 카메라 활성화
+    //  ActivateAttackCamera();
+}
+
+void ACreatureBase::LocateTargetCamera()
+{
+    if (!AttackTarget)
+    {
+        return;
+    }
+
+    // 헤더에 선언된 멤버 변수에 카메라 컴포넌트 캐시
+    CameraComp = FindComponentByClass<UCameraComponent>();
+    if (!CameraComp)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("LocateTargetCamera: CameraComp not found on %s"), *GetName());
+        return;
+    }
+
+    // 플레이어 컨트롤러 가져오기
+    APlayerController *PC = UGameplayStatics::GetPlayerController(this, 0);
+    if (!PC)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("LocateTargetCamera: PlayerController not found"));
+        return;
+    }
+
+    // 카메라 컴포넌트를 가진 액터를 뷰 타겟으로 블렌딩
+    AActor *CameraOwner = CameraComp->GetOwner();
+    AttackTarget->DisableInput(PC);
+    PC->SetViewTargetWithBlend(CameraOwner, 0.1f /*Blend Time*/,
+                               EViewTargetBlendFunction::VTBlend_Linear,
+                               0.1f /*BlendExp*/,
+                               false /*bLockOutgoing*/);
+}
+void ACreatureBase::RevertTargetCamera()
+{
+    if (!AttackTarget)
+    {
+        return;
+    }
+    // 플레이어 컨트롤러 가져오기
+    APlayerController *PC = UGameplayStatics::GetPlayerController(this, 0);
+    if (!PC)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("LocateTargetCamera: PlayerController not found"));
+        return;
+    }
+    AttackTarget->EnableInput(PC);
+    PC->SetViewTargetWithBlend(AttackTarget, 0.1f /*Blend Time*/,
+                               EViewTargetBlendFunction::VTBlend_Linear,
+                               0.0f /*BlendExp*/,
+                               false /*bLockOutgoing*/);
 }
 
 void ACreatureBase::Communicate()
 {
-	UCreatureAnimInstance* CreatureAnimInstance = Cast<UCreatureAnimInstance>(GetMesh()->GetAnimInstance());
-	RETURN_IF_NULL(CreatureAnimInstance)
-	// UE_LOG(LogTemp, Display, TEXT("ACreatureBase is Activate"));
-	ACreatureController* CreatureController = Cast<ACreatureController>(GetController());
-	RETURN_IF_NULL(CreatureController)
+    UCreatureAnimInstance *CreatureAnimInstance = Cast<UCreatureAnimInstance>(GetMesh()->GetAnimInstance());
+    RETURN_IF_NULL(CreatureAnimInstance)
+    // UE_LOG(LogTemp, Display, TEXT("ACreatureBase is Activate"));
+    ACreatureController *CreatureController = Cast<ACreatureController>(GetController());
+    RETURN_IF_NULL(CreatureController)
 
-	UBlackboardComponent* Blackboard = CreatureController->GetBlackboardComponent();
-	RETURN_IF_NULL(Blackboard)
+    UBlackboardComponent *Blackboard = CreatureController->GetBlackboardComponent();
+    RETURN_IF_NULL(Blackboard)
 
-
-	CreatureAnimInstance->PlayCommunicateMontage();
-
-
+    CreatureAnimInstance->PlayCommunicateMontage();
 }
-
-
 
 void ACreatureBase::ActivateAttackCamera()
 {
@@ -167,8 +214,7 @@ void ACreatureBase::ActivateAttackCamera()
             this,
             &ACreatureBase::OnAttackCameraTimerEnd,
             AttackCameraShowTime,
-            false
-        );
+            false);
 
         UE_LOG(LogTemp, Log, TEXT("Attack Camera Activated for %s"), *GetName());
     }

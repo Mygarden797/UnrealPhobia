@@ -14,6 +14,10 @@
 
 AProtoPlayer::AProtoPlayer()
 {
+
+    PlayerInfo = new Protocol::PosInfo();
+    DestInfo = new Protocol::PosInfo();
+
     // Set size for collision capsule
     GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -36,8 +40,6 @@ AProtoPlayer::AProtoPlayer()
 
     GetCharacterMovement()->bRunPhysicsWithNoController = true;
 
-    PlayerInfo = new Protocol::PosInfo();
-    DestInfo = new Protocol::PosInfo();
 }
 
 AProtoPlayer::~AProtoPlayer()
@@ -96,9 +98,11 @@ void AProtoPlayer::Tick(float DeltaSeconds)
             SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             AddMovementInput(GetActorForwardVector());
         }
-        else
+        else if(State == Protocol::MOVE_STATE_CROUCH)
         {
-
+            Crouch();
+            SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
+            AddMovementInput(GetActorForwardVector());
         }
     }
 }
@@ -114,6 +118,9 @@ void AProtoPlayer::SetMoveState(Protocol::MoveState State)
 {
     if (PlayerInfo->state() == State)
         return;
+
+    if (PlayerInfo->state() == Protocol::MOVE_STATE_CROUCH)
+        UnCrouch();
 
     PlayerInfo->set_state(State);
 

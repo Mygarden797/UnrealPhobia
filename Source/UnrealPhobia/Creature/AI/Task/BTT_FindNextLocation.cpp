@@ -32,6 +32,9 @@ EBTNodeResult::Type UBTT_FindNextLocation::ExecuteTask(UBehaviorTreeComponent& O
     RETURN_IF_NULL2(Creature,EBTNodeResult::Failed);
     // UE_LOG(LogTemp,Warning,TEXT("Creature is not null"));
 
+    UCreatureDataAsset* CreatureData = Creature->GetCreatureData();
+    RETURN_IF_NULL2(Creature,EBTNodeResult::Failed);
+
 
     UNavigationSystemV1* NaviSystem = UNavigationSystemV1::GetNavigationSystem(Creature->GetWorld());
     RETURN_IF_NULL2(NaviSystem,EBTNodeResult::Failed);
@@ -71,7 +74,7 @@ EBTNodeResult::Type UBTT_FindNextLocation::ExecuteTask(UBehaviorTreeComponent& O
 
         FNavLocation NextPatrol;
         //시작 위치, 순찰 거리를 범위로 다음에 갈 순찰 포인트를 결정
-        if(NaviSystem->GetRandomPointInNavigableRadius(StartLocation,CreatureController->PatrolDistance,NextPatrol))
+        if(NaviSystem->GetRandomPointInNavigableRadius(StartLocation,CreatureData->PatrolDistance,NextPatrol))
         {
             OwnerComp.GetBlackboardComponent()->SetValueAsVector(ACreatureController::PatrolLocation,NextPatrol.Location);
 

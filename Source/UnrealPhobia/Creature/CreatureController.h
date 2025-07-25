@@ -47,24 +47,24 @@ class UNREALPHOBIA_API ACreatureController : public AAIController
 		static const FName CreatureState; //현재 몬스터 상태 표현
 		static const FName LastFoundLocation; // 마지막 발견 장소
 		static const FName Friend;
+		/*2025-07-18 CreatureDataAsset 추가로 삭제*/
+		// UPROPERTY(EditAnywhere,BlueprintReadWrite,Category= Creature)
+		// float CreatureSightRadius;
 
-		UPROPERTY(EditAnywhere,BlueprintReadWrite,Category= Creature)
-		float CreatureSightRadius;
+		// UPROPERTY(EditAnywhere,BlueprintReadWrite,Category= Creature)
+		// float CreatureLoseSightRadius;
 
-		UPROPERTY(EditAnywhere,BlueprintReadWrite,Category= Creature)
-		float CreatureLoseSightRadius;
+		// UPROPERTY(EditAnywhere,BlueprintReadWrite,Category= Creature)
+		// float CreaturePeripheralVisionAngleDegrees;
 
-		UPROPERTY(EditAnywhere,BlueprintReadWrite,Category= Creature)
-		float CreaturePeripheralVisionAngleDegrees;
+		// UPROPERTY(EditAnywhere,BlueprintReadWrite,Category= Creature)
+		// float CreatureHearingRange = 2500.f;
 
-		UPROPERTY(EditAnywhere,BlueprintReadWrite,Category= Creature)
-		float CreatureHearingRange = 2500.f;
+		// UPROPERTY(EditAnywhere,Category=Creauture)
+		// float InvestigateDistance = 50;
 
-		UPROPERTY(EditAnywhere,Category=Creauture)
-		float InvestigateDistance = 50;
-
-		UPROPERTY(EditAnywhere,Category =Creature)
-		float PatrolDistance = 200;
+		// UPROPERTY(EditAnywhere,Category =Creature)
+		// float PatrolDistance = 200;
 
 		bool GetbIsDetected() {return bIsDetected;}
 
@@ -95,6 +95,10 @@ class UNREALPHOBIA_API ACreatureController : public AAIController
 
 		UPROPERTY(EditDefaultsOnly, Category = Friend)
 		TSet<ACreatureBase*> FriendList; 
+	/* 데이터 에셋 */
+	protected:
+		
+
 
 
 };

@@ -32,11 +32,12 @@ void UAttackCameraWidget::ShowAttackCamera(UTextureRenderTarget2D* RenderTarget,
         return;
     }
 
+    // À§Á¬ Ç¥½Ã
+    SetVisibility(ESlateVisibility::Visible);
+
     // ·»´õ Å¸°ÙÀ» ¸ÓÅÍ¸®¾ó¿¡ ¼³Á¤
     DynamicMaterial->SetTextureParameterValue(TEXT("RenderTarget"), RenderTarget);
 
-    // À§Á¬ Ç¥½Ã
-    SetVisibility(ESlateVisibility::Visible);
 
     // ÀÚµ¿ ¼û±è Å¸ÀÌ¸Ó ¼³Á¤
     if (ShowTime > 0.0f)

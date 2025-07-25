@@ -29,12 +29,17 @@ class UNREALPHOBIA_API UCreatureAnimInstance : public UAnimInstance
 		void PlayAttackMontage();
 		void PlayCommunicateMontage();
 
-	private:
-		UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = Animation,Meta = (AllowPrivateAccess = true))
-		UAnimMontage* AttackMontage;
+		// 애니메이션 DataAsset에서 가져오기
+   		UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
+    	class UBlendSpace* GetMovementBlendspace() const;
 
-		UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = Animation,Meta = (AllowPrivateAccess = true))
-		UAnimMontage* CommunicateMontage;
+    	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
+    	class UAnimMontage* GetAttackMontage() const;
+    	
+		UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
+    	class UAnimMontage* GetCommunicateMontage() const;
+
+
 
 
 

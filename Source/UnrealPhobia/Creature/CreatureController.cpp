@@ -6,6 +6,7 @@
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Creature/PatrolManager.h"
+#include "Creature/CreatureBase.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AISenseConfig_Hearing.h"
 #include "Perception/AIPerceptionComponent.h"
@@ -13,6 +14,7 @@
 #include "Survivor.h"
 #include "Network/Contents/ProtoPlayer.h"
 #include "Network/Contents/NetworkPlayer.h"
+
 
 
 
@@ -46,7 +48,7 @@ ACreatureController::ACreatureController()
     CreatureHearingConfig->DetectionByAffiliation.bDetectFriendlies = true;
 
 
-    CreatureSightConfig->SetMaxAge(2.0f);
+    CreatureHearingConfig->SetMaxAge(2.0f);
 
     //주요 감각 설정
     CreaturePerception->SetDominantSense(*CreatureSightConfig->GetSenseImplementation());
@@ -55,7 +57,7 @@ ACreatureController::ACreatureController()
 
 
     CreaturePerception->OnTargetPerceptionUpdated.Clear(); 
-    CreaturePerception->OnTargetPerceptionUpdated.AddDynamic(this,&ACreatureController::OnFriendDetected);
+    // CreaturePerception->OnTargetPerceptionUpdated.AddDynamic(this,&ACreatureController::OnFriendDetected);
     CreaturePerception->OnTargetPerceptionUpdated.AddDynamic(this,&ACreatureController::OnTargetDetected);
 
 
@@ -70,6 +72,11 @@ void ACreatureController::OnPossess(APawn * PawnToPossess)
     UBlackboardComponent* CreatureBlackboardComp = Blackboard.Get();
     //블랙보드컴포넌트를 불러온다.
     //블랙보드는 오브젝트로 감싸져 있으므로, Get을 통해서 직접 들고 올 수 있다.
+
+    ACreatureBase* Creature = Cast<ACreatureBase>(PawnToPossess);
+
+    UCreatureDataAsset *CreatureData = Creature->GetCreatureData();
+    RETURN_IF_NULL(CreatureData);
 
     if(UseBlackboard(BBAsset,CreatureBlackboardComp))
     { 
@@ -90,13 +97,13 @@ void ACreatureController::OnPossess(APawn * PawnToPossess)
         UAISenseConfig_Hearing* CreatureHearingConfig = Cast<UAISenseConfig_Hearing>(CreaturePerceptionComp->GetSenseConfig(AIHearingID));
         RETURN_IF_NULL(CreatureHearingConfig);
         //시각 설정 조정
-        CreatureSenseConfig->SightRadius = CreatureSightRadius;
-        CreatureSenseConfig->LoseSightRadius = CreatureLoseSightRadius;
-        CreatureSenseConfig->PeripheralVisionAngleDegrees = CreaturePeripheralVisionAngleDegrees;
+        CreatureSenseConfig->SightRadius = CreatureData->CreatureSightRadius;
+        CreatureSenseConfig->LoseSightRadius = CreatureData->CreatureLoseSightRadius;
+        CreatureSenseConfig->PeripheralVisionAngleDegrees = CreatureData->CreaturePeripheralVisionAngleDegrees;
 
 
         //청각 설정 조정
-        CreatureHearingConfig->HearingRange = CreatureHearingRange;
+        CreatureHearingConfig->HearingRange = CreatureData->CreatureHearingRange;
 
         //시각 정보를 업데이트
         CreaturePerceptionComp->RequestStimuliListenerUpdate();
@@ -148,6 +155,7 @@ UE_LOG(LogTemp, Warning, TEXT("Detected Actor: %s (%s)"),
         }
         else
         {
+            Blackboard->SetValueAsObject(Target,nullptr);
             UE_LOG(LogTemp, Warning, TEXT("DeACtivate"));
             bIsDetected = false;
         }
@@ -164,6 +172,7 @@ UE_LOG(LogTemp, Warning, TEXT("Detected Actor: %s (%s)"),
         }
         else
         {
+            Blackboard->SetValueAsObject(Target,nullptr);
             bIsDetected = false;
         }
     }
@@ -180,6 +189,7 @@ UE_LOG(LogTemp, Warning, TEXT("Detected Actor: %s (%s)"),
         }
         else
         {
+            Blackboard->SetValueAsObject(Target,nullptr);
             bIsDetected = false;
         }
     }
@@ -187,19 +197,27 @@ UE_LOG(LogTemp, Warning, TEXT("Detected Actor: %s (%s)"),
     ACreatureBase* Creature = Cast<ACreatureBase>(GetPawn());
     RETURN_IF_NULL(Creature);
 
+    /*플레이어가 공격 중 탐색될 경우, 더 이상 탐색하지 않는다.*/
+    if(Creature->GetState() ==ECreatureState::Attack)
+    {
+        
+        return;
+    }
+
+
     if(bIsDetected)
     {
         Creature->SetState(ECreatureState::Chase);
 
     }
-    else
+    else 
     {
         if(Creature->GetState() != ECreatureState::Check)
         {
             Creature->SetState(ECreatureState::Check);
         }
         UE_LOG(LogTemp, Display, TEXT("bIsDetected is disabled"));
-        Blackboard->SetValueAsObject(Target,nullptr);
+        
     }
 
 

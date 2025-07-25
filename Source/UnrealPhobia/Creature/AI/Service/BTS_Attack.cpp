@@ -32,14 +32,18 @@ void UBTS_Attack::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
     AActor* Target = Cast<AActor>(Blackboard->GetValueAsObject(TargetKey.SelectedKeyName));
     RETURN_IF_NULL(Target);
 
+    UCreatureDataAsset* CreatureData = Creature->GetCreatureData();
+    RETURN_IF_NULL(Creature);
+
     float Distance = Creature->GetDistanceTo(Target);
+
     UE_LOG(LogTemp, Warning, TEXT("Distance: %f"), Distance);
 
     
     FVector LastTargetLocation = Target->GetActorLocation();
     Blackboard->SetValueAsVector(LastFoundLocation,LastTargetLocation);
     
-    if(Distance <= AttackRange)
+    if(Distance <= CreatureData->AttackRange)
     {
         Creature->SetState(ECreatureState::Attack);
     }

@@ -35,28 +35,65 @@ void UCreatureAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UCreatureAnimInstance::PlayAttackMontage()
 {
-    if(!AttackMontage)
+    if(!GetAttackMontage())
     {
         UE_LOG(LogTemp, Display, TEXT("AttackMontage is nullptr"));
     }
     
-    if(!Montage_IsPlaying(AttackMontage))
+    if(!Montage_IsPlaying(GetAttackMontage()))
     {
         UE_LOG(LogTemp, Display, TEXT("AttackMontage is Activate"));
-        Montage_Play(AttackMontage);
+        Montage_Play(GetAttackMontage());
     }
 }
 
 void UCreatureAnimInstance::PlayCommunicateMontage()
 {
-    if(!CommunicateMontage)
+    if(!GetCommunicateMontage())
     {
         UE_LOG(LogTemp, Display, TEXT("AttackMontage is nullptr"));
     }
     
-    if(!Montage_IsPlaying(CommunicateMontage))
+    if(!Montage_IsPlaying(GetCommunicateMontage()))
     {
         UE_LOG(LogTemp, Display, TEXT("AttackMontage is Activate"));
-        Montage_Play(CommunicateMontage);
+        Montage_Play(GetCommunicateMontage());
     }
+}
+
+class UBlendSpace* UCreatureAnimInstance::GetMovementBlendspace() const
+{
+    RETURN_IF_NULL2(Owner,nullptr)
+    ACreatureBase* Creature = Cast<ACreatureBase>(Owner);
+    RETURN_IF_NULL2(Creature,nullptr)
+
+    UCreatureAnimationDataAsset* CreatureAnimationData = Creature->GetCreatureAnimationData();
+    RETURN_IF_NULL2(CreatureAnimationData,nullptr)
+
+    return CreatureAnimationData->MovementBlendspace;
+
+}
+
+class UAnimMontage* UCreatureAnimInstance::GetAttackMontage() const
+{
+    RETURN_IF_NULL2(Owner,nullptr)
+    ACreatureBase* Creature = Cast<ACreatureBase>(Owner);
+    RETURN_IF_NULL2(Creature,nullptr)
+
+    UCreatureAnimationDataAsset* CreatureAnimationData = Creature->GetCreatureAnimationData();
+    RETURN_IF_NULL2(CreatureAnimationData,nullptr)
+
+    return CreatureAnimationData->AttackMontage;
+}
+
+class UAnimMontage* UCreatureAnimInstance::GetCommunicateMontage() const
+{
+    RETURN_IF_NULL2(Owner,nullptr)
+    ACreatureBase* Creature = Cast<ACreatureBase>(Owner);
+    RETURN_IF_NULL2(Creature,nullptr)
+
+    UCreatureAnimationDataAsset* CreatureAnimationData = Creature->GetCreatureAnimationData();
+    RETURN_IF_NULL2(CreatureAnimationData,nullptr)
+
+    return CreatureAnimationData->CommunicateMontage;
 }

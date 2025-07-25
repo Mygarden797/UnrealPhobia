@@ -17,6 +17,7 @@
 #include "MentalBar.h"
 #include "Mental/CandleRoom.h"
 #include "Perception/AISenseConfig_Hearing.h"
+#include "Creature/CreatureBase.h"
 
 ANetworkPlayer::ANetworkPlayer(const FObjectInitializer &ObjectInitializer)
 {
@@ -204,6 +205,11 @@ void ANetworkPlayer::BeginPlay()
         {
             AttackCameraWidget->AddToViewport();
         }
+    }
+    // 크리쳐 공격 카메라 델리게이트 바인딩 추가
+    if (!ACreatureBase::OnCreatureAttackCamera.IsBoundToObject(this))
+    {
+        ACreatureBase::OnCreatureAttackCamera.AddUObject(this, &ANetworkPlayer::OnCreatureAttackCamera);
     }
 }
 
