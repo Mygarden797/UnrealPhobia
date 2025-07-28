@@ -40,10 +40,10 @@ ACreatureBase::ACreatureBase()
     CameraBoom->TargetArmLength = 400.0f;
 
     // 크리쳐의 회전을 따라가도록 설정
-    CameraBoom->bUsePawnControlRotation = true;  // false에서 true로 변경
-    CameraBoom->bInheritPitch = true;            // false에서 true로 변경
-    CameraBoom->bInheritYaw = true;              // false에서 true로 변경
-    CameraBoom->bInheritRoll = false;            // 롤은 그대로 false
+    CameraBoom->bUsePawnControlRotation = true; // false에서 true로 변경
+    CameraBoom->bInheritPitch = true;           // false에서 true로 변경
+    CameraBoom->bInheritYaw = true;             // false에서 true로 변경
+    CameraBoom->bInheritRoll = false;           // 롤은 그대로 false
 
     // 크리쳐 뒤쪽에 카메라 위치 설정 (Y축 회전 180도)
     CameraBoom->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
@@ -53,7 +53,6 @@ ACreatureBase::ACreatureBase()
     AttackCamera->SetupAttachment(CameraBoom);
     AttackCamera->bCaptureEveryFrame = false;
     AttackCamera->bCaptureOnMovement = false;
-
 
     // 렌더 타겟 생성 (블루프린트에서 설정하거나 코드에서 동적 생성)
     AttackCameraRenderTarget = nullptr;
@@ -119,12 +118,19 @@ void ACreatureBase::Attack()
     UGameplayStatics::ApplyDamage(AttackTarget, AttackDamage, CreatureController, this, UDamageType::StaticClass());
     CreatureAnimInstance->PlayAttackMontage();
 
+    // 기준 위치와 앞쪽 방향 벡터 가져오기
+    const FVector BaseLocation = this->GetActorLocation();
+    const FVector ForwardVector = this->GetActorForwardVector();
+    const FVector NewLocation = BaseLocation + ForwardVector * 150;
+
+    AttackTarget->SetActorLocation(NewLocation);
+
     FTimerHandle TimerHandle;
     GetWorld()->GetTimerManager().SetTimer(
         TimerHandle,
         this,
         &ACreatureBase::RevertTargetCamera, // 몽타주 끝났을 때 실행할 함수
-        2.0f,
+        3.0f,
         false);
 
     //  카메라 관련
