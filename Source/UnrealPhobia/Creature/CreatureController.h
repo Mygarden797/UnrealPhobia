@@ -6,9 +6,10 @@
 #include "AIController.h"
 #include "CreatureBase.h"
 #include "CreatureState.h"
-
+#include "UnrealPhobia/Assets/AudioAssets.h"
 
 #include "CreatureController.generated.h"
+
 
 
 //NULL을 돌려주는 매크로
@@ -71,9 +72,6 @@ class UNREALPHOBIA_API ACreatureController : public AAIController
 		virtual void PostInitializeComponents() override;
 		virtual void BeginPlay() override;
 
-        // 발각 효과음 변수
-        UPROPERTY(EditAnywhere, Category = "SFX")
-        USoundBase* DetectSFX;
 
 	private:
 		UFUNCTION()

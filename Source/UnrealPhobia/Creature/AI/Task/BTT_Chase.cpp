@@ -51,14 +51,6 @@ EBTNodeResult::Type UBTT_Chase::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
         Blackboard->SetValueAsVector(LastFoundLocation, LastTargetLocation);
     }
 
-    if (UWorld* World = CreatureController->GetWorld())
-    {
-        auto* SoundMgr = World->GetGameInstance()->GetSubsystem<USoundManager>();
-        if (SoundMgr && CreatureController->DetectSFX)
-        {
-            SoundMgr->PlaySFX2D(CreatureController->DetectSFX);
-        }
-    }
 
     // CreatureController->MoveToActor(TargetActor,AcceptRadius);
 

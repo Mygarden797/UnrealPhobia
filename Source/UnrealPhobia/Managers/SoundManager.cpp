@@ -16,11 +16,19 @@ void USoundManager::PlaySFX2D(USoundBase* SFX)
 }
 
 // 공간계에서 출력
-void USoundManager::PlaySFX3D(USoundBase* SFX, FVector Location)
+void USoundManager::PlaySFX3D(UObject* Object, USoundBase* SFX, FVector Location, FRotator Rotation, USoundAttenuation* AttenuationSettings)
 {
     if (!SFX) return;
     else
     {
-        UGameplayStatics::PlaySoundAtLocation(GetWorld(), SFX, Location);
+        UGameplayStatics::PlaySoundAtLocation(
+            Object,
+            SFX,
+            Location,
+            Rotation,                               // Rotation
+            1.0f,                                       // Volume
+            1.0f,                                       // Pitch
+            0.0f,                                       // Start Time
+            AttenuationSettings);           // Attenuation Asset
     }
 }
