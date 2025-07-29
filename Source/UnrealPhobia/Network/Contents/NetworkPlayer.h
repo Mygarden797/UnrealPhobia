@@ -71,6 +71,7 @@ public:
     void Move(const FInputActionValue &Value);
     // void MoveForward(const FInputActionValue& Value);
     // void MoveRight(const FInputActionValue& Value);
+    void MoveReleased();
     void Look(const FInputActionValue &Value);
     // ChangeView
     void SwitchCameraView(const FInputActionValue &Value);

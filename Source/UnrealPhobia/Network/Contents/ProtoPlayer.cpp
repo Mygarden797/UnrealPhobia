@@ -92,18 +92,23 @@ void AProtoPlayer::Tick(float DeltaSeconds)
 
         SetActorLocation(NextLocation);*/
         const Protocol::MoveState State = PlayerInfo->state();
+        const Protocol::CrouchState IsCrouch = PlayerInfo->crouch();
 
-        if (State == Protocol::MOVE_STATE_RUN)
-        {
-            SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
-            AddMovementInput(GetActorForwardVector());
-        }
-        else if(State == Protocol::MOVE_STATE_CROUCH)
+        if (IsCrouch == Protocol::CROUCH_STATE_CROUCH)
         {
             Crouch();
+        }
+
+        if (State == Protocol::MOVE_STATE_RUN)
+        { 
             SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             AddMovementInput(GetActorForwardVector());
+
+            ///*FVector MoveDir = (ForwardDirection * MovementVector.Y + RightDirection * MovementVector.X).GetSafeNormal();*/
+            //UpdateDirectionWeight(MoveDir);
+            //AddMovementInput(MoveDir);
         }
+
     }
 }
 
@@ -118,9 +123,6 @@ void AProtoPlayer::SetMoveState(Protocol::MoveState State)
 {
     if (PlayerInfo->state() == State)
         return;
-
-    if (PlayerInfo->state() == Protocol::MOVE_STATE_CROUCH)
-        UnCrouch();
 
     PlayerInfo->set_state(State);
 
