@@ -6,6 +6,8 @@
 #include "Creature/CreatureBase.h"
 #include "Creature/CreatureController.h"
 #include "NavigationSystem.h"
+#include "Kismet/GameplayStatics.h"
+#include "UnrealPhobia/Managers/SoundManager.h"
 
 
 
@@ -48,6 +50,7 @@ EBTNodeResult::Type UBTT_Chase::ExecuteTask(UBehaviorTreeComponent& OwnerComp, u
         
         Blackboard->SetValueAsVector(LastFoundLocation, LastTargetLocation);
     }
+
 
     // CreatureController->MoveToActor(TargetActor,AcceptRadius);
 
