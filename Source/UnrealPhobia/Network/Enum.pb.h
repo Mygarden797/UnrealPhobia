@@ -230,6 +230,32 @@ inline bool CreatureType_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<CreatureType>(
     CreatureType_descriptor(), name, value);
 }
+enum CrouchState : int {
+  CROUCH_STATE_NONE = 0,
+  CROUCH_STATE_CROUCH = 1,
+  CROUCH_STATE_UNCROUCH = 2,
+  CrouchState_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  CrouchState_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool CrouchState_IsValid(int value);
+constexpr CrouchState CrouchState_MIN = CROUCH_STATE_NONE;
+constexpr CrouchState CrouchState_MAX = CROUCH_STATE_UNCROUCH;
+constexpr int CrouchState_ARRAYSIZE = CrouchState_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* CrouchState_descriptor();
+template<typename T>
+inline const std::string& CrouchState_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, CrouchState>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function CrouchState_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    CrouchState_descriptor(), enum_t_value);
+}
+inline bool CrouchState_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, CrouchState* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<CrouchState>(
+    CrouchState_descriptor(), name, value);
+}
 // ===================================================================
 
 
@@ -286,6 +312,11 @@ template <> struct is_proto_enum< ::Protocol::CreatureType> : ::std::true_type {
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::CreatureType>() {
   return ::Protocol::CreatureType_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::CrouchState> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::CrouchState>() {
+  return ::Protocol::CrouchState_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

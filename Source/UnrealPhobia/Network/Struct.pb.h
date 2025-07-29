@@ -200,6 +200,7 @@ class PosInfo final :
     kZFieldNumber = 4,
     kYawFieldNumber = 5,
     kStateFieldNumber = 6,
+    kCrouchFieldNumber = 7,
   };
   // uint64 object_id = 1;
   void clear_object_id();
@@ -255,6 +256,15 @@ class PosInfo final :
   void _internal_set_state(::Protocol::MoveState value);
   public:
 
+  // .Protocol.CrouchState crouch = 7;
+  void clear_crouch();
+  ::Protocol::CrouchState crouch() const;
+  void set_crouch(::Protocol::CrouchState value);
+  private:
+  ::Protocol::CrouchState _internal_crouch() const;
+  void _internal_set_crouch(::Protocol::CrouchState value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.PosInfo)
  private:
   class _Internal;
@@ -269,6 +279,7 @@ class PosInfo final :
     float z_;
     float yaw_;
     int state_;
+    int crouch_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1183,6 +1194,26 @@ inline void PosInfo::_internal_set_state(::Protocol::MoveState value) {
 inline void PosInfo::set_state(::Protocol::MoveState value) {
   _internal_set_state(value);
   // @@protoc_insertion_point(field_set:Protocol.PosInfo.state)
+}
+
+// .Protocol.CrouchState crouch = 7;
+inline void PosInfo::clear_crouch() {
+  _impl_.crouch_ = 0;
+}
+inline ::Protocol::CrouchState PosInfo::_internal_crouch() const {
+  return static_cast< ::Protocol::CrouchState >(_impl_.crouch_);
+}
+inline ::Protocol::CrouchState PosInfo::crouch() const {
+  // @@protoc_insertion_point(field_get:Protocol.PosInfo.crouch)
+  return _internal_crouch();
+}
+inline void PosInfo::_internal_set_crouch(::Protocol::CrouchState value) {
+  
+  _impl_.crouch_ = value;
+}
+inline void PosInfo::set_crouch(::Protocol::CrouchState value) {
+  _internal_set_crouch(value);
+  // @@protoc_insertion_point(field_set:Protocol.PosInfo.crouch)
 }
 
 // -------------------------------------------------------------------

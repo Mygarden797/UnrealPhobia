@@ -233,6 +233,7 @@ void ANetworkPlayer::SetupPlayerInputComponent(UInputComponent *PlayerInputCompo
     if (UEnhancedInputComponent *EIC = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
     {
         EIC->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ANetworkPlayer::Move);
+        EIC->BindAction(MoveAction, ETriggerEvent::Completed, this, &ANetworkPlayer::MoveReleased);
         EIC->BindAction(LookAction, ETriggerEvent::Triggered, this, &ANetworkPlayer::Look);
         EIC->BindAction(SwitchViewAction, ETriggerEvent::Started, this, &ANetworkPlayer::SwitchCameraView);
 
@@ -265,7 +266,7 @@ void ANetworkPlayer::Tick(float DeltaTime)
             LastDesiredInput = DesiredInput;
         }
 
-        // State information
+        // 입력과 실제 속도 모두 고려
         if (DesiredInput == FVector2D::Zero())
             SetMoveState(Protocol::MOVE_STATE_IDLE);
         else
@@ -285,6 +286,11 @@ void ANetworkPlayer::Tick(float DeltaTime)
                 Info->CopyFrom(*PlayerInfo);
                 Info->set_yaw(DesiredYaw);
                 Info->set_state(GetMoveState());
+                Info->set_crouch(Protocol::CROUCH_STATE_CROUCH);
+                //if (bIsCrouch)
+                //{
+                //    Info->set_crouch(Protocol::CROUCH_STATE_CROUCH);
+                //}
             }
 
             SEND_PACKET(MovePkt);
@@ -321,6 +327,13 @@ void ANetworkPlayer::Move(const FInputActionValue &Value)
             DesiredYaw = Rotator.Yaw;
         }
     }
+}
+
+void ANetworkPlayer::MoveReleased()
+{
+    // 키를 떼었을 때 DesiredInput을 0으로 설정
+    DesiredInput = FVector2D::Zero();
+    DesiredMoveDirection = FVector::ZeroVector;
 }
 
 void ANetworkPlayer::Look(const FInputActionValue &Value)
