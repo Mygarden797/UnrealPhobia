@@ -2,6 +2,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/SpotLightComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -18,6 +19,7 @@
 #include "Mental/CandleRoom.h"
 #include "Perception/AISenseConfig_Hearing.h"
 #include "Creature/CreatureBase.h"
+#include "Assets/AudioAssets.h"
 
 ANetworkPlayer::ANetworkPlayer(const FObjectInitializer &ObjectInitializer)
 {
@@ -105,7 +107,7 @@ void ANetworkPlayer::BeginPlay()
         }
         else
         {
-            UE_LOG(LogTemp, Error, TEXT("Failed to load Inventory!!"));
+            UE_LOG(LogTemp, Error, TEXT("Failed to load Inventory"));
         }
     }
 
@@ -211,6 +213,15 @@ void ANetworkPlayer::BeginPlay()
     {
         ACreatureBase::OnCreatureAttackCamera.AddUObject(this, &ANetworkPlayer::OnCreatureAttackCamera);
     }
+    FlashLight = FindComponentByClass<USpotLightComponent>();
+    if (FlashLight)
+    {
+        UE_LOG(LogTemp, Log, TEXT("Flash Light Component Found : %s"), *FlashLight->GetName());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Log, TEXT("Failed To Find Flash Light Component"));
+    }
 }
 
 void ANetworkPlayer::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
@@ -242,6 +253,9 @@ void ANetworkPlayer::SetupPlayerInputComponent(UInputComponent *PlayerInputCompo
 
         EIC->BindAction(CrouchAction, ETriggerEvent::Started, this, &ANetworkPlayer::SetCrouch);
         EIC->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ANetworkPlayer::SetCrouch);
+
+        EIC->BindAction(SwitchFlashAction, ETriggerEvent::Started, this, &ANetworkPlayer::SwitchFlash);
+
         UE_LOG(LogTemp, Display, TEXT("Key Binding is done"));
     }
     else
@@ -287,10 +301,10 @@ void ANetworkPlayer::Tick(float DeltaTime)
                 Info->set_yaw(DesiredYaw);
                 Info->set_state(GetMoveState());
                 Info->set_crouch(Protocol::CROUCH_STATE_CROUCH);
-                //if (bIsCrouch)
+                // if (bIsCrouch)
                 //{
-                //    Info->set_crouch(Protocol::CROUCH_STATE_CROUCH);
-                //}
+                //     Info->set_crouch(Protocol::CROUCH_STATE_CROUCH);
+                // }
             }
 
             SEND_PACKET(MovePkt);
@@ -344,6 +358,10 @@ void ANetworkPlayer::Look(const FInputActionValue &Value)
     {
         AddControllerYawInput(LookAxisVector.X);
         AddControllerPitchInput(LookAxisVector.Y * -1);
+        if (FlashLight)
+        {
+            FlashLight->SetWorldRotation(FollowCamera->GetComponentRotation());
+        }
     }
 }
 
@@ -842,4 +860,30 @@ void ANetworkPlayer::UpdateCameraLag()
         CameraBoom->CameraLagSpeed = 9.f;
         CameraBoom->CameraLagMaxDistance = 30.f;
     }
+}
+
+void ANetworkPlayer::SwitchFlash(const FInputActionValue &value)
+{
+
+    if (!FlashLight)
+        return;
+    if (bIsFlashing)
+        bIsFlashing = false;
+    else
+        bIsFlashing = true;
+    FlashLight->SetVisibility(bIsFlashing);
+
+    if (AudioDataAssetClass)
+    {
+        UAudioAssets *AA = AudioDataAssetClass->GetDefaultObject<UAudioAssets>();
+        if (AA && AA->SwitchFlashLight)
+        {
+            UGameplayStatics::PlaySoundAtLocation(
+                this,
+                AA->SwitchFlashLight,
+                GetActorLocation());
+        }
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("set"));
 }
