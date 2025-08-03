@@ -33,5 +33,5 @@ public:
     USoundBase* HandLightButton;
 
     UPROPERTY(EditAnywhere, Category = "Player")
-    USoundBase* beDetected;
+    USoundBase* BeDetected;
 };

@@ -12,6 +12,9 @@
     - Description		: Manage playing sounds
     - Date				    : 2025/07/28
 */
+
+class UAudioAssets;
+
 UCLASS()
 class UNREALPHOBIA_API USoundManager : public UGameInstanceSubsystem
 {
@@ -19,9 +22,11 @@ class UNREALPHOBIA_API USoundManager : public UGameInstanceSubsystem
 
 public:
     USoundManager();
+    virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+    virtual void Deinitialize() override;
 
     UFUNCTION(BlueprintCallable)
-    void PlaySFX2D(USoundBase* SFX);
+    void PlayDetectedSound();
     UFUNCTION(BlueprintCallable)
     void PlaySFX3D(UObject* Object, USoundBase* SFX, FVector Location, FRotator Rotation, USoundAttenuation* AttenuationSettings);
 
@@ -39,6 +44,6 @@ private:
     float FadeStep;
     float CurrentVolume;
 
-    bool IsVaildAssets() const;
+    bool IsValidAssets() const;
     void UpdateFadeStep();
 };

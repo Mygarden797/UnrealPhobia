@@ -5,19 +5,84 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundBase.h"
 #include "Components/AudioComponent.h"
+#include "Misc/ConfigCacheIni.h"
 
 USoundManager::USoundManager()
 {
     BeingChased = CreateDefaultSubobject<UAudioComponent>(TEXT("BeingChased"));
     BeingChased->bAutoActivate = false;
+
+    if (IsValidAssets())
+    {
+        UE_LOG(LogTemp, Display, TEXT("AudioAssets is ready"));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("USoundManager::Constructor; AudioAssets is null"));
+    }
+}
+
+bool USoundManager::IsValidAssets() const
+{
+    if (!AudioAssets)
+    {
+        UE_LOG(LogTemp, Error, TEXT("USoundManager: AudioAssets is NULL!!"));
+        return false;
+    }
+    return true;
+}
+
+void USoundManager::Initialize(FSubsystemCollectionBase& Collection)
+{
+    Super::Initialize(Collection);
+    // UE_LOG(LogTemp, Warning, TEXT("USoundManager::Initalize(), should be called only one time"));
+    FString AudioAssetPath;
+    if (GConfig->GetString(TEXT("GameAudio"), TEXT("DA_AudioAssetPath"),
+        AudioAssetPath, GGameIni))
+    {
+        FSoftObjectPath AudioDataPath(AudioAssetPath);
+        UBlueprint* LoadedBlueprint = Cast<UBlueprint>(AudioDataPath.TryLoad());
+        if (LoadedBlueprint)
+        {
+            AudioAssets = Cast<UAudioAssets>(LoadedBlueprint->GeneratedClass->GetDefaultObject());
+        }
+    }
+
+    if (IsValidAssets())
+    {
+        UE_LOG(LogTemp, Log, TEXT("USoundManager::Initialize; AudioAssets is ready"));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Check the .ini file"));
+    }
+}
+
+void USoundManager::Deinitialize()
+{
+    UE_LOG(LogTemp, Error, TEXT("USoundManager DEINITIALIZED!! This should only happen when the game is closing."));
+    Super::Deinitialize();
 }
 
 // 플레이어에게 직접 전달
-void USoundManager::PlaySFX2D(USoundBase* SFX)
+void USoundManager::PlayDetectedSound()
 {
-    if (!SFX || !GEngine) return;
-    UGameplayStatics::PlaySound2D(GetWorld(), SFX);
-    UE_LOG(LogTemp, Display, TEXT("Call PlaySFX2D"));
+    if (IsValidAssets())
+    {
+        if (AudioAssets->BeDetected)
+        {
+            UGameplayStatics::PlaySound2D(GetWorld(), AudioAssets->BeDetected);
+            UE_LOG(LogTemp, Display, TEXT("USoundManager::PlayDetectedSound()"));
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayDetectedSound(): No BeDetected"));
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayDetectedSound(): No Assets"));
+    }
 }
 
 // 공간계에서 출력
@@ -38,19 +103,9 @@ void USoundManager::PlaySFX3D(UObject* Object, USoundBase* SFX, FVector Location
     }
 }
 
-bool USoundManager::IsVaildAssets() const
-{
-    if (!AudioAssets)
-    {
-        UE_LOG(LogTemp, Error, TEXT("AudioAssets is NULL!!"));
-        return false;
-    }
-    return true;
-}
-
 void USoundManager::PlayBeingChased(EChaseState CurrentState)
 {
-    if (!IsVaildAssets()) return;
+    if (!IsValidAssets()) return;
 
     if (!AudioAssets->BeingChased)
     {

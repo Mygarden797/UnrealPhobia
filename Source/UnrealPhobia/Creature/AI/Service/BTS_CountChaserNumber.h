@@ -6,10 +6,10 @@
 #include "BTS_CountChaserNumber.generated.h"
 
 /**
-* Name				    : CountChaseNumber
-* Description		    : Manage number of creatures chasing player characters
-* Last Update		    : 2025/08/04
-* Todo                     : 
+*       Name				        : CountChaseNumber
+*       Description		        : Manage number of creatures chasing player characters
+*       Last Update		    : 2025/08/04
+*       Todo                       : 
 */
 UCLASS()
 class UNREALPHOBIA_API UBTS_CountChaserNumber : public UBTService

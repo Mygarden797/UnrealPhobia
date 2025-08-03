@@ -274,9 +274,4 @@ public:
 private:
     float FootPrintNoise = 3000.f;
 
-
-
-    /* Audio */
-public:
-    UAudioAssets* AudioAsset;
 };
