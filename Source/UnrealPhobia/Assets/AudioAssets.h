@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
@@ -29,6 +29,9 @@ public:
     UPROPERTY(EditAnywhere,  Category = "Survivor")
     USoundBase* WalkingSteps;
 
+    UPROPERTY(EditAnywhere, Category = "Survivor")
+    USoundBase* HandLightButton;
+
     UPROPERTY(EditAnywhere, Category = "Player")
-    USoundBase* Detected;
+    USoundBase* beDetected;
 };

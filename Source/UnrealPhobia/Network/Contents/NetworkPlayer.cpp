@@ -1,4 +1,4 @@
-#include "NetworkPlayer.h"
+﻿#include "NetworkPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -18,6 +18,7 @@
 #include "Mental/CandleRoom.h"
 #include "Perception/AISenseConfig_Hearing.h"
 #include "Creature/CreatureBase.h"
+#include "SurvivorController.h"
 
 ANetworkPlayer::ANetworkPlayer(const FObjectInitializer &ObjectInitializer)
 {
@@ -61,6 +62,8 @@ void ANetworkPlayer::BeginPlay()
     // Initialize stats
     CurrentStamina = MaxStamina;
     CurrentMental = MaxMental;
+    CurrentChaseState = EChaseState::Safe;
+    ChaserCount = 0;
 
     // Only setup UI for locally controlled players
     if (IsLocallyControlled())
@@ -254,6 +257,9 @@ void ANetworkPlayer::SetupPlayerInputComponent(UInputComponent *PlayerInputCompo
 void ANetworkPlayer::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
+    // Debugging for Creature Chaser Counters
+    DisplayChaserNumberDebug();
 
     // Network packet sending logic (from MyProtoPlayer)
     if (IsMyPlayer())
@@ -809,6 +815,7 @@ void ANetworkPlayer::StartCameraLerp(const FVector &NewOffset)
     GetWorld()->GetTimerManager().SetTimer(CameraLerpTimer, this, &ANetworkPlayer::StepCameraLerp, LerpStepTime, true);
 }
 
+// 카메라 이동 설정, 특정 연출에서도 사용 가능 
 void ANetworkPlayer::StepCameraLerp()
 {
     LerpElapsed += LerpStepTime;
@@ -841,5 +848,74 @@ void ANetworkPlayer::UpdateCameraLag()
     {
         CameraBoom->CameraLagSpeed = 9.f;
         CameraBoom->CameraLagMaxDistance = 30.f;
+    }
+}
+
+// 추적 상태 업데이트 및 컨트롤러에 전달
+void ANetworkPlayer::SetChaseState(EChaseState NewState)
+{
+    if (CurrentChaseState != NewState)
+    {
+        CurrentChaseState = NewState;
+        OnChaseStateChanged.Broadcast(NewState);
+        UE_LOG(LogTemp, Display, TEXT("SetChaseState"));
+    }
+}
+
+// 추적자 수 증가, 0->1일 경우 상태 전달
+void ANetworkPlayer::AddChaser()
+{
+    ChaserCount++;
+
+    UE_LOG(LogTemp, Display, TEXT("AddChaser()"));
+
+    GetWorld()->GetTimerManager().ClearTimer(ChaseCooldownTimerHandle);
+    if (CurrentChaseState != EChaseState::BeingChased)
+    {
+        SetChaseState(EChaseState::BeingChased);
+        UE_LOG(LogTemp, Display, TEXT("SetChaseState(): BeingChased"));
+    }
+}
+
+// 추적자 수 감소, 0일 때 ReturnToSafe() 타이머 활성화
+void ANetworkPlayer::RemoveChaser()
+{
+    ChaserCount = FMath::Max(0, ChaserCount - 1);
+    UE_LOG(LogTemp, Display, TEXT("RemoveChaser()"));
+
+    if (ChaserCount == 0 && CurrentChaseState == EChaseState::BeingChased)
+    {
+        SetChaseState(EChaseState::Cooldown);
+        UE_LOG(LogTemp, Display, TEXT("SetChaseState(): Cooldown"));
+        GetWorld()->GetTimerManager().SetTimer(
+            ChaseCooldownTimerHandle, 
+            this, 
+            &ANetworkPlayer::ReturnToSafe, 
+            2.0f, 
+            false);
+    }
+}
+
+//  안전 상태 전환
+void ANetworkPlayer::ReturnToSafe()
+{
+    if (ChaserCount == 0)
+    {
+        SetChaseState(EChaseState::Safe);
+        UE_LOG(LogTemp, Display, TEXT("SetChaseState(): Safe"));
+    }
+}
+
+void ANetworkPlayer::DisplayChaserNumberDebug()
+{
+    if (bShowChaserCountDebug)
+    {
+        if (GEngine)
+        {
+            FString StateString = StaticEnum<EChaseState>()->GetValueAsString(CurrentChaseState);
+
+            GEngine->AddOnScreenDebugMessage(1, 0.0f, FColor::Red,
+                FString::Printf(TEXT("Current Chasers: %d, State: %s"), ChaserCount, *StateString));
+        }
     }
 }
