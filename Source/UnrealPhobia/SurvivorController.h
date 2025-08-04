@@ -26,8 +26,8 @@ public:
     
 
 protected:
-    TObjectPtr<USoundManager> SoundManager;
+    // TObjectPtr<USoundManager> SoundManager;
 
-    UFUNCTION()
-    void UpdateChaseState(EChaseState NewState);
+    // UFUNCTION()
+    // void UpdateChaseState(EChaseState NewState);
 };

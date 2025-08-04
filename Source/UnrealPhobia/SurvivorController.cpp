@@ -27,6 +27,7 @@ void ASurvivorController::OnPossess(APawn* InCharacter)
     MySurvivor->OnChaseStateChanged.AddDynamic(this, &ASurvivorController::UpdateChaseState);
 }
 
+/*
 void ASurvivorController::UpdateChaseState(EChaseState NewState)
 {
     if (SoundManager)
@@ -38,3 +39,4 @@ void ASurvivorController::UpdateChaseState(EChaseState NewState)
         UE_LOG(LogTemp, Error, TEXT("Failed to call SoundManager!!"));
     }
 }
+*/
