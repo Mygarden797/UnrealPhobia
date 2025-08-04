@@ -36,14 +36,8 @@ private:
     UPROPERTY()
     UAudioAssets* AudioAssets;
 
-    UAudioComponent* BeingChased;
+    UAudioComponent* BeingChasedSource;
 
     FTimerHandle FadeTimerHandle;
-    float TargetVolume;
-    float FadeDuration;
-    float FadeStep;
-    float CurrentVolume;
-
     bool IsValidAssets() const;
-    void UpdateFadeStep();
 };

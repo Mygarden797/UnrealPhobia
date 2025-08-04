@@ -857,8 +857,19 @@ void ANetworkPlayer::SetChaseState(EChaseState NewState)
     if (CurrentChaseState != NewState)
     {
         CurrentChaseState = NewState;
-        OnChaseStateChanged.Broadcast(NewState);
-        UE_LOG(LogTemp, Display, TEXT("SetChaseState"));
+        if (USoundManager* SoundManager = GetSoundManager())
+        {
+            SoundManager->PlayBeingChased(CurrentChaseState);
+            UE_LOG(LogTemp, Display, TEXT("NetworkPlayer::SetChaseState(): SoundManager->PlayBeingChased()"));
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("NetworkPlayer::SetChaseState(): SoundManager is null"));
+            return;
+        }
+        // OnChaseStateChanged.Broadcast(NewState);
+        FString StateString = StaticEnum<EChaseState>()->GetValueAsString(CurrentChaseState);
+        UE_LOG(LogTemp, Display, TEXT("SetChaseState: %s"), *StateString);
     }
 }
 
@@ -866,8 +877,7 @@ void ANetworkPlayer::SetChaseState(EChaseState NewState)
 void ANetworkPlayer::AddChaser()
 {
     ChaserCount++;
-    UWorld* CurrentWorld = GetWorld();
-    if (USoundManager* SoundManager = GetGameInstance()->GetSubsystem<USoundManager>())
+    if (USoundManager* SoundManager = GetSoundManager())
     {
         SoundManager->PlayDetectedSound();
     }
@@ -883,7 +893,6 @@ void ANetworkPlayer::AddChaser()
     if (CurrentChaseState != EChaseState::BeingChased)
     {
         SetChaseState(EChaseState::BeingChased);
-        UE_LOG(LogTemp, Display, TEXT("SetChaseState(): BeingChased"));
     }
 }
 
@@ -896,7 +905,6 @@ void ANetworkPlayer::RemoveChaser()
     if (ChaserCount == 0 && CurrentChaseState == EChaseState::BeingChased)
     {
         SetChaseState(EChaseState::Cooldown);
-        UE_LOG(LogTemp, Display, TEXT("SetChaseState(): Cooldown"));
         GetWorld()->GetTimerManager().SetTimer(
             ChaseCooldownTimerHandle,
             this,
@@ -912,7 +920,6 @@ void ANetworkPlayer::ReturnToSafe()
     if (ChaserCount == 0)
     {
         SetChaseState(EChaseState::Safe);
-        UE_LOG(LogTemp, Display, TEXT("SetChaseState(): Safe"));
     }
 }
 
@@ -928,4 +935,9 @@ void ANetworkPlayer::DisplayChaserNumberDebug()
                 FString::Printf(TEXT("Current Chasers: %d, State: %s"), ChaserCount, *StateString));
         }
     }
+}
+
+USoundManager* ANetworkPlayer::GetSoundManager() const
+{
+    return GetGameInstance() ? GetGameInstance()->GetSubsystem<USoundManager>() : nullptr;
 }

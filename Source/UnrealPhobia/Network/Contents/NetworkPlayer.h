@@ -274,4 +274,7 @@ public:
 private:
     float FootPrintNoise = 3000.f;
 
+    /* Audio */
+ private:
+     USoundManager* GetSoundManager() const;
 };
