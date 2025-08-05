@@ -5,7 +5,7 @@
 #include "ChaseSystemTypes.h"
 #include "NetworkPlayer.h"
 #include "InputActionValue.h"
-#include "UnrealPhobia/Managers/SoundManager.h"
+#include "Managers/SoundManager.h"
 #include "SurvivorController.generated.h"
 
 /**
@@ -21,13 +21,19 @@ class UNREALPHOBIA_API ASurvivorController : public APlayerController
 	GENERATED_BODY()
 
     // virtual void OnPossess(APawn* InCharacter) override;
-	
+
 public:
+ //   UFUNCTION(BlueprintCallable)
+ //   void ToggleInGameMenu();
     
 
-protected:
-    // TObjectPtr<USoundManager> SoundManager;
+//protected:
+ //   virtual void SetupInputComponent() override;
 
-    // UFUNCTION()
-    // void UpdateChaseState(EChaseState NewState);
+private:
+ //   UPROPERTY()
+ //   UUserWidget* CurrentInGameMenu;
+        
+ //   void OnEscapePressed();
+    bool bIsMenuOpen = false;
 };
