@@ -8,7 +8,7 @@
 /*
     - Name				: AudioAssets
     - Description		:  Manage audio sources that used in this game
-    - Date				    : 2025/07/28
+    - LastUpdate	    : 2025/07/28
 */
 
 UCLASS(Blueprintable)
@@ -17,10 +17,11 @@ class UNREALPHOBIA_API UAudioAssets : public UDataAsset
 	GENERATED_BODY()
 	
 public:
-    UPROPERTY(EditAnywhere,  Category = "BGM")
+    /* Audio Sources */
+    UPROPERTY(EditAnywhere,  Category = "Music")
     USoundBase* BeingChased;
 
-    UPROPERTY(EditAnywhere, Category = "BGM")
+    UPROPERTY(EditAnywhere, Category = "Music")
     USoundBase* MainMenu;
 
     UPROPERTY(EditAnywhere,  Category = "Creature")
@@ -34,4 +35,23 @@ public:
 
     UPROPERTY(EditAnywhere, Category = "Player")
     USoundBase* BeDetected;
+
+    /* Sound Classes */
+    UPROPERTY(EditAnywhere, Category = "Audio Classes")
+    USoundClass* MasterSoundClass;
+
+    UPROPERTY(EditAnywhere, Category = "Audio Classes")
+    USoundClass* MusicSoundClass;
+
+    UPROPERTY(EditAnywhere, Category = "Audio Classes")
+    USoundClass* SFXSoundClass;
+
+    UPROPERTY(EditAnywhere, Category = "Audio Classes")
+    USoundClass* UISoundClass;
+
+
+    /* Global Sound Mix */
+    UPROPERTY(EditAnywhere, Category = "AudioCategory")
+    USoundMix* GlobalSoundMix;
+
 };

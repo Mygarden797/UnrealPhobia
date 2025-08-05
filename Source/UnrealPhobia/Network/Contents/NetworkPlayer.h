@@ -116,9 +116,7 @@ public:
     UFUNCTION()
     void OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRenderTarget2D *RenderTarget);
 
-    // ChaseState Delegate
-    UPROPERTY(BlueprintAssignable)
-    FOnChaseStateSignature OnChaseStateChanged;
+    // ChaseState
     UFUNCTION(BlueprintCallable, Category = "Creature")
     void AddChaser();
     UFUNCTION(BlueprintCallable, Category = "Creature")

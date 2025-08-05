@@ -18,39 +18,13 @@ void USoundManager::Initialize(FSubsystemCollectionBase& Collection)
 {
     Super::Initialize(Collection);
     // UE_LOG(LogTemp, Warning, TEXT("USoundManager::Initalize(), should be called only one time"));
-    FString AudioAssetPath;
-    if (GConfig->GetString(TEXT("GameAudio"), TEXT("DA_AudioAssetPath"),
-        AudioAssetPath, GGameIni))
-    {
-        FSoftObjectPath AudioDataPath(AudioAssetPath);
-        UBlueprint* LoadedBlueprint = Cast<UBlueprint>(AudioDataPath.TryLoad());
-        if (LoadedBlueprint)
-        {
-            AudioAssets = Cast<UAudioAssets>(LoadedBlueprint->GeneratedClass->GetDefaultObject());
-        }
-    }
 
-    UWorld* World = GetWorld();
-    if (!World)
-    {
-        UE_LOG(LogTemp, Error, TEXT("USoundManager::Initalize(): World is null"));
-        return;
-    }
+    LoadAudioAssets();
     
-    BeingChasedSource = UGameplayStatics::SpawnSound2D(World, AudioAssets->BeingChased);
-    if (BeingChasedSource && AudioAssets && AudioAssets->BeingChased)
+    if (IsValidAssets() && AudioAssets->GlobalSoundMix)
     {
-        BeingChasedSource->bAutoDestroy = false;
-       //  BeingChasedSource->bIsUISound = true;
-        BeingChasedSource->SetVolumeMultiplier(1.0f);
-        UE_LOG(LogTemp, Display, TEXT("USoundManager::Initalize(): Set BeingChasedSource"));
+        UGameplayStatics::PushSoundMixModifier(this, AudioAssets->GlobalSoundMix);
     }
-}
-
-void USoundManager::Deinitialize()
-{
-    UE_LOG(LogTemp, Error, TEXT("USoundManager DEINITIALIZED!! This should only happen when the game is closing."));
-    Super::Deinitialize();
 }
 
 bool USoundManager::IsValidAssets() const
@@ -159,5 +133,88 @@ void USoundManager::PlayBeingChased(EChaseState CurrentState)
             UE_LOG(LogTemp, Error, TEXT("USoundManager::PlayBeingChased(): Wrong EChaseState"));
             break;
         }
+    }
+}
+
+// 특정 디렉토리 포함된 에셋 호출
+void USoundManager::LoadAudioAssets()
+{
+    FString AudioAssetPath;
+    if (GConfig->GetString(TEXT("GameAudio"), TEXT("DA_AudioAssetPath"),
+        AudioAssetPath, GGameIni))
+    {
+        FSoftObjectPath AudioDataPath(AudioAssetPath);
+
+        // Blueprint로 파생된 AudioAssets를 가져옴
+        // 경로는 Config/DefualtGame.ini
+        UBlueprint* LoadedBlueprint = Cast<UBlueprint>(AudioDataPath.TryLoad());
+        if (LoadedBlueprint)
+        {
+            AudioAssets = Cast<UAudioAssets>(LoadedBlueprint->GeneratedClass->GetDefaultObject());
+        }
+    }
+
+    UWorld* World = GetWorld();
+    if (!World)
+    {
+        UE_LOG(LogTemp, Error, TEXT("USoundManager::Initalize(): World is null"));
+        return;
+    }
+
+    BeingChasedSource = UGameplayStatics::SpawnSound2D(World, AudioAssets->BeingChased);
+    if (BeingChasedSource && AudioAssets && AudioAssets->BeingChased)
+    {
+        BeingChasedSource->bAutoDestroy = false;
+        //  BeingChasedSource->bIsUISound = true;
+        BeingChasedSource->SetVolumeMultiplier(1.0f);
+        UE_LOG(LogTemp, Display, TEXT("USoundManager::Initalize(): Set BeingChasedSource"));
+    }
+}
+
+
+// 실제 출력을 위한 오디오 세팅 적용
+void USoundManager::ApplyAudioSettings()
+{
+    if (!IsValidAssets() || !AudioAssets->GlobalSoundMix)
+    {
+        UE_LOG(LogTemp, Error, TEXT("USoundManager::ApplyAudioSettings(): No GlobalSoundMix"));
+        return;
+    }
+
+    UGameAudioSettings* Settings = UGameAudioSettings::GetGameAudioSettings();
+    if (!Settings)
+    {
+        UE_LOG(LogTemp, Error, TEXT("USoundManager::ApplyAudioSettings(): Failed to load Settings"));
+        return;
+    }
+
+    if (AudioAssets->MasterSoundClass)
+    {
+        UGameplayStatics::SetSoundMixClassOverride(
+            // WorldContext, SoundMix* 
+            // Volume, Pitch, FadeInTime, bApplyToChildren
+            this, AudioAssets->GlobalSoundMix, AudioAssets->MasterSoundClass,
+            Settings->GetMasterVolume(), 1.0f, 0.1f, true);    
+    }
+
+    if (AudioAssets->MusicSoundClass)
+    {
+        UGameplayStatics::SetSoundMixClassOverride(
+            this, AudioAssets->GlobalSoundMix, AudioAssets->MusicSoundClass,
+            Settings->GetMasterVolume(), 1.0f, 0.1f, true);
+    }
+
+    if (AudioAssets->SFXSoundClass)
+    {
+        UGameplayStatics::SetSoundMixClassOverride(
+            this, AudioAssets->GlobalSoundMix, AudioAssets->SFXSoundClass,
+            Settings->GetMasterVolume(), 1.0f, 0.1f, true);
+    }
+
+    if (AudioAssets->UISoundClass)
+    {
+        UGameplayStatics::SetSoundMixClassOverride(
+            this, AudioAssets->GlobalSoundMix, AudioAssets->UISoundClass,
+            Settings->GetMasterVolume(), 1.0f, 0.1f, true);
     }
 }

@@ -5,6 +5,7 @@
 #include "ChaseSystemTypes.h"
 #include "Sound/SoundBase.h"
 #include "UnrealPhobia/Assets/AudioAssets.h"
+#include "Settings/GameAudioSettings.h"
 #include "SoundManager.generated.h"
 
 /*
@@ -23,10 +24,15 @@ class UNREALPHOBIA_API USoundManager : public UGameInstanceSubsystem
 public:
     USoundManager();
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-    virtual void Deinitialize() override;
+    // virtual void Deinitialize() override;
 
+    /* Audio Settings */
+    void ApplyAudioSettings();
+
+    /* Play Audio Sources */
     UFUNCTION(BlueprintCallable)
     void PlayDetectedSound();
+
     UFUNCTION(BlueprintCallable)
     void PlaySFX3D(UObject* Object, USoundBase* SFX, FVector Location, FRotator Rotation, USoundAttenuation* AttenuationSettings);
 
@@ -38,6 +44,6 @@ private:
 
     UAudioComponent* BeingChasedSource;
 
-    FTimerHandle FadeTimerHandle;
     bool IsValidAssets() const;
+    void LoadAudioAssets();
 };

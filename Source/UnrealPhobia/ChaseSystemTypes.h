@@ -17,5 +17,3 @@ enum class EChaseState : uint8
     BeingChased UMETA(DisplayName = "BeingChased"),          // Chasing now
     Cooldown UMETA(DisplayName = "Cooldown"),                  // Chasing is temporily end
 };
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChaseStateSignature, EChaseState, NewState);

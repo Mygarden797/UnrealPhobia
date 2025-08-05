@@ -20,7 +20,7 @@ class UNREALPHOBIA_API ASurvivorController : public APlayerController
 {
 	GENERATED_BODY()
 
-    virtual void OnPossess(APawn* InCharacter) override;
+    // virtual void OnPossess(APawn* InCharacter) override;
 	
 public:
     
