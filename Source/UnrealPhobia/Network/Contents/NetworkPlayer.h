@@ -252,8 +252,15 @@ private:
     /*AI Perception Hearing*/
 public:
     UFUNCTION(BlueprintCallable)
-    void MakeFootprintNoiseEvent();
+    void MakeRunNoiseEvent();
+
+    UFUNCTION(BlueprintCallable)
+    void MakeWalkNoiseEvent();
 
 private:
-    float FootPrintNoise = 3000.f;
+    float RunNoise = 3000.f;
+    float RunLoudness = 1.3f;
+
+    float WalkNoise = 750.f;
+    float WalkLoudness = 1.0f;
 };

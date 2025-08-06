@@ -72,6 +72,8 @@ class UNREALPHOBIA_API ACreatureController : public AAIController
 		virtual void PostInitializeComponents() override;
 		virtual void BeginPlay() override;
 
+		// virtual FGenericTeamId GetGenericTeamId() const override;
+
 
 	private:
 		UFUNCTION()
@@ -95,6 +97,7 @@ class UNREALPHOBIA_API ACreatureController : public AAIController
 		TSet<ACreatureBase*> FriendList; 
 	/* 데이터 에셋 */
 	protected:
+		FGenericTeamId TeamID;
 		
 
 

@@ -30,6 +30,10 @@ const FName ACreatureController::Friend(TEXT("Friend"));
 
 ACreatureController::ACreatureController()
 {
+
+    //TeamID 설정
+    TeamID = FGenericTeamId(2);
+
     //AIPerceptionCOmponent 오브젝트 생성
     UAIPerceptionComponent* CreaturePerception = CreateOptionalDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
         SetPerceptionComponent(*CreaturePerception);
@@ -136,9 +140,16 @@ void ACreatureController::BeginPlay()
 void ACreatureController::OnTargetDetected(AActor* Actor, FAIStimulus Stimulus)
 {
      if (!IsValid(Actor)) return;
-    //ASurvivor* PlayerCheck = Cast<ASurvivor>(Actor);
-    //RETURN_IF_NULL(PlayerCheck);
-UE_LOG(LogTemp, Warning, TEXT("Detected Actor: %s (%s)"),
+    
+    /*다른 Creature를 만났을 때 멈추는 현상을 막기 위함*/
+    ACreatureBase* CreatureCheck = Cast<ACreatureBase>(Actor);
+    if(CreatureCheck != nullptr)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Creature Detected. stop sensing"));
+        return;
+    }
+
+    UE_LOG(LogTemp, Warning, TEXT("Detected Actor: %s (%s)"),
     *Actor->GetName(),
     *Actor->GetClass()->GetName());
     

@@ -765,11 +765,20 @@ void ANetworkPlayer::UpdateMentalBar()
 }
 
 /* 발자국 소리 이벤트*/
-void ANetworkPlayer::MakeFootprintNoiseEvent()
+void ANetworkPlayer::MakeRunNoiseEvent()
 {
-    UE_LOG(LogTemp, Warning, TEXT("MakeFootPrintNoiseEvent is Activate"));
-    UAISense_Hearing::ReportNoiseEvent(GetWorld(), GetActorLocation(), 1.0f, this, FootPrintNoise, FName(TEXT("Footprint")));
+    UE_LOG(LogTemp, Warning, TEXT("MakeRunNoiseEvent is Activate"));
+    UAISense_Hearing::ReportNoiseEvent(GetWorld(), GetActorLocation(), RunLoudness, this, RunNoise, FName(TEXT("RunFootprint")));
+    /* 1.of는 Loudness, RunNoise는 Max Range로 아무리 소리가 커도 Max Range 이후로는 전달되지 않는다.*/
 }
+
+void ANetworkPlayer::MakeWalkNoiseEvent()
+{
+    UE_LOG(LogTemp, Warning, TEXT("MakeWalkNoiseEvent is Activate"));
+    UAISense_Hearing::ReportNoiseEvent(GetWorld(), GetActorLocation(), WalkLoudness, this, WalkNoise, FName(TEXT("WalkFootprint")));
+    /* 1.of는 Loudness, WalkNoise는 Max Range로 아무리 소리가 커도 Max Range 이후로는 전달되지 않는다.*/
+}
+
 
 void ANetworkPlayer::OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRenderTarget2D *RenderTarget)
 {
