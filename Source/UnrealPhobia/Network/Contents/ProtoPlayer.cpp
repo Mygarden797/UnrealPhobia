@@ -34,7 +34,7 @@ AProtoPlayer::AProtoPlayer()
     // instead of recompiling to adjust them
     GetCharacterMovement()->JumpZVelocity = 700.f;
     GetCharacterMovement()->AirControl = 0.35f;
-    GetCharacterMovement()->MaxWalkSpeed = 500.f;
+    GetCharacterMovement()->MaxWalkSpeed = 400.f;
     GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
     GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
@@ -96,8 +96,19 @@ void AProtoPlayer::Tick(float DeltaSeconds)
 
         if (IsCrouch == Protocol::CROUCH_STATE_CROUCH)
         {
+            bIsCrouch = true;
             Crouch();
+            bIsSprinting = false;
+            SetCrouch();
         }
+        else if (IsCrouch == Protocol::CROUCH_STATE_UNCROUCH)
+        {
+            bIsSprinting = true;
+            UnCrouch();
+            bIsCrouch = false;
+            SetWalk();
+        }
+        
 
         if (State == Protocol::MOVE_STATE_RUN)
         { 
@@ -107,6 +118,12 @@ void AProtoPlayer::Tick(float DeltaSeconds)
             ///*FVector MoveDir = (ForwardDirection * MovementVector.Y + RightDirection * MovementVector.X).GetSafeNormal();*/
             //UpdateDirectionWeight(MoveDir);
             //AddMovementInput(MoveDir);
+        }
+        else if (State == Protocol::MOVE_STATE_SPRINT)
+        {
+            SetSprint();
+            SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
+            AddMovementInput(GetActorForwardVector());
         }
 
     }
@@ -154,5 +171,20 @@ void AProtoPlayer::SetDestInfo(const Protocol::PosInfo& Info)
 
     // 상태만 바로 적용하자.
     SetMoveState(Info.state());
+    SetCrouchState(Info.crouch());
 }
 
+void AProtoPlayer::SetCrouch()
+{
+    GetCharacterMovement()->MaxWalkSpeed = 200.f;
+}
+
+void AProtoPlayer::SetSprint()
+{
+    GetCharacterMovement()->MaxWalkSpeed = 900.f;
+}
+
+void AProtoPlayer::SetWalk()
+{
+    GetCharacterMovement()->MaxWalkSpeed = 400.f;
+}
