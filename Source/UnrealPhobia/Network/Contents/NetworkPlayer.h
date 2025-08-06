@@ -13,6 +13,8 @@ class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
+class USpotLightComponent;
+class UAudioAssets;
 
 /*
     - Name				: ANetworkPlayer
@@ -26,7 +28,7 @@ class UNREALPHOBIA_API ANetworkPlayer : public AProtoPlayer
     GENERATED_BODY()
 
 public:
-    ANetworkPlayer(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+    ANetworkPlayer(const FObjectInitializer &ObjectInitializer = FObjectInitializer::Get());
 
     virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
 
@@ -95,6 +97,8 @@ public:
     void StartMentalRegen(float Duration);
     void StopMentalRegen();
 
+    // Flash Function
+    void SwitchFlash(const FInputActionValue &Value);
     void GameWin();
 
     // Attacked
@@ -140,6 +144,11 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
     TObjectPtr<UCameraComponent> FollowCamera;
 
+    USpotLightComponent *FlashLight;
+
+    UPROPERTY(EditAnywhere, Category = "Audio")
+    TSubclassOf<UAudioAssets> AudioDataAssetClass;
+
     FTimerHandle CameraLerpTimer;
     FVector StartOffset;
     FVector EndOffset;
@@ -148,8 +157,8 @@ protected:
     float LerpStepTime = 0.01f;
     bool bIsLerping = false;
 
-    // Move Camera Smoothly 
-    void StartCameraLerp(const FVector& NewOffset);
+    // Move Camera Smoothly
+    void StartCameraLerp(const FVector &NewOffset);
     void StepCameraLerp();
     void UpdateCameraLag();
 
@@ -183,6 +192,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> ForceActivateAction;
+    UPROPERTY(EditDefaultsOnly, Category = "Input")
+    TObjectPtr<UInputAction> SwitchFlashAction;
+
+    bool bIsFlashing = true;
 
     // State Variables
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
