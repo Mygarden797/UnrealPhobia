@@ -1,12 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Network/Contents/ProtoPlayer.h"
 #include "InputActionValue.h"
-#include "Creature/CreatureBase.h" // ũ���� ���̽� ���
-#include "AttackCameraWidget.h"    // ���� ī�޶� ���� ���
+#include "Creature/CreatureBase.h"        // Creature Perception
+#include "AttackCameraWidget.h"          // 공격 카메라
+#include "ChaseSystemTypes.h"
+#include "UnrealPhobia/Assets/AudioAssets.h"
+#include "UnrealPhobia/Managers/SoundManager.h"
 #include "NetworkPlayer.generated.h"
 
 class USpringArmComponent;
@@ -16,10 +19,10 @@ class UInputAction;
 class USpotLightComponent;
 class UAudioAssets;
 
-/*
-    - Name				: ANetworkPlayer
-    - Description		: Network-enabled Player Character with Survivor features
-    - Date				: 2025/06/10
+/**
+ *      Name				    : ANetworkPlayer
+ *      Description		    : Network-enabled Player Character with Survivor features
+ *      Last Update		: 2025/08/04
 */
 
 UCLASS(Blueprintable)
@@ -69,10 +72,8 @@ public:
     UPROPERTY()
     class UMentalBar *MentalBar;
 
-    // Movement Functions
+    /* Movement Functions */ 
     void Move(const FInputActionValue &Value);
-    // void MoveForward(const FInputActionValue& Value);
-    // void MoveRight(const FInputActionValue& Value);
     void MoveReleased();
     void Look(const FInputActionValue &Value);
     // ChangeView
@@ -133,11 +134,18 @@ public:
     UFUNCTION()
     void OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRenderTarget2D *RenderTarget);
 
+    // ChaseState
+    UFUNCTION(BlueprintCallable, Category = "Creature")
+    void AddChaser();
+    UFUNCTION(BlueprintCallable, Category = "Creature")
+    void RemoveChaser();
+    void SetChaseState(EChaseState NewState);
+
 protected:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;
 
-    // Camera Components
+    /* Camera Components */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
     TObjectPtr<USpringArmComponent> CameraBoom;
 
@@ -162,10 +170,7 @@ protected:
     void StepCameraLerp();
     void UpdateCameraLag();
 
-    //// Enhanced Input Components
-    // UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-    // class UInputMappingContext* DefaultMappingContext;
-
+    /* Input Mapping */
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     TObjectPtr<UInputMappingContext> SurvivorMovingContext;
 
@@ -177,12 +182,6 @@ protected:
     TObjectPtr<UInputAction> LookAction;
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     TObjectPtr<UInputAction> SwitchViewAction;
-
-    // UPROPERTY(EditDefaultsOnly, Category = "Input")
-    // TObjectPtr<UInputAction> MoveForwardAction;
-
-    // UPROPERTY(EditDefaultsOnly, Category = "Input")
-    // TObjectPtr<UInputAction> MoveRightAction;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     TObjectPtr<UInputAction> SprintAction;
@@ -199,7 +198,7 @@ protected:
 
     // State Variables
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
-    float BaseSpeed = 300.0f;
+    float BaseSpeed = 400.0f;
 
     //ProtoPlayer로 이전
     //UPROPERTY(BlueprintReadWrite, Category = "Stamina")
@@ -214,6 +213,17 @@ protected:
     UPROPERTY(BlueprintReadWrite, Category = "Mental")
     bool bIsDead = false;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Creature")
+    EChaseState CurrentChaseState;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Creature")
+    int32 ChaserCount = 0;
+    FTimerHandle ChaseCooldownTimerHandle;
+    void ReturnToSafe();
+
+    UPROPERTY(EditAnywhere, Category = "Debug")
+    bool bShowChaserCountDebug = false;
+    void DisplayChaserNumberDebug();
+
     // Mental System
     UPROPERTY(EditDefaultsOnly, Category = "Mental")
     float MaxMental = 200.f;
@@ -227,6 +237,8 @@ protected:
     FTimerHandle MentalDecayTimerHandle;
     FTimerHandle MentalRegenTimerHandle;
     FTimerHandle MentalRegenDurationHandle;
+ 
+
     bool bIsInMentalRegenZone = false;
 
     float MentalRegenTickTime = 1.f;
@@ -234,6 +246,7 @@ protected:
 
     void GameOver();
 
+    /* Network */
     // Network-related variables
     const float MOVE_PACKET_SEND_DELAY = 0.2f;
     float MovePacketSendTimer = MOVE_PACKET_SEND_DELAY;
@@ -255,7 +268,7 @@ protected:
     UAttackCameraWidget *AttackCameraWidget;
 
 private:
-    // Stamina System
+    /* Stamina System */
     UPROPERTY(EditDefaultsOnly, Category = "Stamina")
     float MaxStamina = 100.f;
 
@@ -288,10 +301,14 @@ public:
     UFUNCTION(BlueprintCallable)
     void MakeWalkNoiseEvent();
 
+
+    
 private:
     float RunNoise = 3000.f;
     float RunLoudness = 1.3f;
 
     float WalkNoise = 750.f;
     float WalkLoudness = 1.0f;
+
+    USoundManager* GetSoundManager() const;
 };

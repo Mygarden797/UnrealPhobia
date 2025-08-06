@@ -1,4 +1,4 @@
-#include "NetworkPlayer.h"
+﻿#include "NetworkPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -22,8 +22,9 @@
 #include "TimerManager.h"
 #include "EngineUtils.h"
 #include "Assets/AudioAssets.h"
+#include "SurvivorController.h"
 
-ANetworkPlayer::ANetworkPlayer(const FObjectInitializer &ObjectInitializer)
+ANetworkPlayer::ANetworkPlayer(const FObjectInitializer& ObjectInitializer)
 {
     // Set collision capsule size
     GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -65,6 +66,8 @@ void ANetworkPlayer::BeginPlay()
     // Initialize stats
     CurrentStamina = MaxStamina;
     CurrentMental = MaxMental;
+    CurrentChaseState = EChaseState::Safe;
+    ChaserCount = 0;
 
     // Only setup UI for locally controlled players
     if (IsLocallyControlled())
@@ -121,13 +124,13 @@ void ANetworkPlayer::BeginPlay()
         1.0f,
         true);
 
-    TArray<AActor *> FoundTriggers;
-    TArray<AActor *> FoundTriggers2;
+    TArray<AActor*> FoundTriggers;
+    TArray<AActor*> FoundTriggers2;
     UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers);
     UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom2"), FoundTriggers2);
 
-    TArray<AActor *> AvailableTriggers;
-    for (AActor *Trigger : FoundTriggers)
+    TArray<AActor*> AvailableTriggers;
+    for (AActor* Trigger : FoundTriggers)
     {
         if (Trigger != CurrentCandleRoom)
         {
@@ -135,8 +138,8 @@ void ANetworkPlayer::BeginPlay()
         }
     }
 
-    TArray<AActor *> AvailableTriggers2;
-    for (AActor *Trigger : FoundTriggers2)
+    TArray<AActor*> AvailableTriggers2;
+    for (AActor* Trigger : FoundTriggers2)
     {
         if (Trigger != CurrentCandleRoom)
         {
@@ -146,7 +149,7 @@ void ANetworkPlayer::BeginPlay()
 
     // CandleRoom Ʈ ̸
     UE_LOG(LogTemp, Log, TEXT("=== FoundTriggers (CandleRoom) ==="));
-    for (AActor *Trigger : FoundTriggers)
+    for (AActor* Trigger : FoundTriggers)
     {
         if (Trigger)
         {
@@ -156,7 +159,7 @@ void ANetworkPlayer::BeginPlay()
 
     // CandleRoom2 Ʈ ̸
     UE_LOG(LogTemp, Log, TEXT("=== FoundTriggers2 (CandleRoom2) ==="));
-    for (AActor *Trigger : FoundTriggers2)
+    for (AActor* Trigger : FoundTriggers2)
     {
         if (Trigger)
         {
@@ -168,21 +171,21 @@ void ANetworkPlayer::BeginPlay()
     {
         int32 Index = FMath::RandRange(0, AvailableTriggers.Num() - 1);
         int32 Index2 = FMath::RandRange(0, AvailableTriggers2.Num() - 1);
-        AActor *SelectedTrigger = AvailableTriggers[Index];
-        AActor *SelectedTrigger2 = AvailableTriggers2[Index2];
+        AActor* SelectedTrigger = AvailableTriggers[Index];
+        AActor* SelectedTrigger2 = AvailableTriggers2[Index2];
         SelectedTrigger->Tags.AddUnique(FName("Active")); // Activate with Active Tag
         SelectedTrigger2->Tags.AddUnique(FName("Active"));
 
         UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger->GetName());
         UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger2->GetName());
 
-        if (ACandleRoom *CandleRoom = Cast<ACandleRoom>(SelectedTrigger))
+        if (ACandleRoom* CandleRoom = Cast<ACandleRoom>(SelectedTrigger))
         {
             CandleRoom->TurnOnEffects();
             UE_LOG(LogTemp, Log, TEXT("Candle flames turned ON for: %s"), *SelectedTrigger->GetName());
         }
 
-        if (ACandleRoom *CandleRoom = Cast<ACandleRoom>(SelectedTrigger2))
+        if (ACandleRoom* CandleRoom = Cast<ACandleRoom>(SelectedTrigger2))
         {
             CandleRoom->TurnOnEffects();
             UE_LOG(LogTemp, Log, TEXT("Candle flames turned ON for: %s"), *SelectedTrigger2->GetName());
@@ -214,13 +217,13 @@ void ANetworkPlayer::BeginPlay()
     }
 }
 
-void ANetworkPlayer::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
+void ANetworkPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-    if (APlayerController *PlayerController = Cast<APlayerController>(Controller))
+    if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
     {
-        if (UEnhancedInputLocalPlayerSubsystem *Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+        if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
         {
             Subsystem->AddMappingContext(SurvivorMovingContext, 0);
             UE_LOG(LogTemp, Display, TEXT("Moving Key is ready"));
@@ -231,7 +234,7 @@ void ANetworkPlayer::SetupPlayerInputComponent(UInputComponent *PlayerInputCompo
         UE_LOG(LogTemp, Error, TEXT("Failed to Mapping Keys"));
     }
 
-    if (UEnhancedInputComponent *EIC = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+    if (UEnhancedInputComponent* EIC = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
     {
         EIC->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ANetworkPlayer::Move);
         EIC->BindAction(MoveAction, ETriggerEvent::Completed, this, &ANetworkPlayer::MoveReleased);
@@ -265,6 +268,9 @@ void ANetworkPlayer::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
+    // Debugging for Creature Chaser Counters
+    DisplayChaserNumberDebug();
+
     // Network packet sending logic (from MyProtoPlayer)
     if (IsMyPlayer())
     {
@@ -297,7 +303,7 @@ void ANetworkPlayer::Tick(float DeltaTime)
 
             // Current position information
             {
-                Protocol::PosInfo *Info = MovePkt.mutable_info();
+                Protocol::PosInfo* Info = MovePkt.mutable_info();
                 Info->CopyFrom(*PlayerInfo);
                 Info->set_yaw(DesiredYaw);
                 Info->set_state(GetMoveState());
@@ -310,7 +316,7 @@ void ANetworkPlayer::Tick(float DeltaTime)
 }
 
 // Network Movement Functions (from MyProtoPlayer)
-void ANetworkPlayer::Move(const FInputActionValue &Value)
+void ANetworkPlayer::Move(const FInputActionValue& Value)
 {
     FVector2D MovementVector = Value.Get<FVector2D>();
 
@@ -347,7 +353,7 @@ void ANetworkPlayer::MoveReleased()
     DesiredMoveDirection = FVector::ZeroVector;
 }
 
-void ANetworkPlayer::Look(const FInputActionValue &Value)
+void ANetworkPlayer::Look(const FInputActionValue& Value)
 {
     FVector2D LookAxisVector = Value.Get<FVector2D>();
 
@@ -387,7 +393,7 @@ void ANetworkPlayer::Look(const FInputActionValue &Value)
 //
 
 // Sprint Functions
-void ANetworkPlayer::Sprint(const FInputActionValue &Value)
+void ANetworkPlayer::Sprint(const FInputActionValue& Value)
 {
     const bool DoSprint = Value.Get<bool>();
 
@@ -513,7 +519,7 @@ void ANetworkPlayer::RegenStamina()
 }
 
 // Crouch Function
-void ANetworkPlayer::SetCrouch(const FInputActionValue &value)
+void ANetworkPlayer::SetCrouch(const FInputActionValue& value)
 {
     const bool bPressed = value.Get<bool>();
 
@@ -567,7 +573,7 @@ void ANetworkPlayer::DecreaseMental()
 void ANetworkPlayer::GameOver()
 {
     UE_LOG(LogTemp, Warning, TEXT("Game Over! Mental is Zero."));
-    APlayerController *PlayerController = Cast<APlayerController>(GetController());
+    APlayerController* PlayerController = Cast<APlayerController>(GetController());
     GameOverWidget = CreateWidget<UUserWidget>(GetWorld(), GameOverWidgetClass);
     if (GameOverWidgetClass)
     {
@@ -583,7 +589,7 @@ void ANetworkPlayer::GameOver()
 
     SEND_PACKET(Pkt);
 
-    UNetworkManager *GameInstance = Cast<UNetworkManager>(GetGameInstance());
+    UNetworkManager* GameInstance = Cast<UNetworkManager>(GetGameInstance());
     GameInstance->DisconnectFromGameServer();
 }
 
@@ -591,7 +597,7 @@ void ANetworkPlayer::GameWin()
 {
     UE_LOG(LogTemp, Warning, TEXT("Game Win!"));
 
-    APlayerController *PlayerController = Cast<APlayerController>(GetController());
+    APlayerController* PlayerController = Cast<APlayerController>(GetController());
     GameWinWidget = CreateWidget<UUserWidget>(GetWorld(), GameWinWidgetClass);
     if (GameWinWidgetClass)
     {
@@ -606,13 +612,13 @@ void ANetworkPlayer::GameWin()
 
     SEND_PACKET(Pkt);
 
-    UNetworkManager *GameInstance = Cast<UNetworkManager>(GetGameInstance());
+    UNetworkManager* GameInstance = Cast<UNetworkManager>(GetGameInstance());
     GameInstance->DisconnectFromGameServer();
 }
 
 //  ۿ .  ʿ .  Դ ͵ DecreaseMental Լ ̿ϵ ġ
-float ANetworkPlayer::TakeDamage(float DamageAmount, FDamageEvent const &DamageEvent,
-                                 AController *EventInstigator, AActor *DamageCauser)
+float ANetworkPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+    AController* EventInstigator, AActor* DamageCauser)
 {
     if (bIsDead)
         return 0.0f;
@@ -674,8 +680,8 @@ void ANetworkPlayer::RegenMental()
 
 void ANetworkPlayer::ActivateRandomMentalTrigger()
 {
-    TArray<AActor *> FoundTriggers1;
-    TArray<AActor *> FoundTriggers2;
+    TArray<AActor*> FoundTriggers1;
+    TArray<AActor*> FoundTriggers2;
     UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers1);
     UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom2"), FoundTriggers2);
 
@@ -707,8 +713,8 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
         AllTriggers = &FoundTriggers2;
     }
 
-    TArray<AActor *> AvailableTriggers;
-    for (AActor *Trigger : *AllTriggers)
+    TArray<AActor*> AvailableTriggers;
+    for (AActor* Trigger : *AllTriggers)
     {
         if (Trigger && Trigger != CurrentCandleRoom)
         {
@@ -719,7 +725,7 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
     if (AvailableTriggers.Num() > 0)
     {
         int32 Index = FMath::RandRange(0, AvailableTriggers.Num() - 1);
-        AActor *SelectedTrigger = AvailableTriggers[Index];
+        AActor* SelectedTrigger = AvailableTriggers[Index];
 
         if (CurrentCandleRoom)
         {
@@ -734,7 +740,7 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
         SelectedTrigger->Tags.AddUnique(FName("Active"));
         CurrentCandleRoom = Cast<ACandleRoom>(SelectedTrigger);
 
-        if (ACandleRoom *CandleRoom = Cast<ACandleRoom>(SelectedTrigger))
+        if (ACandleRoom* CandleRoom = Cast<ACandleRoom>(SelectedTrigger))
         {
 			CandleRoom->TurnOnEffects();
         }
@@ -797,7 +803,7 @@ void ANetworkPlayer::OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRen
     UE_LOG(LogTemp, Log, TEXT("Player Controller received attack camera from %s"), *Creature->GetName());
 }
 
-void ANetworkPlayer::SwitchCameraView(const FInputActionValue &Value)
+void ANetworkPlayer::SwitchCameraView(const FInputActionValue& Value)
 {
     float ChangedY = -CameraBoom->SocketOffset.Y;
     StartCameraLerp(FVector(0, ChangedY, CameraBoom->SocketOffset.Z));
@@ -805,7 +811,7 @@ void ANetworkPlayer::SwitchCameraView(const FInputActionValue &Value)
 
 // 상황에 따라 Duration과 NewOffset 조절
 // Duration이 너무 높거나 NewOffset이 SpringArm->SocketOffset+32처럼 고정값이 아니면 시점이 무너질 수 있음
-void ANetworkPlayer::StartCameraLerp(const FVector &NewOffset)
+void ANetworkPlayer::StartCameraLerp(const FVector& NewOffset)
 {
     if (bIsLerping)
     {
@@ -820,6 +826,7 @@ void ANetworkPlayer::StartCameraLerp(const FVector &NewOffset)
     GetWorld()->GetTimerManager().SetTimer(CameraLerpTimer, this, &ANetworkPlayer::StepCameraLerp, LerpStepTime, true);
 }
 
+// 카메라 이동 설정, 특정 연출에서도 사용 가능 
 void ANetworkPlayer::StepCameraLerp()
 {
     LerpElapsed += LerpStepTime;
@@ -918,4 +925,94 @@ void ANetworkPlayer::SwitchFlash(const FInputActionValue &value)
     }
 
     UE_LOG(LogTemp, Log, TEXT("set"));
+}
+// 추적 상태 업데이트 및 컨트롤러에 전달
+void ANetworkPlayer::SetChaseState(EChaseState NewState)
+{
+    if (CurrentChaseState != NewState)
+    {
+        CurrentChaseState = NewState;
+        if (USoundManager* SoundManager = GetSoundManager())
+        {
+            SoundManager->PlayBeingChased(CurrentChaseState);
+            UE_LOG(LogTemp, Display, TEXT("NetworkPlayer::SetChaseState(): SoundManager->PlayBeingChased()"));
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("NetworkPlayer::SetChaseState(): SoundManager is null"));
+            return;
+        }
+        // OnChaseStateChanged.Broadcast(NewState);
+        FString StateString = StaticEnum<EChaseState>()->GetValueAsString(CurrentChaseState);
+        UE_LOG(LogTemp, Display, TEXT("SetChaseState: %s"), *StateString);
+    }
+}
+
+// 추적자 수 증가, 0->1일 경우 상태 전달
+void ANetworkPlayer::AddChaser()
+{
+    ChaserCount++;
+    if (USoundManager* SoundManager = GetSoundManager())
+    {
+        SoundManager->PlayDetectedSound();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("NetworkPlayer::AddChaser(): SoundManager is null"));
+        return;
+    }
+
+    UE_LOG(LogTemp, Display, TEXT("AddChaser()"));
+
+    GetWorld()->GetTimerManager().ClearTimer(ChaseCooldownTimerHandle);
+    if (CurrentChaseState != EChaseState::BeingChased)
+    {
+        SetChaseState(EChaseState::BeingChased);
+    }
+}
+
+// 추적자 수 감소, 0일 때 ReturnToSafe() 타이머 활성화
+void ANetworkPlayer::RemoveChaser()
+{
+    ChaserCount = FMath::Max(0, ChaserCount - 1);
+    UE_LOG(LogTemp, Display, TEXT("RemoveChaser()"));
+
+    if (ChaserCount == 0 && CurrentChaseState == EChaseState::BeingChased)
+    {
+        SetChaseState(EChaseState::Cooldown);
+        GetWorld()->GetTimerManager().SetTimer(
+            ChaseCooldownTimerHandle,
+            this,
+            &ANetworkPlayer::ReturnToSafe,
+            2.0f,
+            false);
+    }
+}
+
+//  안전 상태 전환
+void ANetworkPlayer::ReturnToSafe()
+{
+    if (ChaserCount == 0)
+    {
+        SetChaseState(EChaseState::Safe);
+    }
+}
+
+void ANetworkPlayer::DisplayChaserNumberDebug()
+{
+    if (bShowChaserCountDebug)
+    {
+        if (GEngine)
+        {
+            FString StateString = StaticEnum<EChaseState>()->GetValueAsString(CurrentChaseState);
+
+            GEngine->AddOnScreenDebugMessage(1, 0.0f, FColor::Red,
+                FString::Printf(TEXT("Current Chasers: %d, State: %s"), ChaserCount, *StateString));
+        }
+    }
+}
+
+USoundManager* ANetworkPlayer::GetSoundManager() const
+{
+    return GetGameInstance() ? GetGameInstance()->GetSubsystem<USoundManager>() : nullptr;
 }

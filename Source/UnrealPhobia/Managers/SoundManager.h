@@ -1,10 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "ChaseSystemTypes.h"
 #include "Sound/SoundBase.h"
+#include "UnrealPhobia/Assets/AudioAssets.h"
+#include "Settings/GameAudioSettings.h"
 #include "SoundManager.generated.h"
 
 /*
@@ -12,22 +13,33 @@
     - Description		: Manage playing sounds
     - Date				    : 2025/07/28
 */
+
+class UAudioAssets;
+
 UCLASS()
 class UNREALPHOBIA_API USoundManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
 public:
+    USoundManager();
+    virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+    // virtual void Deinitialize() override;
+
+    /* Play Audio Sources */
     UFUNCTION(BlueprintCallable)
-    void PlaySFX2D(USoundBase* SFX);
+    void PlayDetectedSound();
+
     UFUNCTION(BlueprintCallable)
     void PlaySFX3D(UObject* Object, USoundBase* SFX, FVector Location, FRotator Rotation, USoundAttenuation* AttenuationSettings);
 
-    //UFUNCTION(BlueprintCallable)
-    //void PlayChasingBGM();
+    void PlayBeingChased(EChaseState CurrentState);
 
 private:
-    UPROPERTY(EditAnywhere, Category = "Audio")
-    UAudioComponent* ChasingBGM;
-    
+    UPROPERTY()
+    UAudioAssets* AudioAssets;
+
+    UAudioComponent* BeingChasedSource;
+
+    bool IsValidAssets() const;
 };
