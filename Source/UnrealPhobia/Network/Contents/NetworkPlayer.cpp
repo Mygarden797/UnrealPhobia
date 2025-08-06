@@ -18,6 +18,8 @@
 #include "Mental/CandleRoom.h"
 #include "Perception/AISenseConfig_Hearing.h"
 #include "Creature/CreatureBase.h"
+#include "TimerManager.h"
+#include "EngineUtils.h"
 
 ANetworkPlayer::ANetworkPlayer(const FObjectInitializer &ObjectInitializer)
 {
@@ -125,7 +127,7 @@ void ANetworkPlayer::BeginPlay()
     TArray<AActor *> AvailableTriggers;
     for (AActor *Trigger : FoundTriggers)
     {
-        if (Trigger != CurrentTrigger)
+        if (Trigger != CurrentCandleRoom)
         {
             AvailableTriggers.Add(Trigger);
         }
@@ -134,7 +136,7 @@ void ANetworkPlayer::BeginPlay()
     TArray<AActor *> AvailableTriggers2;
     for (AActor *Trigger : FoundTriggers2)
     {
-        if (Trigger != CurrentTrigger)
+        if (Trigger != CurrentCandleRoom)
         {
             AvailableTriggers2.Add(Trigger);
         }
@@ -174,25 +176,13 @@ void ANetworkPlayer::BeginPlay()
 
         if (ACandleRoom *CandleRoom = Cast<ACandleRoom>(SelectedTrigger))
         {
-            for (const auto &Candle : CandleRoom->AssociatedCandles)
-            {
-                if (Candle)
-                {
-                    Candle->SetFlameActive(true);
-                }
-            }
+            CandleRoom->TurnOnEffects();
             UE_LOG(LogTemp, Log, TEXT("Candle flames turned ON for: %s"), *SelectedTrigger->GetName());
         }
 
         if (ACandleRoom *CandleRoom = Cast<ACandleRoom>(SelectedTrigger2))
         {
-            for (const auto &Candle : CandleRoom->AssociatedCandles)
-            {
-                if (Candle)
-                {
-                    Candle->SetFlameActive(true);
-                }
-            }
+            CandleRoom->TurnOnEffects();
             UE_LOG(LogTemp, Log, TEXT("Candle flames turned ON for: %s"), *SelectedTrigger2->GetName());
         }
     }
@@ -243,6 +233,12 @@ void ANetworkPlayer::SetupPlayerInputComponent(UInputComponent *PlayerInputCompo
         EIC->BindAction(CrouchAction, ETriggerEvent::Started, this, &ANetworkPlayer::SetCrouch);
         EIC->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ANetworkPlayer::SetCrouch);
         UE_LOG(LogTemp, Display, TEXT("Key Binding is done"));
+
+		if (ForceActivateAction)
+		{
+			EIC->BindAction(ForceActivateAction, ETriggerEvent::Started, this, &ANetworkPlayer::OnForceActivatePressed);
+			EIC->BindAction(ForceActivateAction, ETriggerEvent::Completed, this, &ANetworkPlayer::OnForceActivateReleased);
+		}
     }
     else
     {
@@ -288,9 +284,9 @@ void ANetworkPlayer::Tick(float DeltaTime)
                 Info->set_state(GetMoveState());
                 Info->set_crouch(Protocol::CROUCH_STATE_CROUCH);
                 //if (bIsCrouch)
-                //{
+                //
                 //    Info->set_crouch(Protocol::CROUCH_STATE_CROUCH);
-                //}
+                //
             }
 
             SEND_PACKET(MovePkt);
@@ -349,27 +345,27 @@ void ANetworkPlayer::Look(const FInputActionValue &Value)
 
 // Survivor Movement Functions
 // void ANetworkPlayer::MoveForward(const FInputActionValue& Value)
-//{
+//
 //    const float AxisValue = Value.Get<float>();
 //    if (Controller && AxisValue != 0.0f)
-//    {
+//    
 //        const FRotator YawRotation(0, Controller->GetControlRotation().Yaw, 0);
 //        const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 //        AddMovementInput(Direction, AxisValue);
-//    }
-//}
+//    
+//
 //
 // void ANetworkPlayer::MoveRight(const FInputActionValue& Value)
-//{
+//
 //    const float AxisValue = Value.Get<float>();
 //
 //    if (Controller && AxisValue != 0.0f)
-//    {
+//    
 //        const FRotator YawRotation(0, Controller->GetControlRotation().Yaw, 0);
 //        const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 //        AddMovementInput(Direction, AxisValue);
-//    }
-//}
+//    
+//
 
 // Sprint Functions
 void ANetworkPlayer::Sprint(const FInputActionValue &Value)
@@ -615,7 +611,7 @@ float ANetworkPlayer::TakeDamage(float DamageAmount, FDamageEvent const &DamageE
     // ŷ 0 Ϸ
     if (CurrentMental <= 0.0f)
     {
-        CurrentMental = 0.0f; // ���� ���� (���ʿ��ϸ� ���� ����)
+        CurrentMental = 0.0f; //   (ʿϸ  )
         bIsFear = true;
     }
     UpdateMentalBar();
@@ -636,9 +632,10 @@ void ANetworkPlayer::StopMentalRegen()
     GetWorldTimerManager().ClearTimer(MentalRegenTimerHandle);
     GetWorldTimerManager().ClearTimer(MentalRegenDurationHandle);
 
-    if (CurrentTrigger)
+    if (CurrentCandleRoom)
     {
-        CurrentTrigger->Tags.Remove(FName("Active"));
+        CurrentCandleRoom->Tags.Remove(FName("Active"));
+		CurrentCandleRoom->TurnOffEffects();
     }
 
     ActivateRandomMentalTrigger();
@@ -665,21 +662,21 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
 
     //  ƮŰ CandleRoom 迭 CandleRoom2 迭 Ǻ
     FName CurrentMapTag;
-    if (CurrentTrigger && CurrentTrigger->Tags.Contains(FName("CandleRoom")))
+    if (CurrentCandleRoom && CurrentCandleRoom->Tags.Contains(FName("CandleRoom")))
     {
         CurrentMapTag = FName("CandleRoom");
     }
-    else if (CurrentTrigger && CurrentTrigger->Tags.Contains(FName("CandleRoom2")))
+    else if (CurrentCandleRoom && CurrentCandleRoom->Tags.Contains(FName("CandleRoom2")))
     {
         CurrentMapTag = FName("CandleRoom2");
     }
     else
     {
-        // CurrentTrigger  ⺻ CandleRoom ó
+        // CurrentCandleRoom  ⺻ CandleRoom ó
         CurrentMapTag = FName("CandleRoom");
     }
 
-    // ���� ���� Ʈ���ŵ� �߿��� ���� Ʈ���Ű� �ƴ� �͸� ������
+    //   Ʈŵ ߿  ƮŰ ƴ ͸ 
     TArray<AActor *> *AllTriggers = nullptr;
 
     if (CurrentMapTag == FName("CandleRoom"))
@@ -694,7 +691,7 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
     TArray<AActor *> AvailableTriggers;
     for (AActor *Trigger : *AllTriggers)
     {
-        if (Trigger && Trigger != CurrentTrigger)
+        if (Trigger && Trigger != CurrentCandleRoom)
         {
             AvailableTriggers.Add(Trigger);
         }
@@ -705,36 +702,22 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
         int32 Index = FMath::RandRange(0, AvailableTriggers.Num() - 1);
         AActor *SelectedTrigger = AvailableTriggers[Index];
 
-        if (CurrentTrigger)
+        if (CurrentCandleRoom)
         {
-            CurrentTrigger->Tags.Remove(FName("Active"));
-        }
-
-        if (ACandleRoom *CandleRoom = Cast<ACandleRoom>(CurrentTrigger))
-        {
-            for (const auto &Candle : CandleRoom->AssociatedCandles)
-            {
-                if (Candle)
-                {
-                    Candle->SetFlameActive(false);
-                }
-            }
-            UE_LOG(LogTemp, Log, TEXT("Candle flames turned OFF for: %s"), *CurrentTrigger->GetName());
+            CurrentCandleRoom->Tags.Remove(FName("Active"));
+			ACandleRoom* OldCandleRoom = Cast<ACandleRoom>(CurrentCandleRoom);
+			if(OldCandleRoom)
+			{
+				OldCandleRoom->TurnOffEffects();
+			}
         }
 
         SelectedTrigger->Tags.AddUnique(FName("Active"));
-        CurrentTrigger = SelectedTrigger;
+        CurrentCandleRoom = Cast<ACandleRoom>(SelectedTrigger);
 
         if (ACandleRoom *CandleRoom = Cast<ACandleRoom>(SelectedTrigger))
         {
-            for (const auto &Candle : CandleRoom->AssociatedCandles)
-            {
-                if (Candle)
-                {
-                    Candle->SetFlameActive(true);
-                }
-            }
-            UE_LOG(LogTemp, Log, TEXT("Candle flame turned ON for: %s"), *SelectedTrigger->GetName());
+			CandleRoom->TurnOnEffects();
         }
 
         UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger->GetName());
@@ -851,4 +834,44 @@ void ANetworkPlayer::UpdateCameraLag()
         CameraBoom->CameraLagSpeed = 9.f;
         CameraBoom->CameraLagMaxDistance = 30.f;
     }
+}
+
+void ANetworkPlayer::OnForceActivatePressed()
+{
+    if (TouchingCandleRoom != nullptr && !TouchingCandleRoom->ActorHasTag(FName("Active")))
+    {
+        GetWorld()->GetTimerManager().SetTimer(
+            ForceActivateTimerHandle,
+            this,
+            &ANetworkPlayer::ForceActivateCandleRoom,
+            10.0f,
+            false);
+        UE_LOG(LogTemp, Log, TEXT("Force activation started."));
+    }
+}
+
+void ANetworkPlayer::OnForceActivateReleased()
+{
+    // 버튼을 떼면 타이머 취소
+    GetWorld()->GetTimerManager().ClearTimer(ForceActivateTimerHandle);
+    UE_LOG(LogTemp, Log, TEXT("Force activation cancelled."));
+}
+
+void ANetworkPlayer::ForceActivateCandleRoom()
+{
+    GetWorld()->GetTimerManager().ClearTimer(ForceActivateTimerHandle);
+    if (TouchingCandleRoom == nullptr) return;
+
+    if (CurrentCandleRoom && CurrentCandleRoom->ActorHasTag(FName("Active")))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Deactivating old room: %s"), *CurrentCandleRoom->GetName());
+        CurrentCandleRoom->Tags.Remove(FName("Active"));
+        CurrentCandleRoom->TurnOffEffects();
+    }
+
+    CurrentCandleRoom = TouchingCandleRoom;
+    UE_LOG(LogTemp, Warning, TEXT("Activating new room: %s"), *CurrentCandleRoom->GetName());
+    CurrentCandleRoom->Tags.Add(FName("Active"));
+    CurrentCandleRoom->TurnOnEffects();
+    StartMentalRegen(10.f);
 }

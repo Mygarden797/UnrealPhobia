@@ -31,9 +31,9 @@ void ACandleRoom::OnOverlapBegin(UPrimitiveComponent *OverlappedComp, AActor *Ot
     ANetworkPlayer* NetworkPlayer = Cast<ANetworkPlayer>(OtherActor);
     if (NetworkPlayer)
     {
+        NetworkPlayer->TouchingCandleRoom = this;
         if (Tags.Contains(FName("Active")))
         {
-			NetworkPlayer->CurrentTrigger = this;
             NetworkPlayer->StartMentalRegen(10.f);
         }
     }
@@ -43,9 +43,33 @@ void ACandleRoom::OnOverlapEnd(UPrimitiveComponent *OverlappedComp, AActor *Othe
 							   UPrimitiveComponent *OtherComp, int32 OtherBodyIndex)
 {
 	ANetworkPlayer* NetworkPlayer = Cast<ANetworkPlayer>(OtherActor);
+    NetworkPlayer->TouchingCandleRoom = nullptr;
 	if (NetworkPlayer && Tags.Contains(FName("Active")))
 	{
-		Tags.Remove(FName("Active"));
 		NetworkPlayer->StopMentalRegen();
 	}
+}
+
+void ACandleRoom::TurnOnEffects()
+{
+    for (const auto& Candle : AssociatedCandles)
+    {
+        if (Candle)
+        {
+            Candle->SetFlameActive(true);
+        }
+    }
+    UE_LOG(LogTemp, Warning, TEXT("'%s' effects turned ON."), *GetName());
+}
+
+void ACandleRoom::TurnOffEffects()
+{
+    for (const auto& Candle : AssociatedCandles)
+    {
+        if (Candle)
+        {
+            Candle->SetFlameActive(false);
+        }
+    }
+    UE_LOG(LogTemp, Log, TEXT("'%s' effects turned OFF."), *GetName());
 }

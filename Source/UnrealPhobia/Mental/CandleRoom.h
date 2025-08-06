@@ -18,6 +18,12 @@ public:
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "CandleRoom")
 	TArray<TObjectPtr<ACandle>> AssociatedCandles;
 
+	/** 이 방의 불꽃 등 활성화 효과를 켭니다. */
+	void TurnOnEffects();
+
+	/** 이 방의 불꽃 등 활성화 효과를 끕니다. */
+	void TurnOffEffects();
+
 protected:
 	virtual void BeginPlay() override;
 

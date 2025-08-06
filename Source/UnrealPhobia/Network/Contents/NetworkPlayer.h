@@ -107,10 +107,24 @@ public:
     FORCEINLINE class UCameraComponent *GetFollowCamera() const { return FollowCamera; }
 
     UPROPERTY()
-    AActor *CurrentTrigger;
+    class ACandleRoom* CurrentCandleRoom;
+    class ACandleRoom* TouchingCandleRoom;
+
     void DecreaseMental();
     void RegenMental();
     void ActivateRandomMentalTrigger();
+
+	/** 'X' 버튼을 눌렀을 때 호출됩니다. */
+	void OnForceActivatePressed();
+
+	/** 'X' 버튼을 뗐을 때 호출됩니다. */
+	void OnForceActivateReleased();
+
+	/** 10초 타이머가 완료되면 호출될 함수입니다. */
+	void ForceActivateCandleRoom();
+
+	/** 강제 활성화 타이머 핸들입니다. */
+	FTimerHandle ForceActivateTimerHandle;
 
     UFUNCTION()
     void OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRenderTarget2D *RenderTarget);
@@ -166,6 +180,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     TObjectPtr<UInputAction> CrouchAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> ForceActivateAction;
 
     // State Variables
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
