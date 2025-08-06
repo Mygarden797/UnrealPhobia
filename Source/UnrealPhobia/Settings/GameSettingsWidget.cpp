@@ -1,10 +1,10 @@
 ﻿#include "Settings/GameSettingsWidget.h"
 
-/*
 void UGameSettingsWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
+    // 각 버튼에 대한 바인딩
     if (ApplyButton)
     {
         ApplyButton->OnClicked.AddDynamic(this, &UGameSettingsWidget::OnApplyClicked);
@@ -16,7 +16,7 @@ void UGameSettingsWidget::NativeConstruct()
 
     if (ResetButton)
     {
-        ResetButton->OnClicked.AddDynamic(this, &UGameSettingsWidget::OnApplyClicked);
+        ResetButton->OnClicked.AddDynamic(this, &UGameSettingsWidget::OnResetClicked);
     }
     else
     {
@@ -25,7 +25,7 @@ void UGameSettingsWidget::NativeConstruct()
 
     if (BackButton)
     {
-        BackButton->OnClicked.AddDynamic(this, &UGameSettingsWidget::OnApplyClicked);
+        BackButton->OnClicked.AddDynamic(this, &UGameSettingsWidget::OnBackClicked);
     }
     else
     {
@@ -45,6 +45,7 @@ void UGameSettingsWidget::OnApplyClicked()
 void UGameSettingsWidget::OnResetClicked()
 {
     ResetCurrentSettings();
+    LoadCurrentSettings();
     UE_LOG(LogTemp, Warning, TEXT("UGameSettingsWidget::OnResetClicked(): Settings Reset"));
 }
 
@@ -53,5 +54,3 @@ void UGameSettingsWidget::OnBackClicked()
     UE_LOG(LogTemp, Warning, TEXT("UGameSettingsWidget::OnBackClicked(): Go back"));
     RemoveFromParent();
 }
-
-*/

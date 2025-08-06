@@ -26,9 +26,6 @@ public:
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
     // virtual void Deinitialize() override;
 
-    /* Audio Settings */
-    void ApplyAudioSettings();
-
     /* Play Audio Sources */
     UFUNCTION(BlueprintCallable)
     void PlayDetectedSound();
@@ -45,5 +42,4 @@ private:
     UAudioComponent* BeingChasedSource;
 
     bool IsValidAssets() const;
-    void LoadAudioAssets();
 };

@@ -1,13 +1,10 @@
 ﻿#include "Settings/GameAudioSettings.h"
-#include "Managers/SoundManager.h"
-
 #include "Engine/Engine.h"
-
 
 /**
 *       Name				        : GameAudioSettings
 *       Description		        : Manage general audio settings like volume
-*       LastUpate				: 2025/08/05
+*       LastUpate				: 2025/08/06
 *       Todo                       : Implement ApplyGameAudio()
 */
 
@@ -17,6 +14,12 @@ UGameAudioSettings::UGameAudioSettings()
     MusicVolume = 0.5f;
     SFXVolume = 0.5f;
     UIVolume = 0.5f;
+
+    AudioAssets = UAudioAssets::LoadAudioAssets();
+    if (!AudioAssets)
+    {
+        UE_LOG(LogTemp, Error, TEXT("UGameAudioSettings::Constructor: Failed to load AudioAssets"));
+    }
 }
 
 UGameAudioSettings* UGameAudioSettings::GetGameAudioSettings()
@@ -24,120 +27,70 @@ UGameAudioSettings* UGameAudioSettings::GetGameAudioSettings()
     return Cast<UGameAudioSettings>(UGameUserSettings::GetGameUserSettings());
 }
 
-void UGameAudioSettings::SetCategoryVolume(EAudioCategory Category, float Volume)
-{
-    switch (Category)
-    {
-    case EAudioCategory::Master:
-        SetMasterVolume(Volume);
-        break;
-    case EAudioCategory::Music:
-        SetMusicVolume(Volume);
-        break;
-    case EAudioCategory::SFX:
-        SetSFXVolume(Volume);
-        break;
-    case EAudioCategory::UI:
-        SetUIVolume(Volume);
-        break;
-    default:
-        UE_LOG(LogTemp, Error, TEXT("UGameAudioSettings::SetCategoryVolume() : Invaild Category Type"));
-        break;
-    }
-}
 
+// 전체 볼륨 재설정, 각 AudioCategory의 볼륨은 Master 볼륨에 종속적임
 void UGameAudioSettings::SetMasterVolume(float Volume)
 {
-    ClampVolume(Volume);
-    if (MasterVolume != Volume)
-    {
-        MasterVolume = Volume;
-        // ApplyAudioSettings();
-    }
+    MasterVolume = FMath::Clamp(Volume, 0.0f, 1.0f);
+    SetMusicVolume(MusicVolume);
+    SetSFXVolume(SFXVolume);
+    SetUIVolume(UIVolume);
 }
 
 void UGameAudioSettings::SetMusicVolume(float Volume)
 {
-    ClampVolume(Volume);
-    if (MusicVolume != Volume)
-    {
-        MusicVolume = Volume;
-        // ApplyAudioSettings();
-    }
+    MusicVolume = FMath::Clamp(Volume, 0.0f, 1.0f);
+    ApplySoundMixOverride(AudioAssets->MusicSoundClass, MusicVolume);
 }
 
 void UGameAudioSettings::SetSFXVolume(float Volume)
 {
-    ClampVolume(Volume);
-    if (SFXVolume != Volume)
-    {
-        SFXVolume = Volume;
-        // ApplyAudioSettings();
-    }
+    SFXVolume = FMath::Clamp(Volume, 0.0f, 1.0f);
+    ApplySoundMixOverride(AudioAssets->SFXSoundClass, SFXVolume);
 }
 
 void UGameAudioSettings::SetUIVolume(float Volume)
 {
-    ClampVolume(Volume);
-    if (UIVolume != Volume)
+    UIVolume = FMath::Clamp(Volume, 0.0f, 1.0f);
+    ApplySoundMixOverride(AudioAssets->UISoundClass, UIVolume);
+}
+
+    void UGameAudioSettings::ApplyAudioSettings()
     {
-        UIVolume = Volume;
-        // ApplyAudioSettings();
+        SetMasterVolume(MasterVolume);
+        SaveSettings();
     }
-}
 
-float UGameAudioSettings::GetCategoryVolume(EAudioCategory Category) const
-{
-    switch (Category)
+    void UGameAudioSettings::ResetAudioToDefaults()
     {
-    case EAudioCategory::Master:
-        return GetMasterVolume();
-    case EAudioCategory::Music:
-        return GetMusicVolume();
-    case EAudioCategory::SFX:
-        return GetSFXVolume();
-    case EAudioCategory::UI:
-        return GetUIVolume();
-    default:
-        UE_LOG(LogTemp, Error, TEXT("UGameAudioSettings::GetCategoryVolume() : Invaild Category Type"));
-        return 1.0f;
+        MasterVolume = 0.5f;
+        MusicVolume = 0.5f;
+        SFXVolume = 0.5f;
+        UIVolume = 0.5f;
+
+        SetMasterVolume(MasterVolume);
+        SaveSettings();
     }
-}
 
-void UGameAudioSettings::ApplySettings(bool bCheckForCommandLineOverrides)
-{
-    Super::ApplySettings(bCheckForCommandLineOverrides);
-    // ApplyAudioSettings();
-}
-
-void UGameAudioSettings::SetToDefaults()
-{
-    Super::SetToDefaults();
-
-    MasterVolume = 0.5f;
-    MusicVolume = 0.5f;
-    SFXVolume = 0.5f;
-    UIVolume = 0.5f;
-
-    // ApplyAudioSettings();
-}
-
-// 변경된 오디오 세팅을 사운드 매니저에 전달한다
-void UGameAudioSettings::ApplyAudioSettings()
-{
-    if (UWorld* World = GEngine->GetCurrentPlayWorld())
+    bool UGameAudioSettings::IsAudioAssetsReady(USoundClass* SoundClass) const
     {
-        if (UGameInstance* GameInstance = World->GetGameInstance())
+        return AudioAssets && AudioAssets->GlobalSoundMix && SoundClass;
+    }
+
+    void UGameAudioSettings::ApplySoundMixOverride(USoundClass* SoundClass, float Volume) 
+    {
+        UWorld* World = GetWorld();
+        if (!IsAudioAssetsReady(SoundClass))
         {
-            if (USoundManager* SoundManager = GameInstance->GetSubsystem<USoundManager>())
-            {
-                SoundManager->ApplyAudioSettings();
-            }
+            UE_LOG(LogTemp, Error, TEXT("UGameAudioSettings::ApplySoundMixOverride: Some Assets is null"));
+            return;
         }
-    }
-}
+        if (!World)
+        {
+            UE_LOG(LogTemp, Error, TEXT("UGameAudioSettings::ApplySoundMixOverride: Failed to get World"));
+            return;
+        }
 
-void UGameAudioSettings::ClampVolume(float& Volume)
-{
-    Volume = FMath::Clamp(Volume, 0.0f, 1.0f);
-}
+        UGameplayStatics::SetSoundMixClassOverride(
+            World, AudioAssets->GlobalSoundMix, SoundClass, MasterVolume * Volume);
+    }

@@ -8,15 +8,17 @@
 #include "GameSettingsWidget.generated.h"
 
 /**
- * 
- */
+*           Name				: GameSettingsWidget
+*           Description		: Widget of Super Class with Environment Settings
+*           LastUpdate	    : 2025/08/06
+*/
 UCLASS()
 class UNREALPHOBIA_API UGameSettingsWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
- //   virtual void NativeConstruct() override;
+    virtual void NativeConstruct() override;
 
 protected:
 
@@ -31,8 +33,6 @@ protected:
     UButton* BackButton;
 
     /* Click Functions */
-
-    /*
     UFUNCTION()
     virtual void OnApplyClicked();
 
@@ -42,19 +42,10 @@ protected:
     UFUNCTION()
     virtual void OnBackClicked();
 
+    /** Derived Classes' Fucntions 
+    * 현재는 GameAudioSettingsWidget에서만 사용 중
     */
-
-    /* Derived Classes' Fucntions */
-
-    /*
-    UFUNCTION(BlueprintImplementableEvent)
-    virtual void LoadCurrentSettings() {}
-
-    UFUNCTION(BlueprintImplementableEvent)
-    virtual void ApplyCurrentSettings() {}
-
-    UFUNCTION(BlueprintImplementableEvent)
-    virtual void ResetCurrentSettings() {}
-    */
-	
+    virtual void LoadCurrentSettings() {};
+    virtual void ApplyCurrentSettings() {};
+    virtual void ResetCurrentSettings() {};
 };
