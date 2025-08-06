@@ -201,11 +201,12 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
     float BaseSpeed = 300.0f;
 
-    UPROPERTY(BlueprintReadWrite, Category = "Stamina")
-    bool bIsSprinting = false;
+    //ProtoPlayer로 이전
+    //UPROPERTY(BlueprintReadWrite, Category = "Stamina")
+    //bool bIsSprinting = false;
 
-    UPROPERTY(BlueprintReadWrite, Category = "Stamina")
-    bool bIsCrouch = false;
+    //UPROPERTY(BlueprintReadWrite, Category = "Stamina")
+    //bool bIsCrouch = false;
 
     UPROPERTY(BlueprintReadWrite, Category = "Mental")
     bool bIsFear = false;

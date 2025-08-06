@@ -282,6 +282,11 @@ void ANetworkPlayer::Tick(float DeltaTime)
         else
             SetMoveState(Protocol::MOVE_STATE_RUN);
 
+        if (bIsCrouch == true)
+            SetCrouchState(Protocol::CROUCH_STATE_CROUCH);
+        else
+            SetCrouchState(Protocol::CROUCH_STATE_UNCROUCH);
+
         MovePacketSendTimer -= DeltaTime;
 
         if (MovePacketSendTimer <= 0 || ForceSendPacket)
@@ -296,11 +301,7 @@ void ANetworkPlayer::Tick(float DeltaTime)
                 Info->CopyFrom(*PlayerInfo);
                 Info->set_yaw(DesiredYaw);
                 Info->set_state(GetMoveState());
-                Info->set_crouch(Protocol::CROUCH_STATE_CROUCH);
-                //if (bIsCrouch)
-                //
-                //    Info->set_crouch(Protocol::CROUCH_STATE_CROUCH);
-                //
+                Info->set_crouch(GetCrouchState());
             }
 
             SEND_PACKET(MovePkt);

@@ -36,21 +36,21 @@ const char descriptor_table_protodef_Enum_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "R\020\001\022\026\n\022Actor_TYPE_MONSTER\020\002*A\n\013TriggerTy"
   "pe\022\025\n\021TRIGGER_TYPE_NONE\020\000\022\033\n\027TRIGGER_TYP"
   "E_TORCHLIGHT\020\001*:\n\nPlayerType\022\024\n\020PLAYER_T"
-  "YPE_NONE\020\000\022\026\n\022PLAYER_TYPE_PLAYER\020\001*\215\001\n\tM"
+  "YPE_NONE\020\000\022\026\n\022PLAYER_TYPE_PLAYER\020\001*\244\001\n\tM"
   "oveState\022\023\n\017MOVE_STATE_NONE\020\000\022\023\n\017MOVE_ST"
   "ATE_IDLE\020\001\022\022\n\016MOVE_STATE_RUN\020\002\022\023\n\017MOVE_S"
   "TATE_JUMP\020\003\022\026\n\022MOVE_STATE_TRIGGER\020\004\022\025\n\021M"
-  "OVE_STATE_CROUCH\020\005*1\n\004Team\022\r\n\tTEAM_NONE\020"
-  "\000\022\014\n\010TEAM_ONE\020\001\022\014\n\010TEAM_TWO\020\002*S\n\014Creatur"
-  "eType\022\026\n\022CREATURE_TYPE_NONE\020\000\022\026\n\022CREATUR"
-  "E_TYPE_Grey\020\001\022\023\n\017CREATURE_TYPE_A\020\002*X\n\013Cr"
-  "ouchState\022\025\n\021CROUCH_STATE_NONE\020\000\022\027\n\023CROU"
-  "CH_STATE_CROUCH\020\001\022\031\n\025CROUCH_STATE_UNCROU"
-  "CH\020\002b\006proto3"
+  "OVE_STATE_CROUCH\020\005\022\025\n\021MOVE_STATE_SPRINT\020"
+  "\006*1\n\004Team\022\r\n\tTEAM_NONE\020\000\022\014\n\010TEAM_ONE\020\001\022\014"
+  "\n\010TEAM_TWO\020\002*S\n\014CreatureType\022\026\n\022CREATURE"
+  "_TYPE_NONE\020\000\022\026\n\022CREATURE_TYPE_Grey\020\001\022\023\n\017"
+  "CREATURE_TYPE_A\020\002*X\n\013CrouchState\022\025\n\021CROU"
+  "CH_STATE_NONE\020\000\022\027\n\023CROUCH_STATE_CROUCH\020\001"
+  "\022\031\n\025CROUCH_STATE_UNCROUCH\020\002b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_Enum_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Enum_2eproto = {
-    false, false, 692, descriptor_table_protodef_Enum_2eproto,
+    false, false, 715, descriptor_table_protodef_Enum_2eproto,
     "Enum.proto",
     &descriptor_table_Enum_2eproto_once, nullptr, 0, 0,
     schemas, file_default_instances, TableStruct_Enum_2eproto::offsets,
@@ -134,6 +134,7 @@ bool MoveState_IsValid(int value) {
     case 3:
     case 4:
     case 5:
+    case 6:
       return true;
     default:
       return false;

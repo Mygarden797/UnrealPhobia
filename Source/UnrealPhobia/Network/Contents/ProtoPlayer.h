@@ -20,11 +20,19 @@ protected:
     virtual void BeginPlay();
     virtual void Tick(float DeltaSeconds) override;
 
+    UPROPERTY(BlueprintReadWrite, Category = "Stamina")
+    bool bIsSprinting = false;
+
+    UPROPERTY(BlueprintReadWrite, Category = "Stamina")
+    bool bIsCrouch = false;
+
 public:
     bool IsMyPlayer();
 
     Protocol::MoveState GetMoveState() { return PlayerInfo->state(); }
     void SetMoveState(Protocol::MoveState State);
+    Protocol::CrouchState GetCrouchState() { return PlayerInfo->crouch(); }
+    void SetCrouchState(Protocol::CrouchState State) { PlayerInfo->set_crouch(State); }
 
 public:
     void SetPlayerInfo(const Protocol::PosInfo& Info);
@@ -34,4 +42,9 @@ public:
 protected:
     class Protocol::PosInfo* PlayerInfo; // 현재 위치
     class Protocol::PosInfo* DestInfo; // 목적지
+
+    void SetCrouch();
+    void SetSprint();
+    void SetWalk();
+
 };
