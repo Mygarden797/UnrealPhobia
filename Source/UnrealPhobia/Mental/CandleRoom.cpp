@@ -43,11 +43,13 @@ void ACandleRoom::OnOverlapEnd(UPrimitiveComponent *OverlappedComp, AActor *Othe
 							   UPrimitiveComponent *OtherComp, int32 OtherBodyIndex)
 {
 	ANetworkPlayer* NetworkPlayer = Cast<ANetworkPlayer>(OtherActor);
-    NetworkPlayer->TouchingCandleRoom = nullptr;
-	if (NetworkPlayer && Tags.Contains(FName("Active")))
-	{
-		NetworkPlayer->StopMentalRegen();
-	}
+    if(NetworkPlayer){
+        if (Tags.Contains(FName("Active")))
+        {
+            NetworkPlayer->StopMentalRegen();
+        }
+        NetworkPlayer->TouchingCandleRoom = nullptr;
+    }
 }
 
 void ACandleRoom::TurnOnEffects()

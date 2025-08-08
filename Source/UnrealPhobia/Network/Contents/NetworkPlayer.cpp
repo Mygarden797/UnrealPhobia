@@ -657,10 +657,10 @@ void ANetworkPlayer::StopMentalRegen()
     GetWorldTimerManager().ClearTimer(MentalRegenTimerHandle);
     GetWorldTimerManager().ClearTimer(MentalRegenDurationHandle);
 
-    if (CurrentCandleRoom)
+    if (TouchingCandleRoom)
     {
-        CurrentCandleRoom->Tags.Remove(FName("Active"));
-		CurrentCandleRoom->TurnOffEffects();
+        TouchingCandleRoom->Tags.Remove(FName("Active"));
+		TouchingCandleRoom->TurnOffEffects();
     }
 
     ActivateRandomMentalTrigger();
@@ -888,11 +888,39 @@ void ANetworkPlayer::ForceActivateCandleRoom()
     GetWorld()->GetTimerManager().ClearTimer(ForceActivateTimerHandle);
     if (TouchingCandleRoom == nullptr) return;
 
-    if (CurrentCandleRoom && CurrentCandleRoom->ActorHasTag(FName("Active")))
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Deactivating old room: %s"), *CurrentCandleRoom->GetName());
-        CurrentCandleRoom->Tags.Remove(FName("Active"));
-        CurrentCandleRoom->TurnOffEffects();
+
+    if(TouchingCandleRoom->Tags.Contains("CandleRoom")){
+        TArray<AActor*> FoundTriggers;
+        UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom"), FoundTriggers);
+        for (AActor* Trigger : FoundTriggers)
+        {
+            if (Trigger->Tags.Contains("Active"))
+            {
+                if (ACandleRoom* CandleRoomTrigger = Cast<ACandleRoom>(Trigger))
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("Deactivating old room: %s"), *CandleRoomTrigger->GetName());
+                    CandleRoomTrigger->Tags.Remove(FName("Active"));
+                    CandleRoomTrigger->TurnOffEffects();
+                }
+            }
+        }
+    }
+
+    if(TouchingCandleRoom->Tags.Contains("CandleRoom2")){
+        TArray<AActor*> FoundTriggers;
+        UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("CandleRoom2"), FoundTriggers);
+        for (AActor* Trigger : FoundTriggers)
+        {
+            if (Trigger->Tags.Contains("Active"))
+            {
+                if (ACandleRoom* CandleRoomTrigger = Cast<ACandleRoom>(Trigger))
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("Deactivating old room: %s"), *CandleRoomTrigger->GetName());
+                    CandleRoomTrigger->Tags.Remove(FName("Active"));
+                    CandleRoomTrigger->TurnOffEffects();
+                }
+            }
+        }
     }
 
     CurrentCandleRoom = TouchingCandleRoom;
@@ -901,6 +929,7 @@ void ANetworkPlayer::ForceActivateCandleRoom()
     CurrentCandleRoom->TurnOnEffects();
     StartMentalRegen(10.f);
 }
+
 void ANetworkPlayer::SwitchFlash(const FInputActionValue &value)
 {
 
