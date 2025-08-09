@@ -7,46 +7,93 @@
 void UGameAudioSettingsWidget::NativeConstruct()
 {
     Super::NativeConstruct();
-    BindSliderEvents();
+    if (UGameAudioSettings* Settings = UGameAudioSettings::GetGameAudioSettings())
+    {
+        BindSliderEvents();
+    }
 }
 
 void UGameAudioSettingsWidget::BindSliderEvents()
 {
-    struct SliderBinding
+    if (MasterSlider)
     {
-        USlider** Slider;
-        void (UGameAudioSettingsWidget::* Function)(float);
-        const TCHAR* Name;
-    };
-
-    // Struct Array로 저장
-    SliderBinding Bindings[] = {
-        {&MasterSlider, &UGameAudioSettingsWidget::OnMasterVolumeChanged,TEXT("MasterSlide")},
-        {&MusicSlider, &UGameAudioSettingsWidget::OnMusicVolumeChanged,TEXT("MusicSlide")},
-        {&SFXSlider, &UGameAudioSettingsWidget::OnSFXVolumeChanged,TEXT("SFXSlide")},
-        {&UISlider, &UGameAudioSettingsWidget::OnUIVolumeChanged,TEXT("UISlide")}
-    };
-
-    // 각 AudioCategory에 대한 OnVolumeChanged()를 각각 바인딩
-    for (const auto& Binding : Bindings)
-    {
-        if (*Binding.Slider)
-        {
-            (*Binding.Slider)->OnValueChanged.AddDynamic(this, Binding.Function);
-        }
-        else
-        {
-            UE_LOG(LogTemp, Error, 
-                TEXT("UGameAudioSettingsWidget::BindSliderEvents(): No %s"), 
-                Binding.Name);
-        }
+        MasterSlider->OnValueChanged.AddDynamic(this, &UGameAudioSettingsWidget::OnMasterVolumeChanged);
     }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("UGameAudioSettingsWidget::BindSliderEvents(): Failed to bind MasterSlider"));
+    }
+
+    if (MusicSlider)
+    {
+        MusicSlider->OnValueChanged.AddDynamic(this, &UGameAudioSettingsWidget::OnMusicVolumeChanged);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("UGameAudioSettingsWidget::BindSliderEvents(): Failed to bind MasterSlider"));
+    }
+
+    if (SFXSlider)
+    {
+        SFXSlider->OnValueChanged.AddDynamic(this, &UGameAudioSettingsWidget::OnSFXVolumeChanged);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("UGameAudioSettingsWidget::BindSliderEvents(): Failed to bind MasterSlider"));
+    }
+
+    if (UISlider)
+    {
+        UISlider->OnValueChanged.AddDynamic(this, &UGameAudioSettingsWidget::OnUIVolumeChanged);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("UGameAudioSettingsWidget::BindSliderEvents(): Failed to bind MasterSlider"));
+    }
+
+    /*
+struct SliderBinding
+{
+    USlider* Slider;
+    FName FunctionName;
+    const TCHAR* Name;
+};
+
+// Struct Array로 저장
+SliderBinding Bindings[] = {
+    {MasterSlider, TEXT("OnMasterVolumeChanged"), TEXT("MasterSlider")},
+    {MusicSlider, TEXT("OnMusicVolumeChanged"), TEXT("MusicSlider")},
+    {SFXSlider, TEXT("OnSFXVolumeChanged"), TEXT("SFXSlider")},
+    {UISlider, TEXT("OnUIVolumeChanged"), TEXT("UISlider")},
+
+
+    {MasterSlider, &UGameAudioSettingsWidget::OnMasterVolumeChanged,TEXT("MasterSlide")},
+    {MusicSlider, &UGameAudioSettingsWidget::OnMusicVolumeChanged,TEXT("MusicSlide")},
+    {SFXSlider, &UGameAudioSettingsWidget::OnSFXVolumeChanged,TEXT("SFXSlide")},
+    {UISlider, &UGameAudioSettingsWidget::OnUIVolumeChanged,TEXT("UISlide")}
+
+};
+
+// 각 AudioCategory에 대한 OnVolumeChanged()를 각각 바인딩
+for (const auto& Binding : Bindings)
+{
+    if (Binding.Slider)
+    {
+        (Binding.Slider)->OnValueChanged.AddDynamic(this, Binding.FunctionName);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error,
+            TEXT("UGameAudioSettingsWidget::BindSliderEvents(): No %s"),
+            Binding.Name);
+    }
+}*/
 }
 
 // AudioSettings에서 볼륨 변경 및 슬라이더의 값 변경
 void UGameAudioSettingsWidget::OnVolumeChanged(float Value, EAudioCategory Type)
 {
-    UGameAudioSettings* Settings = GetAudioSettings();
+    UGameAudioSettings* Settings = UGameAudioSettings::GetGameAudioSettings();
     if (!Settings)
     {
         UE_LOG(LogTemp, Error,
@@ -57,61 +104,18 @@ void UGameAudioSettingsWidget::OnVolumeChanged(float Value, EAudioCategory Type)
     UpdatePercentageText(GetTextBlockByType(Type), Value);
 }
 
-UGameAudioSettings* UGameAudioSettingsWidget::GetAudioSettings() const
-{
-    UGameAudioSettings* Settings =
-        Cast<UGameAudioSettings>(UGameUserSettings::GetGameUserSettings());
-
-    if (!Settings)
-    {
-        UE_LOG(LogTemp, Error,
-            TEXT("UGameAudioSettingsWidget::GetAudioSettings(): Failed to get AudioSettings"));
-    }
-    return Settings;
-}
 
 // AudioSettings에서 각 AudioCategory의 볼륨 변경
 void UGameAudioSettingsWidget::SetVolumeByType(
     UGameAudioSettings* Settings, EAudioCategory Type, float Value)
 {
-    switch (Type)
-    {
-    case EAudioCategory::Master:
-        Settings->SetMasterVolume(Value);
-        break;
-    case EAudioCategory::Music:
-        Settings->SetMusicVolume(Value);
-        break;
-    case EAudioCategory::SFX:
-        Settings->SetSFXVolume(Value);
-        break;
-    case EAudioCategory::UI:
-        Settings->SetUIVolume(Value);
-        break;
-    default:
-        UE_LOG(LogTemp, Error,
-            TEXT("UGameAudioSettingsWidget::SetVolumeByType(): Wrong Audio Type"));
-    }
+    Settings->SetVolume(Type, Value);
 }
 
 float UGameAudioSettingsWidget::GetVolumeByType(
     UGameAudioSettings* Settings, EAudioCategory Type) const
 {
-    switch (Type)
-    {
-    case EAudioCategory::Master:
-        return Settings->GetMasterVolume();
-    case EAudioCategory::Music:
-        return Settings->GetMusicVolume();
-    case EAudioCategory::SFX:
-        return Settings->GetSFXVolume();
-    case EAudioCategory::UI:
-        return Settings->GetUIVolume();
-    default:
-        UE_LOG(LogTemp, Error,
-            TEXT("UGameAudioSettingsWidget::GetVolumeByType(): Wrong Audio Type"));
-        return 0.0f;
-    }
+    return Settings->GetVolume(Type);
 }
 
 USlider* UGameAudioSettingsWidget::GetSliderByType(EAudioCategory Type) const
@@ -154,10 +158,10 @@ UTextBlock* UGameAudioSettingsWidget::GetTextBlockByType(EAudioCategory Type) co
 
 void UGameAudioSettingsWidget::LoadCurrentSettings()
 {
-    UGameAudioSettings* Settings = GetAudioSettings();
+    UGameAudioSettings* Settings = UGameAudioSettings::GetGameAudioSettings();
     if (!Settings) return;
 
-    EAudioCategory Types[] = 
+    EAudioCategory Types[] =
     { EAudioCategory::Master, EAudioCategory::Music,
     EAudioCategory::SFX, EAudioCategory::UI };
 
@@ -175,7 +179,7 @@ void UGameAudioSettingsWidget::LoadCurrentSettings()
 
 void UGameAudioSettingsWidget::ApplyCurrentSettings()
 {
-    if (UGameAudioSettings* Settings = GetAudioSettings())
+    if (UGameAudioSettings* Settings = UGameAudioSettings::GetGameAudioSettings())
     {
         Settings->SaveSettings();
     }
@@ -187,7 +191,7 @@ void UGameAudioSettingsWidget::ApplyCurrentSettings()
 
 void UGameAudioSettingsWidget::ResetCurrentSettings()
 {
-    if (UGameAudioSettings* Settings = GetAudioSettings())
+    if (UGameAudioSettings* Settings = UGameAudioSettings::GetGameAudioSettings())
     {
         Settings->SetToDefaults();
         Settings->SaveSettings();

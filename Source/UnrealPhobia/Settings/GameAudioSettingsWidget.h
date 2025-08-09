@@ -15,7 +15,8 @@
 /**
 *           Name				: GameSettingsWidget
 *           Description		: Widget of Audio Settings
-*           LastUpdate	    : 2025/08/06
+*           LastUpdate	    : 2025/08/10
+*           
 */
 UCLASS()
 class UNREALPHOBIA_API UGameAudioSettingsWidget : public UGameSettingsWidget
@@ -67,7 +68,6 @@ protected:
     virtual void ResetCurrentSettings() override;
 
 private:
-    class UGameAudioSettings* GetAudioSettings() const;
     void SetVolumeByType(class UGameAudioSettings* Settings, EAudioCategory Type, float Value);
     float GetVolumeByType(class UGameAudioSettings* Settings, EAudioCategory Type) const;
 

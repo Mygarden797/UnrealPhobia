@@ -2,10 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "ChaseSystemTypes.h"
-#include "NetworkPlayer.h"
 #include "InputActionValue.h"
-#include "Managers/SoundManager.h"
+#include "Components/InputComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "Settings/GameAudioSettingsWidget.h"
+#include "NetworkPlayer.h"
 #include "SurvivorController.generated.h"
 
 /**
@@ -15,25 +17,55 @@
 *       Todo                       :
 */
 
+/*
+class UInputMappingContext;
+class UInputAction;
+class UGameAudioSettingsWidget;
+class ANetworkPlayer;
+*/
+
 UCLASS(Blueprintable)
 class UNREALPHOBIA_API ASurvivorController : public APlayerController
 {
 	GENERATED_BODY()
 
-    // virtual void OnPossess(APawn* InCharacter) override;
-
 public:
- //   UFUNCTION(BlueprintCallable)
- //   void ToggleInGameMenu();
+    /*
+    ASurvivorController();
     
+    UFUNCTION(BlueprintCallable, Category = "UI")
+    void ToggleAudioSettings(const FInputActionValue& Value);
 
-//protected:
- //   virtual void SetupInputComponent() override;
+    UFUNCTION(BlueprintCallable, Category = "UI")
+    void ShowAudioSettings();
+
+    UFUNCTION(BlueprintCallable, Category = "UI")
+    void HideAudioSettings();
+
+    UFUNCTION(BlueprintPure, Category = "UI")
+    bool IsInUIMode() const { return bIsUIMode; };
+
+protected:
+    virtual void BeginPlay() override;
+    virtual void OnPossess(APawn* InPawn) override;
+    virtual void OnUnPossess() override;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+    TObjectPtr<UInputMappingContext> UIMappingContext;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+    TObjectPtr<UInputMappingContext> SurvivorMovingContext;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
+    TSubclassOf<UGameAudioSettingsWidget> AudioSettingsWidgetClass;
+
+    UPROPERTY()
+    UGameAudioSettingsWidget* AudioSettingsWidget;
 
 private:
- //   UPROPERTY()
- //   UUserWidget* CurrentInGameMenu;
-        
- //   void OnEscapePressed();
-    bool bIsMenuOpen = false;
+    bool bIsAudioSettingsVisible = false;
+    bool bIsUIMode = false;
+
+    void SetupEnhancedInput();
+    void CreateAudioSettingsWidget();
+    */
 };

@@ -31,58 +31,45 @@ class UNREALPHOBIA_API UGameAudioSettings : public UGameUserSettings
 public:
     UGameAudioSettings();
 
-    /* Static Accessor */
     UFUNCTION(BlueprintCallable, Category = "Settings")
     static UGameAudioSettings* GetGameAudioSettings();
 
+    // UFUNCTION(BlueprintCallable, Category = "settings")
+    // static UGameAudioSettings* CreateGameAudioSettings();
+
     /* Set Audio Volumes */
     UFUNCTION(BlueprintCallable, Category = "Setting Audio Volume")
-    void SetMasterVolume(float Volume);
-
-    UFUNCTION(BlueprintCallable, Category = "Setting Audio Volume")
-    void SetSFXVolume(float Volume);
-
-    UFUNCTION(BlueprintCallable, Category = "Setting Audio Volume")
-    void SetMusicVolume(float Volume);
-
-    UFUNCTION(BlueprintCallable, Category = "Setting Audio Volume")
-    void SetUIVolume(float Volume);
+    void SetVolume(EAudioCategory Category, float Value);
 
     /* Get Audio Volumes */
     UFUNCTION(BlueprintPure, Category = "Getting Audio Volume")
-    float GetMasterVolume() const { return MasterVolume; };
+    float GetVolume(EAudioCategory Category) const;
 
-    UFUNCTION(BlueprintPure, Category = "Getting Audio Volume")
-    float GetSFXVolume() const { return SFXVolume; };
 
-    UFUNCTION(BlueprintPure, Category = "Getting Audio Volume")
-    float GetMusicVolume() const { return MusicVolume; };
-
-    UFUNCTION(BlueprintPure, Category = "Getting Audio Volume")
-    float GetUIVolume() const { return UIVolume; };
+    // 모든 오디오 설정 초기화
+    void ResetAudioToDefaults();
 
 
 protected:
     /* Volume Values */
-    UPROPERTY(Config)
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Audio")
     float MasterVolume;
 
-    UPROPERTY(Config)
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Audio")
     float MusicVolume;
 
-    UPROPERTY(Config)
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Audio")
     float SFXVolume;
 
-    UPROPERTY(Config)
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Audio")
     float UIVolume;
 
 private:
     UAudioAssets* AudioAssets;
 
     // 모든 오디오 설정 적용
-    void ApplyAudioSettings();
-    // 모든 오디오 설정 초기화
-    void ResetAudioToDefaults();
+    void ApplyAllVolumes();
+
     // 유효성 검사
     bool IsAudioAssetsReady(USoundClass* SoundClass) const;
     // SoundMix에 볼륨 적용
