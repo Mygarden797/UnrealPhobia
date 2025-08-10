@@ -193,7 +193,7 @@ void UGameAudioSettingsWidget::ResetCurrentSettings()
 {
     if (UGameAudioSettings* Settings = UGameAudioSettings::GetGameAudioSettings())
     {
-        Settings->SetToDefaults();
+        Settings->ResetAudioToDefaults();
         Settings->SaveSettings();
     }
     else
@@ -206,11 +206,44 @@ void UGameAudioSettingsWidget::UpdatePercentageText(UTextBlock* TextWidget, floa
 {
     if (TextWidget)
     {
-        FString PercentText = FString::Printf(TEXT("%.0f%%"), Value * 100.0f);
-        TextWidget->SetText(FText::FromString(PercentText));
+        int32 Percent = FMath::RoundToInt(Value * 100.0f);
+        TextWidget->SetText(FText::FromString(FString::Printf(TEXT("%d%%"), Percent)));
     }
     else
     {
         UE_LOG(LogTemp, Error, TEXT("UGameAudioSettingsWidget::UpdatePercentageText(): No TextWidget"))
+    }
+}
+
+void UGameAudioSettingsWidget::UpdateSlidersFromSettings()
+{
+    UGameAudioSettings* Settings = UGameAudioSettings::GetGameAudioSettings();
+    if (!Settings)
+    {
+        UE_LOG(LogTemp, Error, TEXT("AudioSettingsWidget::UpdateSlidersFromSettings(): Settings is null"));
+        return;
+    }
+    else
+    {
+        if (MasterSlider)
+        {
+            MasterSlider->SetValue(Settings->GetVolume(EAudioCategory::Master));
+            UpdatePercentageText(MasterPercent, MasterSlider->GetValue());
+        }
+        if (MusicSlider)
+        {
+            MusicSlider->SetValue(Settings->GetVolume(EAudioCategory::Music));
+            UpdatePercentageText(MusicPercent, MusicSlider->GetValue());
+        }
+        if (SFXSlider)
+        {
+            SFXSlider->SetValue(Settings->GetVolume(EAudioCategory::SFX));
+            UpdatePercentageText(SFXPercent, SFXSlider->GetValue());
+        }
+        if (UISlider)
+        {
+            UISlider->SetValue(Settings->GetVolume(EAudioCategory::UI));
+            UpdatePercentageText(UIPercent, UISlider->GetValue());
+        }
     }
 }

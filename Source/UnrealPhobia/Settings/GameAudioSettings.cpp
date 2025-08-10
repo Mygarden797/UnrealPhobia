@@ -2,12 +2,6 @@
 #include "Engine/Engine.h"
 #include "Engine/GameEngine.h"
 
-/**
-*       Name				        : GameAudioSettings
-*       Description		        : Manage general audio settings like volume
-*       LastUpate				: 2025/08/06
-*       Todo                       : Implement ApplyGameAudio()
-*/
 
 UGameAudioSettings::UGameAudioSettings()
 {
@@ -55,6 +49,16 @@ bool UGameAudioSettings::IsAudioAssetsReady(USoundClass* SoundClass) const
 
 UGameAudioSettings* UGameAudioSettings::GetGameAudioSettings()
 {
+    if (UGameUserSettings* Settings = GEngine->GetGameUserSettings())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Class path: %s"), *Settings->GetClass()->GetPathName());
+        UE_LOG(LogTemp, Warning, TEXT("IsA<UGameAudioSettings>: %d"), Settings->IsA(UGameAudioSettings::StaticClass()));
+
+        UE_LOG(LogTemp, Warning, TEXT("Loaded class path: %s"), *Settings->GetClass()->GetPathName());
+        UE_LOG(LogTemp, Warning, TEXT("Loaded class outer: %s"), *Settings->GetClass()->GetOuter()->GetName());
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("%s"), *UGameAudioSettings::StaticClass()->GetPathName());
     if (GEngine)
         return Cast<UGameAudioSettings>(GEngine->GetGameUserSettings());
     return nullptr;
@@ -130,11 +134,15 @@ void UGameAudioSettings::ResetAudioToDefaults()
 
 void UGameAudioSettings::ApplySoundMixOverride(USoundClass* SoundClass, float Volume)
 {
-    UWorld* World = GetWorld();
     if (!IsAudioAssetsReady(SoundClass))
     {
         UE_LOG(LogTemp, Error, TEXT("UGameAudioSettings::ApplySoundMixOverride: Some Assets is null"));
         return;
+    }
+    UWorld* World = nullptr;
+    if (GEngine && GEngine->GetWorldContexts().Num() > 0)
+    {
+        World = GEngine->GetWorldContexts()[0].World();
     }
     if (!World)
     {
@@ -142,6 +150,8 @@ void UGameAudioSettings::ApplySoundMixOverride(USoundClass* SoundClass, float Vo
         return;
     }
 
+    UE_LOG(LogTemp, Log, TEXT("Applying volume %.2f to SoundClass %s"),
+        Volume, *SoundClass->GetName());
     UGameplayStatics::SetSoundMixClassOverride(
         World, AudioAssets->GlobalSoundMix, SoundClass, Volume);
 }
