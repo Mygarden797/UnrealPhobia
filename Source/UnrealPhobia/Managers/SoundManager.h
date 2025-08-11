@@ -22,24 +22,27 @@ class UNREALPHOBIA_API USoundManager : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
-    USoundManager();
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-    // virtual void Deinitialize() override;
+    virtual void Deinitialize() override;
 
     /* Play Audio Sources */
     UFUNCTION(BlueprintCallable)
     void PlayDetectedSound();
-
     UFUNCTION(BlueprintCallable)
     void PlaySFX3D(UObject* Object, USoundBase* SFX, FVector Location, FRotator Rotation, USoundAttenuation* AttenuationSettings);
-
     void PlayBeingChased(EChaseState CurrentState);
+
+    /* Sound Mix Settings */
+    UFUNCTION()
+    void ApplyVolume();
 
 private:
     UPROPERTY()
-    UAudioAssets* AudioAssets;
+    TObjectPtr<UAudioAssets> AudioAssets;
+    TObjectPtr<UGameAudioSettings> AudioSettings;
 
     UAudioComponent* BeingChasedSource;
 
     bool IsValidAssets() const;
+    bool bIsDelegateBound = false;
 };

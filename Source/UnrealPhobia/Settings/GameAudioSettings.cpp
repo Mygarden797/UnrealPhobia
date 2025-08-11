@@ -9,42 +9,6 @@ UGameAudioSettings::UGameAudioSettings()
     MusicVolume = 0.5f;
     SFXVolume = 0.5f;
     UIVolume = 0.5f;
-
-    AudioAssets = UAudioAssets::LoadAudioAssets();
-    if (!AudioAssets)
-    {
-        UE_LOG(LogTemp, Error, TEXT("UGameAudioSettings::Constructor: Failed to load AudioAssets"));
-    }
-
-}
-
-/*
-UGameAudioSettings* UGameAudioSettings::CreateGameAudioSettings()
-{
-    if (GEngine)
-    {
-        if (UGameAudioSettings* ExistingSettings = Cast<UGameAudioSettings>(GEngine->GetGameUserSettings()))
-        {
-            return ExistingSettings;
-        }
-        else
-        {
-            UGameAudioSettings* NewSettings = NewObject<UGameAudioSettings>(GEngine);
-            GEngine->GameUserSettings = NewSettings;
-            return NewSettings;
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("UGameAudioSettings::CreateGameAudioSettings(): GEngine is null"));
-        return;
-    }
-}
-*/
-
-bool UGameAudioSettings::IsAudioAssetsReady(USoundClass* SoundClass) const
-{
-    return AudioAssets && AudioAssets->GlobalSoundMix && SoundClass;
 }
 
 UGameAudioSettings* UGameAudioSettings::GetGameAudioSettings()
@@ -88,7 +52,8 @@ void UGameAudioSettings::SetVolume(EAudioCategory Category, float Value)
         break;
     }
 
-    ApplyAllVolumes();
+    OnAudioSettingsChanged.Broadcast();
+    UE_LOG(LogTemp, Warning, TEXT("=== 2. Settings Broadcasted! ==="));
 }
 
 float UGameAudioSettings::GetVolume(EAudioCategory Category) const
@@ -109,49 +74,25 @@ float UGameAudioSettings::GetVolume(EAudioCategory Category) const
     }
 }
 
-void UGameAudioSettings::ApplyAllVolumes()
-{
-    if (!AudioAssets)
-    {
-        UE_LOG(LogTemp, Error, TEXT("UGameAudioSettings::ApplyAllVolumes(): AudioAssets is null"));
-    }
-
-    ApplySoundMixOverride(AudioAssets->MusicSoundClass, MasterVolume * MusicVolume);
-    ApplySoundMixOverride(AudioAssets->SFXSoundClass, MasterVolume * SFXVolume);
-    ApplySoundMixOverride(AudioAssets->UISoundClass, MasterVolume * UIVolume);
-}
-
-void UGameAudioSettings::ResetAudioToDefaults()
+void UGameAudioSettings::ResetAudioToDefaultsOnly()
 {
     MasterVolume = 0.5f;
     MusicVolume = 0.5f;
     SFXVolume = 0.5f;
     UIVolume = 0.5f;
 
-    ApplyAllVolumes();
+    OnAudioSettingsChanged.Broadcast();
     SaveSettings();
 }
 
-void UGameAudioSettings::ApplySoundMixOverride(USoundClass* SoundClass, float Volume)
+/*
+void UGameAudioSettings::SetToDefaults()
 {
-    if (!IsAudioAssetsReady(SoundClass))
-    {
-        UE_LOG(LogTemp, Error, TEXT("UGameAudioSettings::ApplySoundMixOverride: Some Assets is null"));
-        return;
-    }
-    UWorld* World = nullptr;
-    if (GEngine && GEngine->GetWorldContexts().Num() > 0)
-    {
-        World = GEngine->GetWorldContexts()[0].World();
-    }
-    if (!World)
-    {
-        UE_LOG(LogTemp, Error, TEXT("UGameAudioSettings::ApplySoundMixOverride: Failed to get World"));
-        return;
-    }
+    Super::SetToDefaults();
 
-    UE_LOG(LogTemp, Log, TEXT("Applying volume %.2f to SoundClass %s"),
-        Volume, *SoundClass->GetName());
-    UGameplayStatics::SetSoundMixClassOverride(
-        World, AudioAssets->GlobalSoundMix, SoundClass, Volume);
+    MasterVolume = 0.5f;
+    MusicVolume = 0.5f;
+    SFXVolume = 0.5f;
+    UIVolume = 0.5f;
 }
+*/

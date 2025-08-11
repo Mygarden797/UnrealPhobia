@@ -49,6 +49,9 @@ public:
 
     /* Sound Classes */
     UPROPERTY(EditAnywhere, Category = "Audio Classes")
+    USoundClass* MasterSoundClass;
+
+    UPROPERTY(EditAnywhere, Category = "Audio Classes")
     USoundClass* MusicSoundClass;
 
     UPROPERTY(EditAnywhere, Category = "Audio Classes")

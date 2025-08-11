@@ -5,14 +5,10 @@
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "GameFramework/GameUserSettings.h"
-
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundMix.h"
 #include "Sound/SoundClass.h"
-
-#include "Assets/AudioAssets.h"
 #include "Types/GameAudioTypes.h"
-
 #include "GameAudioSettings.generated.h"
 
 /**
@@ -20,6 +16,8 @@
 *           Description		: Environment Setting of Audio 
 *           LastUpdate	    : 2025/08/06, Implement volume control system
 */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAudioSettingsChanged);
 
 class UAudioAssets;
 
@@ -34,9 +32,6 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Settings")
     static UGameAudioSettings* GetGameAudioSettings();
 
-    //UFUNCTION(BlueprintCallable, Category = "settings")
-    // static UGameAudioSettings* CreateGameAudioSettings();
-
     /* Set Audio Volumes */
     UFUNCTION(BlueprintCallable, Category = "Setting Audio Volume")
     void SetVolume(EAudioCategory Category, float Value);
@@ -46,9 +41,12 @@ public:
     float GetVolume(EAudioCategory Category) const;
 
 
-    // 모든 오디오 설정 초기화
-    void ResetAudioToDefaults();
+    /* 모든 오디오 설정 초기화 */
+    // virtual void SetToDefaults() override;
+    void ResetAudioToDefaultsOnly();
 
+    UPROPERTY(BlueprintAssignable, Category = "Game Audio Settings")
+    FOnAudioSettingsChanged OnAudioSettingsChanged;
 
 protected:
     /* Volume Values */
@@ -63,15 +61,5 @@ protected:
 
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Audio")
     float UIVolume;
-
-private:
-    UAudioAssets* AudioAssets;
-
-    // 모든 오디오 설정 적용
-    void ApplyAllVolumes();
-
-    // 유효성 검사
-    bool IsAudioAssetsReady(USoundClass* SoundClass) const;
-    // SoundMix에 볼륨 적용
-    void ApplySoundMixOverride(USoundClass* SoundClass, float Volume);
 };
+
