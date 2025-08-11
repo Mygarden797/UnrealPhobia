@@ -15,7 +15,6 @@
 *           
 */
 
-
 UCLASS()
 class UNREALPHOBIA_API UGameAudioSettingsWidget : public UGameSettingsWidget
 {

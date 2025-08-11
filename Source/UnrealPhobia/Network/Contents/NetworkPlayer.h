@@ -8,9 +8,9 @@
 #include "Creature/CreatureBase.h"        // Creature Perception
 #include "AttackCameraWidget.h"          // 공격 카메라
 #include "ChaseSystemTypes.h"
-#include "UnrealPhobia/Assets/AudioAssets.h"
-#include "UnrealPhobia/Managers/SoundManager.h"
-#include "Settings/GameAudioSettingsWidget.h"
+#include "Assets/AudioAssets.h"
+#include "Managers/SoundManager.h"
+#include "Settings/GameSettingsWidget.h"
 #include "NetworkPlayer.generated.h"
 
 class USpringArmComponent;
@@ -52,7 +52,7 @@ public:
     TSubclassOf<class UInventoryWidget> InventoryWidgetClass;
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<class UGameAudioSettingsWidget> AudioSettingsWidgetClass;
+    TSubclassOf<class UGameSettingsWidget> AudioSettingsWidgetClass;
 
     UPROPERTY()
     class UUserWidget *CrosshairWidget;
@@ -66,8 +66,9 @@ public:
     UPROPERTY()
     class UInventoryWidget *InventoryWidget;
 
+    // 현재 보는 설정창, 당장은 오디오 창뿐임
     UPROPERTY()
-    UGameAudioSettingsWidget* AudioSettingsWidget;
+    TObjectPtr<UGameSettingsWidget> CurrentSettingsWidget;
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<class UStaminaBar> StaminaBarClass;
@@ -155,10 +156,10 @@ public:
     void ToggleAudioSettings(const FInputActionValue& Value);
 
     UFUNCTION(BlueprintCallable, Category = "UI")
-    void ShowAudioSettings();
+    void ShowSettings(TSubclassOf<UGameSettingsWidget> WidgetClassToShow);
 
     UFUNCTION(BlueprintCallable, Category = "UI")
-    void HideAudioSettings();
+    void HideSettings();
 
 
 protected:

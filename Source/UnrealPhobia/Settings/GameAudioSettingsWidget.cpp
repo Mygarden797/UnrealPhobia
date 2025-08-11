@@ -58,61 +58,6 @@ void UGameAudioSettingsWidget::BindSliderEvents()
 
 }
 
-// AudioSettings에서 볼륨 변경 및 슬라이더의 값 변경
-/*
-void UGameAudioSettingsWidget::OnVolumeChanged(float Value, EAudioCategory Type)
-{
-    UGameAudioSettings* Settings = UGameAudioSettings::GetGameAudioSettings();
-    if (!Settings)
-    {
-        UE_LOG(LogTemp, Error,
-            TEXT("UGameAudioSettingsWidget::OnVolumeChanged(): Settings is null"));
-        return;
-    }
-    Settings->SetVolume(Type, Value);
-    UpdatePercentageText(GetTextBlockByType(Type), Value);
-}
-*/
-
-/*
-USlider* UGameAudioSettingsWidget::GetSliderByType(EAudioCategory Type) const
-{
-    switch (Type)
-    {
-    case EAudioCategory::Master:
-        return MasterSlider;
-    case EAudioCategory::Music:
-        return MusicSlider;
-    case EAudioCategory::SFX:
-        return SFXSlider;
-    case EAudioCategory::UI:
-        return UISlider;
-    default:
-        UE_LOG(LogTemp, Error,
-            TEXT("UGameAudioSettingsWidget::GetSliderByType(): Wrong Audio Type"));
-        return nullptr;
-    }
-}
-
-UTextBlock* UGameAudioSettingsWidget::GetTextBlockByType(EAudioCategory Type) const
-{
-    switch (Type)
-    {
-    case EAudioCategory::Master:
-        return MasterPercent;
-    case EAudioCategory::Music:
-        return MusicPercent;
-    case EAudioCategory::SFX:
-        return SFXPercent;
-    case EAudioCategory::UI:
-        return UIPercent;
-    default:
-        UE_LOG(LogTemp, Error,
-            TEXT("UGameAudioSettingsWidget::GetTextBlockByType(): Wrong Audio Type"));
-        return nullptr;
-    }
-}
-*/
 void UGameAudioSettingsWidget::LoadCurrentSettings()
 {
     if (UGameAudioSettings* Settings = UGameAudioSettings::GetGameAudioSettings())
@@ -149,23 +94,6 @@ void UGameAudioSettingsWidget::LoadCurrentSettings()
             }
         }
     }
-  
-    /*
-    EAudioCategory Types[] =
-    { EAudioCategory::Master, EAudioCategory::Music,
-    EAudioCategory::SFX, EAudioCategory::UI };
-
-    for (EAudioCategory Type : Types)
-    {
-        USlider* Slider = GetSliderByType(Type);
-        if (Slider)
-        {
-            float Volume = Settings->GetVolume(Type);
-            Slider->SetValue(Volume);
-            UpdatePercentageText(GetTextBlockByType(Type), Volume);
-        }
-    }
-    */
 }
 
 void UGameAudioSettingsWidget::ApplyCurrentSettings()
@@ -204,41 +132,6 @@ void UGameAudioSettingsWidget::UpdatePercentageText(UTextBlock* TextWidget, floa
         UE_LOG(LogTemp, Error, TEXT("UGameAudioSettingsWidget::UpdatePercentageText(): No TextWidget"))
     }
 }
-
-/*
-void UGameAudioSettingsWidget::UpdateSlidersFromSettings()
-{
-    UGameAudioSettings* Settings = UGameAudioSettings::GetGameAudioSettings();
-    if (!Settings)
-    {
-        UE_LOG(LogTemp, Error, TEXT("AudioSettingsWidget::UpdateSlidersFromSettings(): Settings is null"));
-        return;
-    }
-    else
-    {
-        if (MasterSlider)
-        {
-            MasterSlider->SetValue(Settings->GetVolume(EAudioCategory::Master));
-            UpdatePercentageText(MasterPercent, MasterSlider->GetValue());
-        }
-        if (MusicSlider)
-        {
-            MusicSlider->SetValue(Settings->GetVolume(EAudioCategory::Music));
-            UpdatePercentageText(MusicPercent, MusicSlider->GetValue());
-        }
-        if (SFXSlider)
-        {
-            SFXSlider->SetValue(Settings->GetVolume(EAudioCategory::SFX));
-            UpdatePercentageText(SFXPercent, SFXSlider->GetValue());
-        }
-        if (UISlider)
-        {
-            UISlider->SetValue(Settings->GetVolume(EAudioCategory::UI));
-            UpdatePercentageText(UIPercent, UISlider->GetValue());
-        }
-    }
-}
-*/
 
 void UGameAudioSettingsWidget::OnAudioSettingsChanged()
 {

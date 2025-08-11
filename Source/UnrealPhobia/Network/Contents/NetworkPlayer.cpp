@@ -116,16 +116,6 @@ void ANetworkPlayer::BeginPlay()
         {
             UE_LOG(LogTemp, Error, TEXT("Failed to load Inventory"));
         }
-
-        // Create Audio Settings Widget
-        if (AudioSettingsWidgetClass)
-        {
-            CreateAudioSettingsWidget();
-        }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("ANetworkPlayer::BeginPlay(): AudioStettingsWidgetClass is null"));
-        }
     }
 
     // Mental decay timer
@@ -1087,20 +1077,7 @@ void ANetworkPlayer::OnToggleAudioSettings(const FInputActionValue& Value)
 }
 */
 
-void ANetworkPlayer::CreateAudioSettingsWidget()
-{
-    APlayerController* PC = Cast<APlayerController>(GetController());
-    if (PC && !AudioSettingsWidget && AudioSettingsWidgetClass)
-    {
-        AudioSettingsWidget = CreateWidget<UGameAudioSettingsWidget>(PC, AudioSettingsWidgetClass);
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error,
-            TEXT("ANetworkPlayer::CreateAudioSettingsWidget(): Failed to create Widgets"));
-    }
-}
-
+// Todo: Implement Closing Window when press key (Now: Only press 'Back' button to close window)
 void ANetworkPlayer::ToggleAudioSettings(const FInputActionValue& Value)
 {
     const bool bPressed = Value.Get<bool>();
@@ -1109,46 +1086,80 @@ void ANetworkPlayer::ToggleAudioSettings(const FInputActionValue& Value)
         UE_LOG(LogTemp, Display, TEXT("SurvivorController::ToggleAudioSettings(): Key is pressed"));
         if (bIsAudioSettingsVisible)
         {
-            HideAudioSettings();
+            HideSettings();
         }
         else
         {
-            ShowAudioSettings();
+            ShowSettings(AudioSettingsWidgetClass);
         }
     }
 }
 
-void ANetworkPlayer::ShowAudioSettings()
+void ANetworkPlayer::ShowSettings(TSubclassOf<UGameSettingsWidget> WidgetClassToShow)
 {
-    if (!AudioSettingsWidget)
+    if (!IsLocallyControlled())
     {
-        UE_LOG(LogTemp, Error,
-            TEXT("AMyPlayerController::ShowAudioSettings(): AudioSettingsWidget is null"));
         return;
     }
 
-    AudioSettingsWidget->AddToViewport();
 
     if (APlayerController* PC = Cast<APlayerController>(GetController()))
     {
+        if (CurrentSettingsWidget)
+        {
+            CurrentSettingsWidget->RemoveFromParent();
+            CurrentSettingsWidget = nullptr;
+        }
+
+        if (!WidgetClassToShow)
+        {
+            UE_LOG(LogTemp, Error, TEXT("ANetworkPlayer::ShowSettings(): WidgetClassToShow is null."));
+            return;
+        }
+
+        CurrentSettingsWidget = CreateWidget<UGameSettingsWidget>(PC, WidgetClassToShow);
+        if (!CurrentSettingsWidget) return;
+
+        CurrentSettingsWidget->OnBackRequested.BindUObject(this, &ANetworkPlayer::HideSettings);
+        CurrentSettingsWidget->AddToViewport();
+
+        FInputModeUIOnly InputModeData;
+        InputModeData.SetWidgetToFocus(CurrentSettingsWidget->TakeWidget());
+        InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
         PC->SetInputMode(FInputModeUIOnly());
         PC->bShowMouseCursor = true;
     }
 }
 
-void ANetworkPlayer::HideAudioSettings()
+void ANetworkPlayer::HideSettings()
 {
-    if (!AudioSettingsWidget)
+    UE_LOG(LogTemp, Warning, TEXT("=== 2. HideSettings function called in Player! ==="));
+    if (!IsLocallyControlled())
     {
-        UE_LOG(LogTemp, Error,
-            TEXT("AMyPlayerController::HideAudioSettings(): AudioSettingsWidget is null"));
         return;
     }
 
-    AudioSettingsWidget->RemoveFromParent();
     if (APlayerController* PC = Cast<APlayerController>(GetController()))
     {
+        if (!CurrentSettingsWidget)
+        {
+            UE_LOG(LogTemp, Error,
+                TEXT("AMyPlayerController::HideAudioSettings(): AudioSettingsWidget is null"));
+            return;
+        }
+
+        CurrentSettingsWidget->RemoveFromParent();
+        CurrentSettingsWidget = nullptr;
+
+        UE_LOG(LogTemp, Log, TEXT("HideSettings Step: Setting input mode to GameOnly."));
+        FInputModeGameOnly InputModeData;
         PC->SetInputMode(FInputModeGameOnly());
         PC->bShowMouseCursor = false;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error,
+            TEXT("AMyPlayerController::HideAudioSettings(): Controller is null"));
+        return;
     }
 }

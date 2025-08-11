@@ -30,6 +30,7 @@ void USoundManager::Initialize(FSubsystemCollectionBase& Collection)
     if (IsValidAssets() && AudioAssets->GlobalSoundMix)
     {
         UGameplayStatics::PushSoundMixModifier(this, AudioAssets->GlobalSoundMix);
+        UE_LOG(LogTemp, Warning, TEXT("=== Global Sound Mix Activated! ==="));
     }
     else
     {
