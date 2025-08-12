@@ -7,7 +7,7 @@
 #include "InputActionValue.h"
 #include "Creature/CreatureBase.h"        // Creature Perception
 #include "AttackCameraWidget.h"          // 공격 카메라
-#include "ChaseSystemTypes.h"
+#include "Types/ChaseSystemTypes.h"
 #include "Assets/AudioAssets.h"
 #include "Managers/SoundManager.h"
 #include "Settings/GameSettingsWidget.h"

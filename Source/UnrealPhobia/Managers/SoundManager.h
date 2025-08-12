@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "ChaseSystemTypes.h"
+#include "Types/ChaseSystemTypes.h"
 #include "Sound/SoundBase.h"
 #include "UnrealPhobia/Assets/AudioAssets.h"
 #include "Settings/GameAudioSettings.h"
