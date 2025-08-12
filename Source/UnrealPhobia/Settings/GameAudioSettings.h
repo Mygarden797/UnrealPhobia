@@ -6,8 +6,6 @@
 #include "Engine/World.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Kismet/GameplayStatics.h"
-#include "Sound/SoundMix.h"
-#include "Sound/SoundClass.h"
 #include "Types/GameAudioTypes.h"
 #include "GameAudioSettings.generated.h"
 

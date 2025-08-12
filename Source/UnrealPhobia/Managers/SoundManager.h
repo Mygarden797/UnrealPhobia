@@ -4,7 +4,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Types/ChaseSystemTypes.h"
 #include "Sound/SoundBase.h"
-#include "UnrealPhobia/Assets/AudioAssets.h"
+#include "Assets/AudioAssets.h"
 #include "Settings/GameAudioSettings.h"
 #include "SoundManager.generated.h"
 

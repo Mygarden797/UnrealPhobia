@@ -85,7 +85,7 @@ void UGameAudioSettings::ResetAudioToDefaultsOnly()
     SaveSettings();
 }
 
-/*
+/* Will be used when make whole of settings
 void UGameAudioSettings::SetToDefaults()
 {
     Super::SetToDefaults();
