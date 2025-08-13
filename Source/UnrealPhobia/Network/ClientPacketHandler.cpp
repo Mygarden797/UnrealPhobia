@@ -132,3 +132,13 @@ bool Handle_S_WIN(PacketSessionRef& session, Protocol::S_WIN& pkt)
 
     return true;
 }
+
+bool Handle_S_CREATURE_BEHAVIOR(PacketSessionRef& session, Protocol::S_CREATURE_BEHAVIOR& pkt)
+{
+    if (auto* GameInstance = Cast<UNetworkManager>(GWorld->GetGameInstance()))
+    {
+        GameInstance->HandleCreatureBehavior(pkt);
+    }
+
+    return true;
+}

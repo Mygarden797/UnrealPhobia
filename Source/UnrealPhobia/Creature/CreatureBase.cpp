@@ -11,7 +11,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Engine/SceneCapture2D.h"
 #include "Engine/TextureRenderTarget2D.h"
-
+#include "Network/Contents/ProtoPlayer.h"
+#include "Network/NetworkBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // 정적 델리게이트 정의
@@ -69,6 +70,59 @@ void ACreatureBase::BeginPlay()
 void ACreatureBase::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
+    {
+        FVector Location = GetActorLocation();
+        CurrentInfo->set_x(Location.X);
+        CurrentInfo->set_y(Location.Y);
+        CurrentInfo->set_z(Location.Z);
+        CurrentInfo->set_yaw(GetControlRotation().Yaw);
+    }
+
+    if (bHaveAIController) //AI컨트롤러 있으면 패킷 보내고 없으면 DestInfo로 이동
+    {
+        // Send 판정
+        bool ForceSendPacket = false;
+
+        if (MovePacketSendTimer <= 0 || ForceSendPacket)
+        {
+            MovePacketSendTimer = MOVE_PACKET_SEND_DELAY;
+
+            Protocol::C_CREATURE_BEHAVIOR MovePkt;
+
+            // 현재 위치 정보
+            {
+                Protocol::PosInfo* Info = MovePkt.mutable_info();
+                Info->CopyFrom(*CurrentInfo);
+                //크리쳐 스테이트 지정.
+                ECreatureState CreatureState = this->GetState();
+                
+                if (CreatureState == ECreatureState::Attack)
+                {
+                    Info->set_creature_state(Protocol::CreatureState::CREATURE_STATE_ATTACK);
+                }
+                else if (CreatureState == ECreatureState::Chase)
+                {
+                    Info->set_creature_state(Protocol::CreatureState::CREATURE_STATE_CHASE);
+                }
+                else
+                {
+                    Info->set_creature_state(Protocol::CreatureState::CREATURE_STATE_MOVE);
+                }
+            }
+
+            SEND_PACKET(MovePkt);
+        }
+    }
+    else
+    {
+        {
+            SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
+            AddMovementInput(GetActorForwardVector());
+            //애니메이션 추가
+        }
+
+    }
 }
 
 // Called to bind functionality to input
@@ -135,7 +189,10 @@ void ACreatureBase::Attack()
 
     //  카메라 관련
     //   공격 시 카메라 활성화
-    //  ActivateAttackCamera();
+    if (Cast<AProtoPlayer>(AttackTarget))
+    {
+        ActivateAttackCamera();
+    }
 }
 
 void ACreatureBase::LocateTargetCamera()
@@ -239,6 +296,54 @@ void ACreatureBase::DeactivateAttackCamera()
     {
         GetWorld()->GetTimerManager().ClearTimer(AttackCameraTimerHandle);
     }
+}
+
+void ACreatureBase::MultiBehaveior(const Protocol::PosInfo& PosInfo)
+{
+    //AI 컨트롤러가 없을 때 작동
+    if (this->AIControllerClass != nullptr)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("AIControllerClass is not nullptr"));
+        return;
+    }
+
+    SetDestInfo(PosInfo);
+}
+
+void ACreatureBase::SetCreatureState(Protocol::CreatureState CreatureState)
+{
+    if (CurrentInfo->creature_state() == CreatureState)
+        return;
+
+    CurrentInfo->set_creature_state(CreatureState);
+
+    // TODO 각 애니메이션 지정
+}
+
+void ACreatureBase::SetCurrentInfo(const Protocol::PosInfo& Info)
+{
+    if (CurrentInfo->object_id() != 0)
+    {
+        assert(PlayerInfo->object_id() == Info.object_id());
+    }
+
+    CurrentInfo->CopyFrom(Info);
+
+    FVector Location(Info.x(), Info.y(), Info.z());
+    SetActorLocation(Location);
+}
+
+void ACreatureBase::SetDestInfo(const Protocol::PosInfo& Info)
+{
+    if (CurrentInfo->object_id() != 0)
+    {
+        assert(PlayerInfo->object_id() == Info.object_id());
+    }
+
+    // Dest에 최종 상태 복사.
+    DestInfo->CopyFrom(Info);
+
+    // 크리쳐 상태 지정하는 코드
 }
 
 void ACreatureBase::OnAttackCameraTimerEnd()

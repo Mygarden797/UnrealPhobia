@@ -301,6 +301,8 @@ void ANetworkPlayer::Tick(float DeltaTime)
 
             Protocol::C_MOVE MovePkt;
 
+            float speed = GetVelocity().Size();
+
             // Current position information
             {
                 Protocol::PosInfo* Info = MovePkt.mutable_info();
@@ -308,6 +310,7 @@ void ANetworkPlayer::Tick(float DeltaTime)
                 Info->set_yaw(DesiredYaw);
                 Info->set_state(GetMoveState());
                 Info->set_crouch(GetCrouchState());
+                Info->set_speed(speed); 
             }
 
             SEND_PACKET(MovePkt);

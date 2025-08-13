@@ -7,6 +7,7 @@
 #include "Creature/CreatureState.h"
 #include "Creature/CreatureDataAsset.h"
 #include "Creature/Animation/CreatureAnimationDataAsset.h"
+#include "Protocol.pb.h"
 #include "CreatureBase.generated.h"
 
 // 크리처 상탱 변경을 위한 델리게이트
@@ -95,6 +96,20 @@ public:
         return AttackCameraRenderTarget;
     }
 
+    //멀티 이동관련
+    const float MOVE_PACKET_SEND_DELAY = 0.2f;
+    float MovePacketSendTimer = MOVE_PACKET_SEND_DELAY;
+
+    bool bHaveAIController = true; // AI 컨트롤러가 있는지 여부
+    void MultiBehaveior(const Protocol::PosInfo& PosInfo);
+
+    Protocol::MoveState GetCreatureState() { return CurrentInfo->state(); }
+    void SetCreatureState(Protocol::CreatureState State);
+
+    void SetCurrentInfo(const Protocol::PosInfo& Info);
+    void SetDestInfo(const Protocol::PosInfo& Info);
+    Protocol::PosInfo* GetCurrentInfo() { return CurrentInfo; }
+
 private:
 	float AttackDamage = 10;
     AActor *AttackTarget;
@@ -106,6 +121,9 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Creature")
     UCreatureAnimationDataAsset* CreatureAnimationData;
+
+    class Protocol::PosInfo* CurrentInfo; // 현재 위치
+    class Protocol::PosInfo* DestInfo; // 목적지
 
 public:
     UCreatureDataAsset* GetCreatureData() const { return CreatureData; }

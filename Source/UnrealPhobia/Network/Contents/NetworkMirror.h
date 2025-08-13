@@ -22,7 +22,7 @@ public:
     UStaticMeshComponent* BaseMeshComponent; // Default mesh component
 
     UFUNCTION(BlueprintCallable)
-    bool ActivateTrigger(int64 trigger_id);
+    bool ActivateTrigger(int64 trigger_id, ETriggerName trigger_name);
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FName location_id;

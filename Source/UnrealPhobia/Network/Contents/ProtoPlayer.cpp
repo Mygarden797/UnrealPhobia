@@ -93,6 +93,7 @@ void AProtoPlayer::Tick(float DeltaSeconds)
         SetActorLocation(NextLocation);*/
         const Protocol::MoveState State = PlayerInfo->state();
         const Protocol::CrouchState IsCrouch = PlayerInfo->crouch();
+        float speed = PlayerInfo->speed();
 
         if (IsCrouch == Protocol::CROUCH_STATE_CROUCH)
         {
@@ -106,6 +107,8 @@ void AProtoPlayer::Tick(float DeltaSeconds)
             bIsSprinting = true;
             UnCrouch();
             bIsCrouch = false;
+            FVector CurrentDirection = GetVelocity().GetSafeNormal();
+            GetCharacterMovement()->Velocity = CurrentDirection * speed;
             SetWalk();
         }
         

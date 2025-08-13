@@ -278,8 +278,34 @@ struct S_WINDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S_WINDefaultTypeInternal _S_WIN_default_instance_;
+PROTOBUF_CONSTEXPR C_CREATURE_BEHAVIOR::C_CREATURE_BEHAVIOR(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.info_)*/nullptr
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct C_CREATURE_BEHAVIORDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR C_CREATURE_BEHAVIORDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~C_CREATURE_BEHAVIORDefaultTypeInternal() {}
+  union {
+    C_CREATURE_BEHAVIOR _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C_CREATURE_BEHAVIORDefaultTypeInternal _C_CREATURE_BEHAVIOR_default_instance_;
+PROTOBUF_CONSTEXPR S_CREATURE_BEHAVIOR::S_CREATURE_BEHAVIOR(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.info_)*/nullptr
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct S_CREATURE_BEHAVIORDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR S_CREATURE_BEHAVIORDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~S_CREATURE_BEHAVIORDefaultTypeInternal() {}
+  union {
+    S_CREATURE_BEHAVIOR _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S_CREATURE_BEHAVIORDefaultTypeInternal _S_CREATURE_BEHAVIOR_default_instance_;
 }  // namespace Protocol
-static ::_pb::Metadata file_level_metadata_Protocol_2eproto[20];
+static ::_pb::Metadata file_level_metadata_Protocol_2eproto[22];
 static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_Protocol_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_Protocol_2eproto = nullptr;
 
@@ -425,6 +451,20 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_CREATURE_BEHAVIOR, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_CREATURE_BEHAVIOR, _impl_.info_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_CREATURE_BEHAVIOR, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_CREATURE_BEHAVIOR, _impl_.info_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::Protocol::C_LOGIN)},
@@ -447,6 +487,8 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 122, -1, -1, sizeof(::Protocol::S_START)},
   { 129, -1, -1, sizeof(::Protocol::C_DEFEAT)},
   { 135, -1, -1, sizeof(::Protocol::S_WIN)},
+  { 141, -1, -1, sizeof(::Protocol::C_CREATURE_BEHAVIOR)},
+  { 148, -1, -1, sizeof(::Protocol::S_CREATURE_BEHAVIOR)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -470,6 +512,8 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::Protocol::_S_START_default_instance_._instance,
   &::Protocol::_C_DEFEAT_default_instance_._instance,
   &::Protocol::_S_WIN_default_instance_._instance,
+  &::Protocol::_C_CREATURE_BEHAVIOR_default_instance_._instance,
+  &::Protocol::_S_CREATURE_BEHAVIOR_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -495,7 +539,10 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "ectInfo\022+\n\rcreature_info\030\002 \001(\0132\024.Protoco"
   "l.ObjectInfo\"\030\n\007S_TIMER\022\r\n\005timer\030\001 \001(\004\"1"
   "\n\007S_START\022&\n\010triggers\030\001 \003(\0132\024.Protocol.O"
-  "bjectInfo\"\n\n\010C_DEFEAT\"\007\n\005S_WINb\006proto3"
+  "bjectInfo\"\n\n\010C_DEFEAT\"\007\n\005S_WIN\"6\n\023C_CREA"
+  "TURE_BEHAVIOR\022\037\n\004info\030\001 \001(\0132\021.Protocol.P"
+  "osInfo\"6\n\023S_CREATURE_BEHAVIOR\022\037\n\004info\030\001 "
+  "\001(\0132\021.Protocol.PosInfob\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -503,9 +550,9 @@ static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_de
 };
 static ::_pbi::once_flag descriptor_table_Protocol_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Protocol_2eproto = {
-    false, false, 918, descriptor_table_protodef_Protocol_2eproto,
+    false, false, 1030, descriptor_table_protodef_Protocol_2eproto,
     "Protocol.proto",
-    &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 20,
+    &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 22,
     schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
     file_level_metadata_Protocol_2eproto, file_level_enum_descriptors_Protocol_2eproto,
     file_level_service_descriptors_Protocol_2eproto,
@@ -3814,6 +3861,404 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*S_WIN::GetClassData() const { 
       file_level_metadata_Protocol_2eproto[19]);
 }
 
+// ===================================================================
+
+class C_CREATURE_BEHAVIOR::_Internal {
+ public:
+  static const ::Protocol::PosInfo& info(const C_CREATURE_BEHAVIOR* msg);
+};
+
+const ::Protocol::PosInfo&
+C_CREATURE_BEHAVIOR::_Internal::info(const C_CREATURE_BEHAVIOR* msg) {
+  return *msg->_impl_.info_;
+}
+void C_CREATURE_BEHAVIOR::clear_info() {
+  if (GetArenaForAllocation() == nullptr && _impl_.info_ != nullptr) {
+    delete _impl_.info_;
+  }
+  _impl_.info_ = nullptr;
+}
+C_CREATURE_BEHAVIOR::C_CREATURE_BEHAVIOR(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:Protocol.C_CREATURE_BEHAVIOR)
+}
+C_CREATURE_BEHAVIOR::C_CREATURE_BEHAVIOR(const C_CREATURE_BEHAVIOR& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  C_CREATURE_BEHAVIOR* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.info_){nullptr}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from._internal_has_info()) {
+    _this->_impl_.info_ = new ::Protocol::PosInfo(*from._impl_.info_);
+  }
+  // @@protoc_insertion_point(copy_constructor:Protocol.C_CREATURE_BEHAVIOR)
+}
+
+inline void C_CREATURE_BEHAVIOR::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.info_){nullptr}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+C_CREATURE_BEHAVIOR::~C_CREATURE_BEHAVIOR() {
+  // @@protoc_insertion_point(destructor:Protocol.C_CREATURE_BEHAVIOR)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void C_CREATURE_BEHAVIOR::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete _impl_.info_;
+}
+
+void C_CREATURE_BEHAVIOR::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void C_CREATURE_BEHAVIOR::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.C_CREATURE_BEHAVIOR)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  if (GetArenaForAllocation() == nullptr && _impl_.info_ != nullptr) {
+    delete _impl_.info_;
+  }
+  _impl_.info_ = nullptr;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* C_CREATURE_BEHAVIOR::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // .Protocol.PosInfo info = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          ptr = ctx->ParseMessage(_internal_mutable_info(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* C_CREATURE_BEHAVIOR::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.C_CREATURE_BEHAVIOR)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .Protocol.PosInfo info = 1;
+  if (this->_internal_has_info()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(1, _Internal::info(this),
+        _Internal::info(this).GetCachedSize(), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.C_CREATURE_BEHAVIOR)
+  return target;
+}
+
+size_t C_CREATURE_BEHAVIOR::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.C_CREATURE_BEHAVIOR)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // .Protocol.PosInfo info = 1;
+  if (this->_internal_has_info()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.info_);
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData C_CREATURE_BEHAVIOR::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    C_CREATURE_BEHAVIOR::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*C_CREATURE_BEHAVIOR::GetClassData() const { return &_class_data_; }
+
+
+void C_CREATURE_BEHAVIOR::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<C_CREATURE_BEHAVIOR*>(&to_msg);
+  auto& from = static_cast<const C_CREATURE_BEHAVIOR&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.C_CREATURE_BEHAVIOR)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_has_info()) {
+    _this->_internal_mutable_info()->::Protocol::PosInfo::MergeFrom(
+        from._internal_info());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void C_CREATURE_BEHAVIOR::CopyFrom(const C_CREATURE_BEHAVIOR& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.C_CREATURE_BEHAVIOR)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool C_CREATURE_BEHAVIOR::IsInitialized() const {
+  return true;
+}
+
+void C_CREATURE_BEHAVIOR::InternalSwap(C_CREATURE_BEHAVIOR* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_.info_, other->_impl_.info_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata C_CREATURE_BEHAVIOR::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
+      file_level_metadata_Protocol_2eproto[20]);
+}
+
+// ===================================================================
+
+class S_CREATURE_BEHAVIOR::_Internal {
+ public:
+  static const ::Protocol::PosInfo& info(const S_CREATURE_BEHAVIOR* msg);
+};
+
+const ::Protocol::PosInfo&
+S_CREATURE_BEHAVIOR::_Internal::info(const S_CREATURE_BEHAVIOR* msg) {
+  return *msg->_impl_.info_;
+}
+void S_CREATURE_BEHAVIOR::clear_info() {
+  if (GetArenaForAllocation() == nullptr && _impl_.info_ != nullptr) {
+    delete _impl_.info_;
+  }
+  _impl_.info_ = nullptr;
+}
+S_CREATURE_BEHAVIOR::S_CREATURE_BEHAVIOR(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:Protocol.S_CREATURE_BEHAVIOR)
+}
+S_CREATURE_BEHAVIOR::S_CREATURE_BEHAVIOR(const S_CREATURE_BEHAVIOR& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  S_CREATURE_BEHAVIOR* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.info_){nullptr}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from._internal_has_info()) {
+    _this->_impl_.info_ = new ::Protocol::PosInfo(*from._impl_.info_);
+  }
+  // @@protoc_insertion_point(copy_constructor:Protocol.S_CREATURE_BEHAVIOR)
+}
+
+inline void S_CREATURE_BEHAVIOR::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.info_){nullptr}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+S_CREATURE_BEHAVIOR::~S_CREATURE_BEHAVIOR() {
+  // @@protoc_insertion_point(destructor:Protocol.S_CREATURE_BEHAVIOR)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void S_CREATURE_BEHAVIOR::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete _impl_.info_;
+}
+
+void S_CREATURE_BEHAVIOR::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void S_CREATURE_BEHAVIOR::Clear() {
+// @@protoc_insertion_point(message_clear_start:Protocol.S_CREATURE_BEHAVIOR)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  if (GetArenaForAllocation() == nullptr && _impl_.info_ != nullptr) {
+    delete _impl_.info_;
+  }
+  _impl_.info_ = nullptr;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* S_CREATURE_BEHAVIOR::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // .Protocol.PosInfo info = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          ptr = ctx->ParseMessage(_internal_mutable_info(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* S_CREATURE_BEHAVIOR::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:Protocol.S_CREATURE_BEHAVIOR)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .Protocol.PosInfo info = 1;
+  if (this->_internal_has_info()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(1, _Internal::info(this),
+        _Internal::info(this).GetCachedSize(), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:Protocol.S_CREATURE_BEHAVIOR)
+  return target;
+}
+
+size_t S_CREATURE_BEHAVIOR::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:Protocol.S_CREATURE_BEHAVIOR)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // .Protocol.PosInfo info = 1;
+  if (this->_internal_has_info()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.info_);
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData S_CREATURE_BEHAVIOR::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    S_CREATURE_BEHAVIOR::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*S_CREATURE_BEHAVIOR::GetClassData() const { return &_class_data_; }
+
+
+void S_CREATURE_BEHAVIOR::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<S_CREATURE_BEHAVIOR*>(&to_msg);
+  auto& from = static_cast<const S_CREATURE_BEHAVIOR&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:Protocol.S_CREATURE_BEHAVIOR)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_has_info()) {
+    _this->_internal_mutable_info()->::Protocol::PosInfo::MergeFrom(
+        from._internal_info());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void S_CREATURE_BEHAVIOR::CopyFrom(const S_CREATURE_BEHAVIOR& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:Protocol.S_CREATURE_BEHAVIOR)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool S_CREATURE_BEHAVIOR::IsInitialized() const {
+  return true;
+}
+
+void S_CREATURE_BEHAVIOR::InternalSwap(S_CREATURE_BEHAVIOR* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_.info_, other->_impl_.info_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata S_CREATURE_BEHAVIOR::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_Protocol_2eproto_getter, &descriptor_table_Protocol_2eproto_once,
+      file_level_metadata_Protocol_2eproto[21]);
+}
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
@@ -3896,6 +4341,14 @@ Arena::CreateMaybeMessage< ::Protocol::C_DEFEAT >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::Protocol::S_WIN*
 Arena::CreateMaybeMessage< ::Protocol::S_WIN >(Arena* arena) {
   return Arena::CreateMessageInternal< ::Protocol::S_WIN >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::C_CREATURE_BEHAVIOR*
+Arena::CreateMaybeMessage< ::Protocol::C_CREATURE_BEHAVIOR >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::C_CREATURE_BEHAVIOR >(arena);
+}
+template<> PROTOBUF_NOINLINE ::Protocol::S_CREATURE_BEHAVIOR*
+Arena::CreateMaybeMessage< ::Protocol::S_CREATURE_BEHAVIOR >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::Protocol::S_CREATURE_BEHAVIOR >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

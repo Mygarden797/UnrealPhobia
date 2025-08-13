@@ -55,7 +55,7 @@ void ANetworkMirror::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 }
 
-bool ANetworkMirror::ActivateTrigger(int64 trigger_id)
+bool ANetworkMirror::ActivateTrigger(int64 trigger_id, ETriggerName trigger_name)
 {
     Protocol::C_SPAWN_CREATURE SpawnCreaturePkt;
 
@@ -63,7 +63,7 @@ bool ANetworkMirror::ActivateTrigger(int64 trigger_id)
     class Protocol::ObjectInfo* CreatureInfo = SpawnCreaturePkt.mutable_creature_info();
     class Protocol::CreatureInfo* CreatureInfo_Spawn = CreatureInfo->mutable_creature_info();
     TriggerInfo->set_object_id(trigger_id);
-
+    CreatureInfo_Spawn->set_creature_type(static_cast<Protocol::CreatureType>(trigger_name));
 
     //거울 location_id보고  해당 위치에 소환.
     FString LocationIdStr = location_id.ToString();

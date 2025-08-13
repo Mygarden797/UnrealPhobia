@@ -29,6 +29,8 @@ protected:
 public:
     bool IsMyPlayer();
 
+    uint64 MyPlayerId = 0;
+
     Protocol::MoveState GetMoveState() { return PlayerInfo->state(); }
     void SetMoveState(Protocol::MoveState State);
     Protocol::CrouchState GetCrouchState() { return PlayerInfo->crouch(); }

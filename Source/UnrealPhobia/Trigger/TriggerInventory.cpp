@@ -124,7 +124,7 @@ void UTriggerInventory::PickUp()
 		else if (Inventory[SelectedIndex] != ETriggerName::None && HitActor->IsA(ANetworkMirror::StaticClass()))
 		{
 			ANetworkMirror *HitMirror = Cast<ANetworkMirror>(HitActor);
-			if (HitMirror->ActivateTrigger(TriggerIDs[SelectedIndex]))
+			if (HitMirror->ActivateTrigger(TriggerIDs[SelectedIndex], Inventory[SelectedIndex]))
 			{
 				Inventory[SelectedIndex] = ETriggerName::None;
 				CurrentInventorySize--;

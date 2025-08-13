@@ -22,7 +22,7 @@ namespace _pbi = _pb::internal;
 
 namespace Protocol {
 }  // namespace Protocol
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_Enum_2eproto[8];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_Enum_2eproto[10];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_Enum_2eproto = nullptr;
 const uint32_t TableStruct_Enum_2eproto::offsets[1] = {};
 static constexpr ::_pbi::MigrationSchema* schemas = nullptr;
@@ -42,15 +42,22 @@ const char descriptor_table_protodef_Enum_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "TATE_JUMP\020\003\022\026\n\022MOVE_STATE_TRIGGER\020\004\022\025\n\021M"
   "OVE_STATE_CROUCH\020\005\022\025\n\021MOVE_STATE_SPRINT\020"
   "\006*1\n\004Team\022\r\n\tTEAM_NONE\020\000\022\014\n\010TEAM_ONE\020\001\022\014"
-  "\n\010TEAM_TWO\020\002*S\n\014CreatureType\022\026\n\022CREATURE"
-  "_TYPE_NONE\020\000\022\026\n\022CREATURE_TYPE_Grey\020\001\022\023\n\017"
-  "CREATURE_TYPE_A\020\002*X\n\013CrouchState\022\025\n\021CROU"
-  "CH_STATE_NONE\020\000\022\027\n\023CROUCH_STATE_CROUCH\020\001"
-  "\022\031\n\025CROUCH_STATE_UNCROUCH\020\002b\006proto3"
+  "\n\010TEAM_TWO\020\002*W\n\014CreatureType\022\026\n\022CREATURE"
+  "_TYPE_NONE\020\000\022\026\n\022CREATURE_TYPE_GREY\020\001\022\027\n\023"
+  "CREATURE_TYPE_GHOST\020\002*X\n\013CrouchState\022\025\n\021"
+  "CROUCH_STATE_NONE\020\000\022\027\n\023CROUCH_STATE_CROU"
+  "CH\020\001\022\031\n\025CROUCH_STATE_UNCROUCH\020\002*a\n\017Creat"
+  "ureControl\022\031\n\025CREATURE_CONTROL_NONE\020\000\022\030\n"
+  "\024CREATURE_CONTROL_ODD\020\001\022\031\n\025CREATURE_CONT"
+  "ROL_EVEN\020\002*\217\001\n\rCreatureState\022\027\n\023CREATURE"
+  "_STATE_NONE\020\000\022\027\n\023CREATURE_STATE_IDLE\020\001\022\027"
+  "\n\023CREATURE_STATE_MOVE\020\002\022\031\n\025CREATURE_STAT"
+  "E_ATTACK\020\003\022\030\n\024CREATURE_STATE_CHASE\020\004b\006pr"
+  "oto3"
   ;
 static ::_pbi::once_flag descriptor_table_Enum_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Enum_2eproto = {
-    false, false, 715, descriptor_table_protodef_Enum_2eproto,
+    false, false, 964, descriptor_table_protodef_Enum_2eproto,
     "Enum.proto",
     &descriptor_table_Enum_2eproto_once, nullptr, 0, 0,
     schemas, file_default_instances, TableStruct_Enum_2eproto::offsets,
@@ -180,6 +187,38 @@ bool CrouchState_IsValid(int value) {
     case 0:
     case 1:
     case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* CreatureControl_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Enum_2eproto);
+  return file_level_enum_descriptors_Enum_2eproto[8];
+}
+bool CreatureControl_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* CreatureState_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Enum_2eproto);
+  return file_level_enum_descriptors_Enum_2eproto[9];
+}
+bool CreatureState_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
       return true;
     default:
       return false;

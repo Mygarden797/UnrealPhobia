@@ -11,6 +11,7 @@
 #include "NetworkManager.generated.h"
 
 class AProtoPlayer;
+class ACreatureBase;
 
 /**
  * 
@@ -78,6 +79,7 @@ public:
     void HandleDespawn(const Protocol::S_DESPAWN& DespawnPkt);
 
     void HandleMove(const Protocol::S_MOVE& MovePkt);
+    void HandleCreatureBehavior(const Protocol::S_CREATURE_BEHAVIOR& CreatureBehaviorPkt);
 
     void HandleTimer(const Protocol::S_TIMER& TimerPkt);
     void HandleStart(const Protocol::S_START& StartPkt);
@@ -98,5 +100,6 @@ public:
     AProtoPlayer* MyPlayer;
 
     TMap<uint64, AProtoPlayer*> Players;
+    TMap<uint64, ACreatureBase*> Creatures;
     
 };

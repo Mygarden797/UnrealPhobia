@@ -3,6 +3,7 @@
 
 #include "Network/ProtoGameState.h"
 #include "Creature/CreatureBase.h"
+#include "Trigger/Trigger.h"
 #include "Kismet/GameplayStatics.h"
 
 AProtoGameState::AProtoGameState()
@@ -29,7 +30,7 @@ bool AProtoGameState::SpawnTrigger(Protocol::ObjectInfo objectInfo)
     if (SpawnedTrigger)
     {
         // 스폰된 트리거에 트리거 종류 랜덤으로 부여
-        int32 RandValue = FMath::RandRange(0, static_cast<int32>(ETriggerName::None) - 1);
+        int32 RandValue = FMath::RandRange(static_cast<int32>(ETriggerName::None) + 1, 2);
         SpawnedTrigger->SetTriggerName(static_cast<ETriggerName>(RandValue));
         SpawnedTrigger->TriggerInfo->set_object_id(objectInfo.object_id());
         return true;
@@ -37,11 +38,30 @@ bool AProtoGameState::SpawnTrigger(Protocol::ObjectInfo objectInfo)
     return false;
 }
 
-//소환하는 방식 바꿔야할 듯
-bool AProtoGameState::SpawnCreature(FVector SpawnPoint, FRotator SpawnRotate, FString Creature)
+bool AProtoGameState::SpawnCreature(FVector SpawnPoint, FRotator SpawnRotate, Protocol::CreatureType Creature, bool bAIControl)
 {
+    FString CreaturePath;
+    if (Creature == Protocol::CreatureType::CREATURE_TYPE_NONE)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("CreatureType is NONE"));
+        return false;
+    }
+    else if (Creature == Protocol::CreatureType::CREATURE_TYPE_GREY)
+    {
+        CreaturePath = CreatureGrey;
+    }
+    else if (Creature == Protocol::CreatureType::CREATURE_TYPE_GHOST)
+    {
+        CreaturePath = CreatureGhost;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Unknown CreatureType"));
+        return false;
+    }
+
     TSubclassOf<ACreatureBase> BP_Creature;
-    BP_Creature = LoadClass<ACreatureBase>(nullptr, *Creature);
+    BP_Creature = LoadClass<ACreatureBase>(nullptr, *CreaturePath);
     if (BP_Creature == nullptr)
     {
         UE_LOG(LogTemp, Warning, TEXT("BP_Creature is not Load"));
@@ -51,5 +71,19 @@ bool AProtoGameState::SpawnCreature(FVector SpawnPoint, FRotator SpawnRotate, FS
 
     ACreatureBase* SpawnActor = GetWorld()->SpawnActor<ACreatureBase>(BP_Creature, SpawnPoint, SpawnRotate, Params);
     //ACreatureBase* SpawnActor = GetWorld()->SpawnActor<ACreatureBase>(ACreatureBase::StaticClass(), SpawnPoint, SpawnRotate, Params);
+
+    if (bAIControl == false)
+    {
+        if (SpawnActor->GetController())
+        {
+            SpawnActor->GetController()->UnPossess();
+        }
+        // 자동 AI 소유 비활성화
+        SpawnActor->AutoPossessAI = EAutoPossessAI::Disabled;
+        SpawnActor->AIControllerClass = nullptr;
+        SpawnActor->bHaveAIController = false;
+    }
+
+
     return true;
 }

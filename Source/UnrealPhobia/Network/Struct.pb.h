@@ -201,6 +201,8 @@ class PosInfo final :
     kYawFieldNumber = 5,
     kStateFieldNumber = 6,
     kCrouchFieldNumber = 7,
+    kCreatureStateFieldNumber = 8,
+    kSpeedFieldNumber = 9,
   };
   // uint64 object_id = 1;
   void clear_object_id();
@@ -265,6 +267,24 @@ class PosInfo final :
   void _internal_set_crouch(::Protocol::CrouchState value);
   public:
 
+  // .Protocol.CreatureState creature_state = 8;
+  void clear_creature_state();
+  ::Protocol::CreatureState creature_state() const;
+  void set_creature_state(::Protocol::CreatureState value);
+  private:
+  ::Protocol::CreatureState _internal_creature_state() const;
+  void _internal_set_creature_state(::Protocol::CreatureState value);
+  public:
+
+  // float speed = 9;
+  void clear_speed();
+  float speed() const;
+  void set_speed(float value);
+  private:
+  float _internal_speed() const;
+  void _internal_set_speed(float value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.PosInfo)
  private:
   class _Internal;
@@ -280,6 +300,8 @@ class PosInfo final :
     float yaw_;
     int state_;
     int crouch_;
+    int creature_state_;
+    float speed_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -850,7 +872,7 @@ class TriggerInfo final :
   enum : int {
     kObjectIdFieldNumber = 1,
     kTriggerLidFieldNumber = 2,
-    kTriggerTypeFieldNumber = 3,
+    kCreatureTypeFieldNumber = 3,
   };
   // uint64 object_id = 1;
   void clear_object_id();
@@ -870,13 +892,13 @@ class TriggerInfo final :
   void _internal_set_trigger_lid(uint64_t value);
   public:
 
-  // .Protocol.TriggerType trigger_type = 3;
-  void clear_trigger_type();
-  ::Protocol::TriggerType trigger_type() const;
-  void set_trigger_type(::Protocol::TriggerType value);
+  // .Protocol.CreatureType creature_type = 3;
+  void clear_creature_type();
+  ::Protocol::CreatureType creature_type() const;
+  void set_creature_type(::Protocol::CreatureType value);
   private:
-  ::Protocol::TriggerType _internal_trigger_type() const;
-  void _internal_set_trigger_type(::Protocol::TriggerType value);
+  ::Protocol::CreatureType _internal_creature_type() const;
+  void _internal_set_creature_type(::Protocol::CreatureType value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.TriggerInfo)
@@ -889,7 +911,7 @@ class TriggerInfo final :
   struct Impl_ {
     uint64_t object_id_;
     uint64_t trigger_lid_;
-    int trigger_type_;
+    int creature_type_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1021,6 +1043,7 @@ class CreatureInfo final :
     kObjectIdFieldNumber = 1,
     kSpawnPointFieldNumber = 2,
     kCreatureTypeFieldNumber = 3,
+    kCreatureControlFieldNumber = 4,
   };
   // uint64 object_id = 1;
   void clear_object_id();
@@ -1049,6 +1072,15 @@ class CreatureInfo final :
   void _internal_set_creature_type(::Protocol::CreatureType value);
   public:
 
+  // .Protocol.CreatureControl creature_control = 4;
+  void clear_creature_control();
+  ::Protocol::CreatureControl creature_control() const;
+  void set_creature_control(::Protocol::CreatureControl value);
+  private:
+  ::Protocol::CreatureControl _internal_creature_control() const;
+  void _internal_set_creature_control(::Protocol::CreatureControl value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.CreatureInfo)
  private:
   class _Internal;
@@ -1060,6 +1092,7 @@ class CreatureInfo final :
     uint64_t object_id_;
     uint64_t spawn_point_;
     int creature_type_;
+    int creature_control_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1214,6 +1247,46 @@ inline void PosInfo::_internal_set_crouch(::Protocol::CrouchState value) {
 inline void PosInfo::set_crouch(::Protocol::CrouchState value) {
   _internal_set_crouch(value);
   // @@protoc_insertion_point(field_set:Protocol.PosInfo.crouch)
+}
+
+// .Protocol.CreatureState creature_state = 8;
+inline void PosInfo::clear_creature_state() {
+  _impl_.creature_state_ = 0;
+}
+inline ::Protocol::CreatureState PosInfo::_internal_creature_state() const {
+  return static_cast< ::Protocol::CreatureState >(_impl_.creature_state_);
+}
+inline ::Protocol::CreatureState PosInfo::creature_state() const {
+  // @@protoc_insertion_point(field_get:Protocol.PosInfo.creature_state)
+  return _internal_creature_state();
+}
+inline void PosInfo::_internal_set_creature_state(::Protocol::CreatureState value) {
+  
+  _impl_.creature_state_ = value;
+}
+inline void PosInfo::set_creature_state(::Protocol::CreatureState value) {
+  _internal_set_creature_state(value);
+  // @@protoc_insertion_point(field_set:Protocol.PosInfo.creature_state)
+}
+
+// float speed = 9;
+inline void PosInfo::clear_speed() {
+  _impl_.speed_ = 0;
+}
+inline float PosInfo::_internal_speed() const {
+  return _impl_.speed_;
+}
+inline float PosInfo::speed() const {
+  // @@protoc_insertion_point(field_get:Protocol.PosInfo.speed)
+  return _internal_speed();
+}
+inline void PosInfo::_internal_set_speed(float value) {
+  
+  _impl_.speed_ = value;
+}
+inline void PosInfo::set_speed(float value) {
+  _internal_set_speed(value);
+  // @@protoc_insertion_point(field_set:Protocol.PosInfo.speed)
 }
 
 // -------------------------------------------------------------------
@@ -1788,24 +1861,24 @@ inline void TriggerInfo::set_trigger_lid(uint64_t value) {
   // @@protoc_insertion_point(field_set:Protocol.TriggerInfo.trigger_lid)
 }
 
-// .Protocol.TriggerType trigger_type = 3;
-inline void TriggerInfo::clear_trigger_type() {
-  _impl_.trigger_type_ = 0;
+// .Protocol.CreatureType creature_type = 3;
+inline void TriggerInfo::clear_creature_type() {
+  _impl_.creature_type_ = 0;
 }
-inline ::Protocol::TriggerType TriggerInfo::_internal_trigger_type() const {
-  return static_cast< ::Protocol::TriggerType >(_impl_.trigger_type_);
+inline ::Protocol::CreatureType TriggerInfo::_internal_creature_type() const {
+  return static_cast< ::Protocol::CreatureType >(_impl_.creature_type_);
 }
-inline ::Protocol::TriggerType TriggerInfo::trigger_type() const {
-  // @@protoc_insertion_point(field_get:Protocol.TriggerInfo.trigger_type)
-  return _internal_trigger_type();
+inline ::Protocol::CreatureType TriggerInfo::creature_type() const {
+  // @@protoc_insertion_point(field_get:Protocol.TriggerInfo.creature_type)
+  return _internal_creature_type();
 }
-inline void TriggerInfo::_internal_set_trigger_type(::Protocol::TriggerType value) {
+inline void TriggerInfo::_internal_set_creature_type(::Protocol::CreatureType value) {
   
-  _impl_.trigger_type_ = value;
+  _impl_.creature_type_ = value;
 }
-inline void TriggerInfo::set_trigger_type(::Protocol::TriggerType value) {
-  _internal_set_trigger_type(value);
-  // @@protoc_insertion_point(field_set:Protocol.TriggerInfo.trigger_type)
+inline void TriggerInfo::set_creature_type(::Protocol::CreatureType value) {
+  _internal_set_creature_type(value);
+  // @@protoc_insertion_point(field_set:Protocol.TriggerInfo.creature_type)
 }
 
 // -------------------------------------------------------------------
@@ -1870,6 +1943,26 @@ inline void CreatureInfo::_internal_set_creature_type(::Protocol::CreatureType v
 inline void CreatureInfo::set_creature_type(::Protocol::CreatureType value) {
   _internal_set_creature_type(value);
   // @@protoc_insertion_point(field_set:Protocol.CreatureInfo.creature_type)
+}
+
+// .Protocol.CreatureControl creature_control = 4;
+inline void CreatureInfo::clear_creature_control() {
+  _impl_.creature_control_ = 0;
+}
+inline ::Protocol::CreatureControl CreatureInfo::_internal_creature_control() const {
+  return static_cast< ::Protocol::CreatureControl >(_impl_.creature_control_);
+}
+inline ::Protocol::CreatureControl CreatureInfo::creature_control() const {
+  // @@protoc_insertion_point(field_get:Protocol.CreatureInfo.creature_control)
+  return _internal_creature_control();
+}
+inline void CreatureInfo::_internal_set_creature_control(::Protocol::CreatureControl value) {
+  
+  _impl_.creature_control_ = value;
+}
+inline void CreatureInfo::set_creature_control(::Protocol::CreatureControl value) {
+  _internal_set_creature_control(value);
+  // @@protoc_insertion_point(field_set:Protocol.CreatureInfo.creature_control)
 }
 
 #ifdef __GNUC__

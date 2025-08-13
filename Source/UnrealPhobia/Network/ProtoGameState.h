@@ -23,10 +23,14 @@ class UNREALPHOBIA_API AProtoGameState : public AGameStateBase
 public:
     AProtoGameState();
 
-    const FString CreatureGrey = TEXT("/Game/AI/BP_CreatureGrey.BP_CreatureGrey_C"); //초기 위치 표현
+    //const FString CreatureGrey = TEXT("/Game/AI/BP_CreatureGrey.BP_CreatureGrey_C"); //초기 위치 표현
+    //const FString CreatureGhost = TEXT("/Game/AI/BP_CreatureGhost.BP_CreatureGhost_C"); //초기 위치 표현
+
+    const FString CreatureGrey = TEXT("/Game/Creature/AI/BP_CreatureGrey.BP_CreatureGrey_C"); //초기 위치 표현
+    const FString CreatureGhost = TEXT("/Game/Creature/AI/BP_Ghost.BP_Ghost_C"); //초기 위치 표현
 
     bool SpawnTrigger(Protocol::ObjectInfo);
     
-    bool SpawnCreature(FVector SpawnPoint, FRotator SpawnRotate, FString Creature);
+    bool SpawnCreature(FVector SpawnPoint, FRotator SpawnRotate, Protocol::CreatureType Creature, bool bAIControl);
 
 };

@@ -207,14 +207,14 @@ inline bool Team_Parse(
 }
 enum CreatureType : int {
   CREATURE_TYPE_NONE = 0,
-  CREATURE_TYPE_Grey = 1,
-  CREATURE_TYPE_A = 2,
+  CREATURE_TYPE_GREY = 1,
+  CREATURE_TYPE_GHOST = 2,
   CreatureType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   CreatureType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool CreatureType_IsValid(int value);
 constexpr CreatureType CreatureType_MIN = CREATURE_TYPE_NONE;
-constexpr CreatureType CreatureType_MAX = CREATURE_TYPE_A;
+constexpr CreatureType CreatureType_MAX = CREATURE_TYPE_GHOST;
 constexpr int CreatureType_ARRAYSIZE = CreatureType_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* CreatureType_descriptor();
@@ -256,6 +256,60 @@ inline bool CrouchState_Parse(
     ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, CrouchState* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<CrouchState>(
     CrouchState_descriptor(), name, value);
+}
+enum CreatureControl : int {
+  CREATURE_CONTROL_NONE = 0,
+  CREATURE_CONTROL_ODD = 1,
+  CREATURE_CONTROL_EVEN = 2,
+  CreatureControl_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  CreatureControl_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool CreatureControl_IsValid(int value);
+constexpr CreatureControl CreatureControl_MIN = CREATURE_CONTROL_NONE;
+constexpr CreatureControl CreatureControl_MAX = CREATURE_CONTROL_EVEN;
+constexpr int CreatureControl_ARRAYSIZE = CreatureControl_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* CreatureControl_descriptor();
+template<typename T>
+inline const std::string& CreatureControl_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, CreatureControl>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function CreatureControl_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    CreatureControl_descriptor(), enum_t_value);
+}
+inline bool CreatureControl_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, CreatureControl* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<CreatureControl>(
+    CreatureControl_descriptor(), name, value);
+}
+enum CreatureState : int {
+  CREATURE_STATE_NONE = 0,
+  CREATURE_STATE_IDLE = 1,
+  CREATURE_STATE_MOVE = 2,
+  CREATURE_STATE_ATTACK = 3,
+  CREATURE_STATE_CHASE = 4,
+  CreatureState_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  CreatureState_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool CreatureState_IsValid(int value);
+constexpr CreatureState CreatureState_MIN = CREATURE_STATE_NONE;
+constexpr CreatureState CreatureState_MAX = CREATURE_STATE_CHASE;
+constexpr int CreatureState_ARRAYSIZE = CreatureState_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* CreatureState_descriptor();
+template<typename T>
+inline const std::string& CreatureState_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, CreatureState>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function CreatureState_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    CreatureState_descriptor(), enum_t_value);
+}
+inline bool CreatureState_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, CreatureState* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<CreatureState>(
+    CreatureState_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -318,6 +372,16 @@ template <> struct is_proto_enum< ::Protocol::CrouchState> : ::std::true_type {}
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::CrouchState>() {
   return ::Protocol::CrouchState_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::CreatureControl> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::CreatureControl>() {
+  return ::Protocol::CreatureControl_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::CreatureState> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::CreatureState>() {
+  return ::Protocol::CreatureState_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

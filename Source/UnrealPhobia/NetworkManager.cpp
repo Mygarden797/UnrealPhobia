@@ -12,6 +12,7 @@
 #include "ClientPacketHandler.h"
 #include "Contents/ProtoPlayer.h"
 #include "ProtoGameState.h"
+#include "Creature/CreatureBase.h"
 
 void UNetworkManager::ConnectToGameServer()
 {
@@ -140,6 +141,7 @@ void UNetworkManager::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool I
 
         Player->SetPlayerInfo(ObjectInfo.pos_info());
         MyPlayer = Player;
+        MyPlayer->MyPlayerId = ObjectId;
         Players.Add(ObjectInfo.object_id(), Player);
     }
     else
@@ -173,11 +175,18 @@ void UNetworkManager::HandleSpawn(const Protocol::S_SPAWN& SpawnPkt)
         if (World == nullptr)
             return;
 
+        bool bAIContol;
+        if (MyPlayer->MyPlayerId % 2 == Creature.creature_info().creature_control()%2)
+            bAIContol = true;
+        else
+            bAIContol = false;
+
         auto* GameState = Cast<AProtoGameState>(World->GetGameState());
         GameState->SpawnCreature(
             FVector(Creature.pos_info().x(), Creature.pos_info().y(), Creature.pos_info().z()),
             FRotator(0.0f, Creature.pos_info().yaw(), 0.0f),
-            TEXT("/Game/AI/BP_CreatureGrey.BP_CreatureGrey_C")
+            Creature.creature_info().creature_type(),
+            bAIContol
         );
     }
 }
@@ -228,6 +237,28 @@ void UNetworkManager::HandleMove(const Protocol::S_MOVE& MovePkt)
     const Protocol::PosInfo& Info = MovePkt.info();
     //Player->SetPlayerInfo(Info);
     Player->SetDestInfo(Info);
+}
+
+void UNetworkManager::HandleCreatureBehavior(const Protocol::S_CREATURE_BEHAVIOR& MovePkt)
+{
+    if (Socket == nullptr || GameServerSession == nullptr)
+        return;
+
+    auto* World = GetWorld();
+    if (World == nullptr)
+        return;
+
+    const uint64 ObjectId = MovePkt.info().object_id();
+    ACreatureBase** FindActor = Creatures.Find(ObjectId);
+    if (FindActor == nullptr)
+        return;
+
+    ACreatureBase* Creature = (*FindActor);
+
+    const Protocol::PosInfo& Info = MovePkt.info();
+    //Player->SetPlayerInfo(Info);
+    
+    //크리쳐 행동 함수 여기에
 }
 
 //Ÿ�̸� ����
