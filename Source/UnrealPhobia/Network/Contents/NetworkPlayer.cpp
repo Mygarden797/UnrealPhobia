@@ -914,6 +914,8 @@ void ANetworkPlayer::OnForceActivateReleased()
     {
         GetWorld()->GetTimerManager().ClearTimer(ForceActivateTimerHandle);
         GetWorld()->GetTimerManager().ClearTimer(ForceActivateProgressTimerHandle);
+        ForceActivateProgressElapsed = 0;
+        UpdateForceActivateProgress();
         UE_LOG(LogTemp, Log, TEXT("Force activation cancelled."));
         HideForceActivateProgress(); // Call the new hide function
 
