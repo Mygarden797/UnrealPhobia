@@ -7,11 +7,12 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SceneCaptureComponent2D.h"
+#include "Components/SpotLightComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Engine/SceneCapture2D.h"
 #include "Engine/TextureRenderTarget2D.h"
-
+#include "Sound/SoundBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // 정적 델리게이트 정의
@@ -63,12 +64,46 @@ void ACreatureBase::BeginPlay()
 {
     Super::BeginPlay();
     SetState(State);
+
+    FaceLight = FindComponentByClass<USpotLightComponent>();
+    if (FaceLight)
+    {
+        FaceLight->SetVisibility(false);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed To Find Face Light Component"));
+    }
+
+    CameraComp = FindComponentByClass<UCameraComponent>();
+
+    if (!CameraComp)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("CameraComp not found on %s"), *GetName());
+    }
 }
 
 // Called every frame
 void ACreatureBase::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
+    if (!bIsFOVChanging || !CameraComp)
+        return;
+
+    FOVElapsed += DeltaTime;
+    float Alpha = FMath::Clamp(FOVElapsed / FOVDuration, 0.f, 1.f);
+    float SmoothAlpha = Alpha * Alpha * (3.f - 2.f * Alpha);
+
+    float NewFOV = FMath::Lerp(FOVStart, FOVTarget, SmoothAlpha);
+    CameraComp->SetFieldOfView(NewFOV);
+
+    if (Alpha >= 1.f)
+    {
+        // 완료
+        bIsFOVChanging = false;
+        FOVElapsed = 0.f;
+    }
 }
 
 // Called to bind functionality to input
@@ -122,7 +157,6 @@ void ACreatureBase::Attack()
     const FVector BaseLocation = this->GetActorLocation();
     const FVector ForwardVector = this->GetActorForwardVector();
     const FVector NewLocation = BaseLocation + ForwardVector * 150;
-
     AttackTarget->SetActorLocation(NewLocation);
 
     FTimerHandle TimerHandle;
@@ -130,7 +164,7 @@ void ACreatureBase::Attack()
         TimerHandle,
         this,
         &ACreatureBase::RevertTargetCamera, // 몽타주 끝났을 때 실행할 함수
-        3.0f,
+        1.5f,                               // 카메라 전환 지속 시간(초)
         false);
 
     //  카메라 관련
@@ -145,14 +179,6 @@ void ACreatureBase::LocateTargetCamera()
         return;
     }
 
-    // 헤더에 선언된 멤버 변수에 카메라 컴포넌트 캐시
-    CameraComp = FindComponentByClass<UCameraComponent>();
-    if (!CameraComp)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("LocateTargetCamera: CameraComp not found on %s"), *GetName());
-        return;
-    }
-
     // 플레이어 컨트롤러 가져오기
     APlayerController *PC = UGameplayStatics::GetPlayerController(this, 0);
     if (!PC)
@@ -161,8 +187,27 @@ void ACreatureBase::LocateTargetCamera()
         return;
     }
 
+    if (FaceLight)
+    {
+        FaceLight->SetVisibility(true);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("LocateTargetCamera: FaceLightComp not found on %s"), *GetName());
+    }
+
+    if (AttackSound)
+    {
+        UGameplayStatics::PlaySoundAtLocation(
+            this,
+            AttackSound,
+            GetActorLocation());
+    }
+
     // 카메라 컴포넌트를 가진 액터를 뷰 타겟으로 블렌딩
     AActor *CameraOwner = CameraComp->GetOwner();
+    CameraComp->FieldOfView = 190;
+    StartChangeFOV(80.0f, 0.2f);
     AttackTarget->DisableInput(PC);
     PC->SetViewTargetWithBlend(CameraOwner, 0.1f /*Blend Time*/,
                                EViewTargetBlendFunction::VTBlend_Linear,
@@ -182,6 +227,16 @@ void ACreatureBase::RevertTargetCamera()
         UE_LOG(LogTemp, Warning, TEXT("LocateTargetCamera: PlayerController not found"));
         return;
     }
+
+    if (FaceLight)
+    {
+        FaceLight->SetVisibility(false);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("LocateTargetCamera: FaceLightComp not found on %s"), *GetName());
+    }
+
     AttackTarget->EnableInput(PC);
     PC->SetViewTargetWithBlend(AttackTarget, 0.1f /*Blend Time*/,
                                EViewTargetBlendFunction::VTBlend_Linear,
@@ -244,4 +299,16 @@ void ACreatureBase::DeactivateAttackCamera()
 void ACreatureBase::OnAttackCameraTimerEnd()
 {
     DeactivateAttackCamera();
+}
+
+void ACreatureBase::StartChangeFOV(float NewFOV, float Duration)
+{
+    if (!CameraComp)
+        return;
+
+    FOVStart = CameraComp->FieldOfView;
+    FOVTarget = NewFOV;
+    FOVDuration = FMath::Max(0.01f, Duration);
+    FOVElapsed = 0.f;
+    bIsFOVChanging = true;
 }

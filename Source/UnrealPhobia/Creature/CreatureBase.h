@@ -15,7 +15,8 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FCreatureStateChangedDelegate, ECreatureSta
 // 크리쳐 공격 시 카메라 전환을 위한 델리게이트 (크리쳐, 렌더 타겟)
 DECLARE_MULTICAST_DELEGATE_TwoParams(FCreatureAttackCameraDelegate, ACreatureBase *, UTextureRenderTarget2D *);
 
-
+class USpotLightComponent;
+class USoundBase;
 
 UCLASS()
 class UNREALPHOBIA_API ACreatureBase : public ACharacter
@@ -53,9 +54,23 @@ protected:
     // 타이머 핸들
     FTimerHandle AttackCameraTimerHandle;
 
+    USpotLightComponent *FaceLight;
+
+    bool bIsFOVChanging = false;
+    float FOVStart = 120.f;
+    float FOVTarget = 80.f;
+    float FOVDuration = 2.f;
+    float FOVElapsed = 0.f;
+
+    void StartChangeFOV(float NewFOV, float Duration);
+
+    UPROPERTY(EditAnywhere, Category = "Audio")
+    USoundBase *AttackSound;
+
 public:
     // Called every frame
-    virtual void Tick(float DeltaTime) override;
+    virtual void
+    Tick(float DeltaTime) override;
     // 델리게이트를 위한 시그니쳐 함수 생성
     FCreatureStateChangedDelegate OnCreatureStateChanged;
 
@@ -96,25 +111,23 @@ public:
     }
 
 private:
-	float AttackDamage = 10;
+    float AttackDamage = 10;
     AActor *AttackTarget;
 
-//크리쳐 데이터
+    // 크리쳐 데이터
 protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Creature")
-    UCreatureDataAsset* CreatureData;
+    UCreatureDataAsset *CreatureData;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Creature")
-    UCreatureAnimationDataAsset* CreatureAnimationData;
+    UCreatureAnimationDataAsset *CreatureAnimationData;
 
 public:
-    UCreatureDataAsset* GetCreatureData() const { return CreatureData; }
+    UCreatureDataAsset *GetCreatureData() const { return CreatureData; }
 
-    UCreatureAnimationDataAsset* GetCreatureAnimationData() const { return CreatureAnimationData; }
+    UCreatureAnimationDataAsset *GetCreatureAnimationData() const { return CreatureAnimationData; }
 
-
-//카메라 관련
-    // 공격 카메라 비활성화 타이머 콜백
+    // 카메라 관련
+    //  공격 카메라 비활성화 타이머 콜백
     void OnAttackCameraTimerEnd();
-
 };
