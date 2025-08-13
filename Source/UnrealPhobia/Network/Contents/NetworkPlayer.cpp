@@ -1188,6 +1188,16 @@ void ANetworkPlayer::StartInvincible()
          GetWorldTimerManager().SetTimer(FInvincibleTimerHandle, this, &ANetworkPlayer::EndInvincible, InvincibleTime, true);
          GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreOnlyPawn"));
 
+        if (USoundManager* SoundManager = GetSoundManager())
+        {
+            SoundManager->PlayScream();
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("NetworkPlayer::AddChaser(): SoundManager is null"));
+            return;
+        }
+
     }
 
 }

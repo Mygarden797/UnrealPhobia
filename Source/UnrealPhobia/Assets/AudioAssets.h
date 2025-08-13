@@ -44,6 +44,9 @@ public:
     TObjectPtr<USoundBase> HandLightButton;
 
     UPROPERTY(EditAnywhere, Category = "Player")
+    TObjectPtr<USoundBase> Scream;
+
+    UPROPERTY(EditAnywhere, Category = "Player")
     TObjectPtr<USoundBase> BeDetected;
 
     /* Sound Classes */

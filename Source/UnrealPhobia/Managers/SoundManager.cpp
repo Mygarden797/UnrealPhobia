@@ -92,6 +92,28 @@ void USoundManager::PlayDetectedSound()
     }
 }
 
+void USoundManager::PlayScream()
+{
+    if (IsValidAssets())
+    {
+        if (AudioAssets->BeDetected)
+        {
+            UGameplayStatics::PlaySound2D(GetWorld(), AudioAssets->BeDetected);
+            UE_LOG(LogTemp, Display, TEXT("USoundManager::PlayDetectedSound()"));
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayDetectedSound(): No BeDetected"));
+            return;
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayDetectedSound(): No Assets"));
+        return;
+    }
+}
+
 // 공간계에서 출력
 void USoundManager::PlaySFX3D(UObject* Object, USoundBase* SFX, FVector Location, FRotator Rotation, USoundAttenuation* AttenuationSettings)
 {
