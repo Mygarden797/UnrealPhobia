@@ -311,4 +311,14 @@ private:
     float WalkLoudness = 1.0f;
 
     USoundManager* GetSoundManager() const;
+
+    /*무적 시간 관리를 위한 변수*/
+    float InvincibleTime = 5.0f;
+    bool bIsinvincible = false;
+    FTimerHandle FInvincibleTimerHandle;
+
+public:
+    bool GetIsinvincible() { return bIsinvincible;};
+    void StartInvincible();
+    void EndInvincible();
 };

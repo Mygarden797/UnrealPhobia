@@ -620,6 +620,9 @@ void ANetworkPlayer::GameWin()
 float ANetworkPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
     AController* EventInstigator, AActor* DamageCauser)
 {
+
+    StartInvincible();
+
     if (bIsDead)
         return 0.0f;
 
@@ -630,6 +633,7 @@ float ANetworkPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
     }
 
     //
+
     float AppliedDamage = FMath::Clamp(DamageAmount, 0.0f, CurrentMental);
     CurrentMental -= AppliedDamage;
 
@@ -1015,4 +1019,26 @@ void ANetworkPlayer::DisplayChaserNumberDebug()
 USoundManager* ANetworkPlayer::GetSoundManager() const
 {
     return GetGameInstance() ? GetGameInstance()->GetSubsystem<USoundManager>() : nullptr;
+}
+
+
+
+void ANetworkPlayer::StartInvincible()
+{
+    if(bIsinvincible == false)
+    {
+         bIsinvincible = true;
+         GetWorldTimerManager().SetTimer(FInvincibleTimerHandle, this, &ANetworkPlayer::EndInvincible, InvincibleTime, true);
+         GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreOnlyPawn"));
+
+    }
+
+}
+
+void ANetworkPlayer::EndInvincible()
+{
+    bIsinvincible = false;
+    GetWorld()->GetTimerManager().ClearTimer(FInvincibleTimerHandle);
+    GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
+
 }
