@@ -23,6 +23,8 @@
 #include "EngineUtils.h"
 #include "Assets/AudioAssets.h"
 #include "SurvivorController.h"
+#include "Blueprint/WidgetTree.h"
+#include "Components/ProgressBar.h"
 
 ANetworkPlayer::ANetworkPlayer(const FObjectInitializer& ObjectInitializer)
 {
@@ -113,6 +115,17 @@ void ANetworkPlayer::BeginPlay()
         else
         {
             UE_LOG(LogTemp, Error, TEXT("Failed to load Inventory"));
+        }
+
+        // Create force activate progress widget
+        if (ForceActivateProgressWidgetClass)
+        {
+            ForceActivateProgressWidget = CreateWidget<UUserWidget>(GetWorld(), ForceActivateProgressWidgetClass);
+            if (ForceActivateProgressWidget)
+            {
+                ForceActivateProgressWidget->AddToViewport();
+                ForceActivateProgressWidget->SetVisibility(ESlateVisibility::Hidden); // Start hidden
+            }
         }
     }
 
@@ -868,28 +881,54 @@ void ANetworkPlayer::UpdateCameraLag()
 
 void ANetworkPlayer::OnForceActivatePressed()
 {
-    if (TouchingCandleRoom != nullptr && !TouchingCandleRoom->ActorHasTag(FName("Active")))
+    if (TouchingCandleRoom != nullptr && !TouchingCandleRoom->ActorHasTag(FName("Active")) && ForceActiveCount > 0)
     {
         GetWorld()->GetTimerManager().SetTimer(
             ForceActivateTimerHandle,
             this,
             &ANetworkPlayer::ForceActivateCandleRoom,
-            10.0f,
+            ForceActivateDuration,
             false);
         UE_LOG(LogTemp, Log, TEXT("Force activation started."));
+
+        // Start UI timer
+        ForceActivateProgressElapsed = 0.0f; // Reset elapsed time
+        GetWorld()->GetTimerManager().SetTimer(
+            ForceActivateProgressTimerHandle,
+            this,
+            &ANetworkPlayer::UpdateForceActivateProgress,
+            0.05f, // Update frequently for smooth progress
+            true);
+
+        if (ForceActivateProgressWidget)
+        {
+            ForceActivateProgressWidget->SetVisibility(ESlateVisibility::Visible);
+        }
+    }
+    if (ForceActiveCount <= 0)
+    {
+        UE_LOG(LogTemp, Log, TEXT("ForceActiveCount is 0"))
     }
 }
 
 void ANetworkPlayer::OnForceActivateReleased()
 {
     // 버튼을 떼면 타이머 취소
-    GetWorld()->GetTimerManager().ClearTimer(ForceActivateTimerHandle);
-    UE_LOG(LogTemp, Log, TEXT("Force activation cancelled."));
+    if (ForceActiveCount > 0)
+    {
+        GetWorld()->GetTimerManager().ClearTimer(ForceActivateTimerHandle);
+        GetWorld()->GetTimerManager().ClearTimer(ForceActivateProgressTimerHandle);
+        UE_LOG(LogTemp, Log, TEXT("Force activation cancelled."));
+        HideForceActivateProgress(); // Call the new hide function
+
+    }
 }
 
 void ANetworkPlayer::ForceActivateCandleRoom()
 {
     GetWorld()->GetTimerManager().ClearTimer(ForceActivateTimerHandle);
+    HideForceActivateProgress(); // Call the new hide function
+
     if (TouchingCandleRoom == nullptr) return;
 
 
@@ -932,6 +971,45 @@ void ANetworkPlayer::ForceActivateCandleRoom()
     CurrentCandleRoom->Tags.Add(FName("Active"));
     CurrentCandleRoom->TurnOnEffects();
     StartMentalRegen(10.f);
+    ForceActiveCount--;
+}
+
+void ANetworkPlayer::UpdateForceActivateProgress()
+{
+    constexpr float TimerInterval = 0.05f;
+    ForceActivateProgressElapsed += TimerInterval;
+
+    float Progress = FMath::Clamp(
+        ForceActivateProgressElapsed / ForceActivateDuration,
+        0.0f,
+        1.0f
+    );
+
+    if (ForceActivateProgressWidget && ForceActivateProgressWidget->WidgetTree)
+    {
+        UProgressBar* ProgressBar = Cast<UProgressBar>(
+            ForceActivateProgressWidget->WidgetTree->FindWidget("ProgressBar_Activation")
+        );
+        if (ProgressBar)
+        {
+            ProgressBar->SetPercent(Progress);
+        }
+    }
+
+    if (ForceActivateProgressElapsed >= ForceActivateDuration)
+    {
+        GetWorld()->GetTimerManager().ClearTimer(ForceActivateProgressTimerHandle);
+    }
+}
+
+void ANetworkPlayer::HideForceActivateProgress()
+{
+    if (ForceActivateProgressWidget)
+    {
+        ForceActivateProgressWidget->SetVisibility(ESlateVisibility::Hidden);
+    }
+    GetWorld()->GetTimerManager().ClearTimer(ForceActivateProgressTimerHandle);
+    ForceActivateProgressElapsed = 0.0f; // Reset elapsed time
 }
 
 void ANetworkPlayer::SwitchFlash(const FInputActionValue &value)
