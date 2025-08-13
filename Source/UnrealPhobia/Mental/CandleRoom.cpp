@@ -49,6 +49,7 @@ void ACandleRoom::OnOverlapEnd(UPrimitiveComponent *OverlappedComp, AActor *Othe
             NetworkPlayer->StopMentalRegen();
         }
         NetworkPlayer->TouchingCandleRoom = nullptr;
+        NetworkPlayer->HideForceActivateProgress();
     }
 }
 

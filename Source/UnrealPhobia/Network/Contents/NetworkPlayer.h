@@ -11,7 +11,7 @@
 #include "UnrealPhobia/Assets/AudioAssets.h"
 #include "UnrealPhobia/Managers/SoundManager.h"
 #include "NetworkPlayer.generated.h"
-
+ 
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
@@ -48,6 +48,15 @@ public:
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<class UInventoryWidget> InventoryWidgetClass;
 
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
+    TSubclassOf<class UStaminaBar> StaminaBarClass;
+
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
+    TSubclassOf<class UMentalBar> MentalBarClass;
+
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
+    TSubclassOf<class UUserWidget> ForceActivateProgressWidgetClass;
+
     UPROPERTY()
     class UUserWidget *CrosshairWidget;
 
@@ -60,17 +69,14 @@ public:
     UPROPERTY()
     class UInventoryWidget *InventoryWidget;
 
-    UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<class UStaminaBar> StaminaBarClass;
-
-    UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<class UMentalBar> MentalBarClass;
-
     UPROPERTY()
     class UStaminaBar *StaminaBar;
 
     UPROPERTY()
     class UMentalBar *MentalBar;
+
+    UPROPERTY()
+    class UUserWidget *ForceActivateProgressWidget; // Changed to UUserWidget
 
     /* Movement Functions */ 
     void Move(const FInputActionValue &Value);
@@ -119,17 +125,20 @@ public:
     void RegenMental();
     void ActivateRandomMentalTrigger();
 
-	/** 'X' 버튼을 눌렀을 때 호출됩니다. */
 	void OnForceActivatePressed();
 
-	/** 'X' 버튼을 뗐을 때 호출됩니다. */
 	void OnForceActivateReleased();
 
-	/** 10초 타이머가 완료되면 호출될 함수입니다. */
 	void ForceActivateCandleRoom();
 
-	/** 강제 활성화 타이머 핸들입니다. */
 	FTimerHandle ForceActivateTimerHandle;
+
+    // New: Force Activate Progress UI
+    FTimerHandle ForceActivateProgressTimerHandle; // Timer for UI updates
+    float ForceActivateProgressElapsed = 0.0f; // Elapsed time for progress
+    const float ForceActivateDuration = 10.0f; // Total duration for force activation
+    void UpdateForceActivateProgress(); // Function to update the UI
+    void HideForceActivateProgress(); // Function to hide the UI
 
     UFUNCTION()
     void OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRenderTarget2D *RenderTarget);
@@ -243,6 +252,7 @@ protected:
 
     float MentalRegenTickTime = 1.f;
     float MentalRegenPerTick = 6.f;
+    int ForceActiveCount = 3;
 
     void GameOver();
 
