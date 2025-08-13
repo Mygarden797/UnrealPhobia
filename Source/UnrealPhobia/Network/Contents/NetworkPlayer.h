@@ -54,6 +54,7 @@ public:
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<class UUserWidget> ForceActivateProgressWidgetClass;
     
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<class UGameSettingsWidget> AudioSettingsWidgetClass;
 
     UPROPERTY()
