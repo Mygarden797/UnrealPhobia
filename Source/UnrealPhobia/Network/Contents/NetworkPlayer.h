@@ -7,9 +7,10 @@
 #include "InputActionValue.h"
 #include "Creature/CreatureBase.h"        // Creature Perception
 #include "AttackCameraWidget.h"          // 공격 카메라
-#include "ChaseSystemTypes.h"
-#include "UnrealPhobia/Assets/AudioAssets.h"
-#include "UnrealPhobia/Managers/SoundManager.h"
+#include "Types/ChaseSystemTypes.h"
+#include "Assets/AudioAssets.h"
+#include "Managers/SoundManager.h"
+#include "Settings/GameSettingsWidget.h"
 #include "NetworkPlayer.generated.h"
  
 class USpringArmComponent;
@@ -22,7 +23,8 @@ class UAudioAssets;
 /**
  *      Name				    : ANetworkPlayer
  *      Description		    : Network-enabled Player Character with Survivor features
- *      Last Update		: 2025/08/04
+ *      LastUpdate		    : 2025/08/09
+ *      개선사항             : 위젯 생성을 템플릿으로 일반화
 */
 
 UCLASS(Blueprintable)
@@ -34,6 +36,7 @@ public:
     ANetworkPlayer(const FObjectInitializer &ObjectInitializer = FObjectInitializer::Get());
 
     virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
+    // void ReinitializeInputBindings();
 
     // UI Components
     UPROPERTY(EditDefaultsOnly, Category = "UI")
@@ -49,13 +52,9 @@ public:
     TSubclassOf<class UInventoryWidget> InventoryWidgetClass;
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<class UStaminaBar> StaminaBarClass;
-
-    UPROPERTY(EditDefaultsOnly, Category = "UI")
-    TSubclassOf<class UMentalBar> MentalBarClass;
-
-    UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<class UUserWidget> ForceActivateProgressWidgetClass;
+    
+    TSubclassOf<class UGameSettingsWidget> AudioSettingsWidgetClass;
 
     UPROPERTY()
     class UUserWidget *CrosshairWidget;
@@ -68,6 +67,16 @@ public:
 
     UPROPERTY()
     class UInventoryWidget *InventoryWidget;
+
+    // 현재 보는 설정창, 당장은 오디오 창뿐임
+    UPROPERTY()
+    TObjectPtr<UGameSettingsWidget> CurrentSettingsWidget;
+
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
+    TSubclassOf<class UStaminaBar> StaminaBarClass;
+
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
+    TSubclassOf<class UMentalBar> MentalBarClass;
 
     UPROPERTY()
     class UStaminaBar *StaminaBar;
@@ -85,7 +94,7 @@ public:
     // ChangeView
     void SwitchCameraView(const FInputActionValue &Value);
 
-    // Sprint Handler
+    /* Sprint Handler */ 
     void Sprint(const FInputActionValue &Value);
     void StartSprint();
     void StopSprint();
@@ -150,6 +159,17 @@ public:
     void RemoveChaser();
     void SetChaseState(EChaseState NewState);
 
+    /* Environment Settings Widgets */
+    UFUNCTION(BlueprintCallable, Category = "UI")
+    void ToggleAudioSettings(const FInputActionValue& Value);
+
+    UFUNCTION(BlueprintCallable, Category = "UI")
+    void ShowSettings(TSubclassOf<UGameSettingsWidget> WidgetClassToShow);
+
+    UFUNCTION(BlueprintCallable, Category = "UI")
+    void HideSettings();
+
+
 protected:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaTime) override;
@@ -180,9 +200,11 @@ protected:
     void UpdateCameraLag();
 
     /* Input Mapping */
-    UPROPERTY(EditDefaultsOnly, Category = "Input")
-    TObjectPtr<UInputMappingContext> SurvivorMovingContext;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+    TObjectPtr<UInputMappingContext> UIMappingContext;
 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+    TObjectPtr<UInputMappingContext> SurvivorMovingContext;
     // Input Actions
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
     TObjectPtr<UInputAction> MoveAction;
@@ -200,8 +222,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> ForceActivateAction;
+
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     TObjectPtr<UInputAction> SwitchFlashAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+    TObjectPtr<UInputAction> InteractUIAction;
 
     bool bIsFlashing = true;
 
@@ -299,9 +325,12 @@ private:
     float RegenStartMental = 0.f;
     float RegenTargetAmount = 0.f;
 
-    // UI Update Functions
+    /* UI Var and Functions */
+    bool bIsAudioSettingsVisible;
     void UpdateStaminaBar();
     void UpdateMentalBar();
+    //void OnToggleAudioSettings(const FInputActionValue& Value);
+    void CreateAudioSettingsWidget();
 
     /*AI Perception Hearing*/
 public:

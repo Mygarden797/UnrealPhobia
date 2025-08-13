@@ -20,47 +20,48 @@ class UNREALPHOBIA_API UAudioAssets : public UDataAsset
     GENERATED_BODY()
 
 public:
-        
     /* Load AudioAssets to Target Classes*/
     UFUNCTION(BlueprintCallable, Category = "Audio")
     static UAudioAssets* LoadAudioAssets();
 
     /* Audio Sources */
     UPROPERTY(EditAnywhere,  Category = "Music")
-    USoundBase* BeingChased;
+    TObjectPtr<USoundBase> BeingChased;
 
     UPROPERTY(EditAnywhere, Category = "Music")
-    USoundBase* MainMenu;
+    TObjectPtr<USoundBase> MainMenu;
 
     UPROPERTY(EditAnywhere, Category = "Creature")
-    USoundBase *Growling;
+    TObjectPtr<USoundBase> Growling;
 
     UPROPERTY(EditAnywhere, Category = "Survivor")
-    USoundBase *WalkingSteps;
+    TObjectPtr<USoundBase> WalkingSteps;
 
     UPROPERTY(EditAnywhere, Category = "Survivor")
-    USoundBase *SwitchFlashLight;
+    TObjectPtr<USoundBase> SwitchFlashLight;
 
     UPROPERTY(EditAnywhere, Category = "Survivor")
-    USoundBase* HandLightButton;
+    TObjectPtr<USoundBase> HandLightButton;
 
     UPROPERTY(EditAnywhere, Category = "Player")
-    USoundBase* BeDetected;
+    TObjectPtr<USoundBase> BeDetected;
 
     /* Sound Classes */
     UPROPERTY(EditAnywhere, Category = "Audio Classes")
-    USoundClass* MusicSoundClass;
+    TObjectPtr<USoundClass> MasterSoundClass;
 
     UPROPERTY(EditAnywhere, Category = "Audio Classes")
-    USoundClass* SFXSoundClass;
+    TObjectPtr<USoundClass> MusicSoundClass;
 
     UPROPERTY(EditAnywhere, Category = "Audio Classes")
-    USoundClass* UISoundClass;
+    TObjectPtr<USoundClass> SFXSoundClass;
 
+    UPROPERTY(EditAnywhere, Category = "Audio Classes")
+    TObjectPtr<USoundClass> UISoundClass;
 
     /* Global Sound Mix */
     UPROPERTY(EditAnywhere, Category = "AudioCategory")
-    USoundMix* GlobalSoundMix;
+    TObjectPtr<USoundMix> GlobalSoundMix;
 
 private:
     static UAudioAssets* CachedAudioAssets;

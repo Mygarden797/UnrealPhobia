@@ -3,6 +3,7 @@
 void UGameSettingsWidget::NativeConstruct()
 {
     Super::NativeConstruct();
+    bIsFocusable = true;
 
     // 각 버튼에 대한 바인딩
     if (ApplyButton)
@@ -52,5 +53,7 @@ void UGameSettingsWidget::OnResetClicked()
 void UGameSettingsWidget::OnBackClicked()
 {
     UE_LOG(LogTemp, Warning, TEXT("UGameSettingsWidget::OnBackClicked(): Go back"));
-    RemoveFromParent();
+    // RemoveFromParent();
+    UE_LOG(LogTemp, Warning, TEXT("=== 1. Back Button Clicked in Widget! ==="));
+    OnBackRequested.ExecuteIfBound();
 }

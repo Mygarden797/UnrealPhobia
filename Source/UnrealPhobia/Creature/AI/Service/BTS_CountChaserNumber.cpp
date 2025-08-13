@@ -4,7 +4,7 @@
 #include "Creature/AI/Service/BTS_CountChaserNumber.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "NetworkPlayer.h"
-#include "ChaseSystemTypes.h"
+#include "Types/ChaseSystemTypes.h"
 
 UBTS_CountChaserNumber::UBTS_CountChaserNumber()
 {

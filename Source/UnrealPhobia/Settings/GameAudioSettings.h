@@ -5,14 +5,8 @@
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "GameFramework/GameUserSettings.h"
-
 #include "Kismet/GameplayStatics.h"
-#include "Sound/SoundMix.h"
-#include "Sound/SoundClass.h"
-
-#include "Assets/AudioAssets.h"
 #include "Types/GameAudioTypes.h"
-
 #include "GameAudioSettings.generated.h"
 
 /**
@@ -20,6 +14,8 @@
 *           Description		: Environment Setting of Audio 
 *           LastUpdate	    : 2025/08/06, Implement volume control system
 */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAudioSettingsChanged);
 
 class UAudioAssets;
 
@@ -31,60 +27,37 @@ class UNREALPHOBIA_API UGameAudioSettings : public UGameUserSettings
 public:
     UGameAudioSettings();
 
-    /* Static Accessor */
     UFUNCTION(BlueprintCallable, Category = "Settings")
     static UGameAudioSettings* GetGameAudioSettings();
 
     /* Set Audio Volumes */
     UFUNCTION(BlueprintCallable, Category = "Setting Audio Volume")
-    void SetMasterVolume(float Volume);
-
-    UFUNCTION(BlueprintCallable, Category = "Setting Audio Volume")
-    void SetSFXVolume(float Volume);
-
-    UFUNCTION(BlueprintCallable, Category = "Setting Audio Volume")
-    void SetMusicVolume(float Volume);
-
-    UFUNCTION(BlueprintCallable, Category = "Setting Audio Volume")
-    void SetUIVolume(float Volume);
+    void SetVolume(EAudioCategory Category, float Value);
 
     /* Get Audio Volumes */
     UFUNCTION(BlueprintPure, Category = "Getting Audio Volume")
-    float GetMasterVolume() const { return MasterVolume; };
+    float GetVolume(EAudioCategory Category) const;
 
-    UFUNCTION(BlueprintPure, Category = "Getting Audio Volume")
-    float GetSFXVolume() const { return SFXVolume; };
 
-    UFUNCTION(BlueprintPure, Category = "Getting Audio Volume")
-    float GetMusicVolume() const { return MusicVolume; };
+    /* 모든 오디오 설정 초기화 */
+    // virtual void SetToDefaults() override;
+    void ResetAudioToDefaultsOnly();
 
-    UFUNCTION(BlueprintPure, Category = "Getting Audio Volume")
-    float GetUIVolume() const { return UIVolume; };
-
+    UPROPERTY(BlueprintAssignable, Category = "Game Audio Settings")
+    FOnAudioSettingsChanged OnAudioSettingsChanged;
 
 protected:
     /* Volume Values */
-    UPROPERTY(Config)
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Audio")
     float MasterVolume;
 
-    UPROPERTY(Config)
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Audio")
     float MusicVolume;
 
-    UPROPERTY(Config)
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Audio")
     float SFXVolume;
 
-    UPROPERTY(Config)
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Audio")
     float UIVolume;
-
-private:
-    UAudioAssets* AudioAssets;
-
-    // 모든 오디오 설정 적용
-    void ApplyAudioSettings();
-    // 모든 오디오 설정 초기화
-    void ResetAudioToDefaults();
-    // 유효성 검사
-    bool IsAudioAssetsReady(USoundClass* SoundClass) const;
-    // SoundMix에 볼륨 적용
-    void ApplySoundMixOverride(USoundClass* SoundClass, float Volume);
 };
+
