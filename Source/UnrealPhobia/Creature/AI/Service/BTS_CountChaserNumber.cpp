@@ -35,7 +35,7 @@ void UBTS_CountChaserNumber::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
         }
         else
         {
-            UE_LOG(LogTemp, Error, TEXT("BTS_CountChaserNumber: LastChasedPlayer is null"));
+            UE_LOG(LogTemp, Warning, TEXT("BTS_CountChaserNumber: LastChasedPlayer is null"));
         }
         if (CurrentTargetPlayer)
         {
@@ -44,7 +44,7 @@ void UBTS_CountChaserNumber::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
         }
         else
         {
-            UE_LOG(LogTemp, Error, TEXT("BTS_CountChaserNumber: CurrentTargetPlayer is null"));
+            UE_LOG(LogTemp, Warning, TEXT("BTS_CountChaserNumber: CurrentTargetPlayer is null"));
         }
         LastChasedPlayer = CurrentTargetPlayer;
     }

@@ -2,8 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "Types/ChaseSystemTypes.h"
+#include "Tickable.h"
 #include "Sound/SoundBase.h"
+#include "Types/ChaseSystemTypes.h"
 #include "Assets/AudioAssets.h"
 #include "Settings/GameAudioSettings.h"
 #include "SoundManager.generated.h"
@@ -17,13 +18,17 @@
 class UAudioAssets;
 
 UCLASS()
-class UNREALPHOBIA_API USoundManager : public UGameInstanceSubsystem
+class UNREALPHOBIA_API USoundManager : public UGameInstanceSubsystem, public FTickableGameObject
 {
 	GENERATED_BODY()
 
 public:
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
     virtual void Deinitialize() override;
+
+    virtual void Tick(float DeltaTime) override;
+    virtual  TStatId GetStatId() const override;
+    virtual bool IsTickable() const override { return true; }
 
     /* Play Audio Sources */
     UFUNCTION(BlueprintCallable)
@@ -40,9 +45,14 @@ public:
 private:
     UPROPERTY()
     TObjectPtr<UAudioAssets> AudioAssets;
+
+    UPROPERTY()
     TObjectPtr<UGameAudioSettings> AudioSettings;
 
-    UAudioComponent* BeingChasedSource;
+
+    TObjectPtr<UAudioComponent> BeingChasedSource;
+    UPROPERTY()
+    TObjectPtr<AActor> AudioActor;
 
     bool IsValidAssets() const;
     bool bIsDelegateBound = false;
