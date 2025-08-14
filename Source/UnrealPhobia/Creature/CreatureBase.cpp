@@ -116,6 +116,23 @@ void ACreatureBase::Tick(float DeltaTime)
         CurrentInfo->set_yaw(GetControlRotation().Yaw);
     }
 
+    if (!bIsFOVChanging || !CameraComp)
+        return;
+
+    FOVElapsed += DeltaTime;
+    float Alpha = FMath::Clamp(FOVElapsed / FOVDuration, 0.f, 1.f);
+    float SmoothAlpha = Alpha * Alpha * (3.f - 2.f * Alpha);
+
+    float NewFOV = FMath::Lerp(FOVStart, FOVTarget, SmoothAlpha);
+    CameraComp->SetFieldOfView(NewFOV);
+
+    if (Alpha >= 1.f)
+    {
+        // 완료
+        bIsFOVChanging = false;
+        FOVElapsed = 0.f;
+    }
+
     if (bHaveAIController) //AI컨트롤러 있으면 패킷 보내고 없으면 DestInfo로 이동
     {
         // Send 판정
@@ -169,28 +186,12 @@ void ACreatureBase::Tick(float DeltaTime)
             float speed = DestInfo->speed();
             float MoveDist = (MoveDir * speed * DeltaTime).Length();
             MoveDist = FMath::Min(MoveDist, DistToDest);
-            FVector NextLocation = Location + MoveDir* MoveDist;
+            FVector NextLocation = Location + MoveDir * MoveDist;
 
             SetActorLocation(NextLocation);
-            //애니메이션 추가
         }
-
-    if (!bIsFOVChanging || !CameraComp)
-        return;
-
-    FOVElapsed += DeltaTime;
-    float Alpha = FMath::Clamp(FOVElapsed / FOVDuration, 0.f, 1.f);
-    float SmoothAlpha = Alpha * Alpha * (3.f - 2.f * Alpha);
-
-    float NewFOV = FMath::Lerp(FOVStart, FOVTarget, SmoothAlpha);
-    CameraComp->SetFieldOfView(NewFOV);
-
-    if (Alpha >= 1.f)
-    {
-        // 완료
-        bIsFOVChanging = false;
-        FOVElapsed = 0.f;
     }
+
 }
 
 // Called to bind functionality to input

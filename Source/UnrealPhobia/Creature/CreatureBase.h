@@ -142,6 +142,7 @@ protected:
     class Protocol::PosInfo* CurrentInfo; // 현재 위치
     class Protocol::PosInfo* DestInfo; // 목적지
 
+
 public:
     UCreatureDataAsset *GetCreatureData() const { return CreatureData; }
 
