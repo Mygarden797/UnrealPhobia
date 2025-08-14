@@ -12,6 +12,9 @@
 *           Description		: Widget of Super Class with Environment Settings
 *           LastUpdate	    : 2025/08/06
 */
+
+DECLARE_DELEGATE(FOnBackRequested);
+
 UCLASS()
 class UNREALPHOBIA_API UGameSettingsWidget : public UUserWidget
 {
@@ -19,6 +22,7 @@ class UNREALPHOBIA_API UGameSettingsWidget : public UUserWidget
 
 public:
     virtual void NativeConstruct() override;
+    FOnBackRequested OnBackRequested;
 
 protected:
 
@@ -48,4 +52,7 @@ protected:
     virtual void LoadCurrentSettings() {};
     virtual void ApplyCurrentSettings() {};
     virtual void ResetCurrentSettings() {};
+
+private:
+
 };

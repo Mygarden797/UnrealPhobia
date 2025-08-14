@@ -7,11 +7,12 @@
 #include "InputActionValue.h"
 #include "Creature/CreatureBase.h"        // Creature Perception
 #include "AttackCameraWidget.h"          // 공격 카메라
-#include "ChaseSystemTypes.h"
-#include "UnrealPhobia/Assets/AudioAssets.h"
-#include "UnrealPhobia/Managers/SoundManager.h"
+#include "Types/ChaseSystemTypes.h"
+#include "Assets/AudioAssets.h"
+#include "Managers/SoundManager.h"
+#include "Settings/GameSettingsWidget.h"
 #include "NetworkPlayer.generated.h"
-
+ 
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
@@ -22,7 +23,8 @@ class UAudioAssets;
 /**
  *      Name				    : ANetworkPlayer
  *      Description		    : Network-enabled Player Character with Survivor features
- *      Last Update		: 2025/08/04
+ *      LastUpdate		    : 2025/08/09
+ *      개선사항             : 위젯 생성을 템플릿으로 일반화
 */
 
 UCLASS(Blueprintable)
@@ -34,6 +36,7 @@ public:
     ANetworkPlayer(const FObjectInitializer &ObjectInitializer = FObjectInitializer::Get());
 
     virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
+    // void ReinitializeInputBindings();
 
     // UI Components
     UPROPERTY(EditDefaultsOnly, Category = "UI")
@@ -48,6 +51,12 @@ public:
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<class UInventoryWidget> InventoryWidgetClass;
 
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
+    TSubclassOf<class UUserWidget> ForceActivateProgressWidgetClass;
+    
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
+    TSubclassOf<class UGameSettingsWidget> AudioSettingsWidgetClass;
+
     UPROPERTY()
     class UUserWidget *CrosshairWidget;
 
@@ -59,6 +68,10 @@ public:
 
     UPROPERTY()
     class UInventoryWidget *InventoryWidget;
+
+    // 현재 보는 설정창, 당장은 오디오 창뿐임
+    UPROPERTY()
+    TObjectPtr<UGameSettingsWidget> CurrentSettingsWidget;
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<class UStaminaBar> StaminaBarClass;
@@ -72,6 +85,9 @@ public:
     UPROPERTY()
     class UMentalBar *MentalBar;
 
+    UPROPERTY()
+    class UUserWidget *ForceActivateProgressWidget; // Changed to UUserWidget
+
     /* Movement Functions */ 
     void Move(const FInputActionValue &Value);
     void MoveReleased();
@@ -79,7 +95,7 @@ public:
     // ChangeView
     void SwitchCameraView(const FInputActionValue &Value);
 
-    // Sprint Handler
+    /* Sprint Handler */ 
     void Sprint(const FInputActionValue &Value);
     void StartSprint();
     void StopSprint();
@@ -119,17 +135,20 @@ public:
     void RegenMental();
     void ActivateRandomMentalTrigger();
 
-	/** 'X' 버튼을 눌렀을 때 호출됩니다. */
 	void OnForceActivatePressed();
 
-	/** 'X' 버튼을 뗐을 때 호출됩니다. */
 	void OnForceActivateReleased();
 
-	/** 10초 타이머가 완료되면 호출될 함수입니다. */
 	void ForceActivateCandleRoom();
 
-	/** 강제 활성화 타이머 핸들입니다. */
 	FTimerHandle ForceActivateTimerHandle;
+
+    // New: Force Activate Progress UI
+    FTimerHandle ForceActivateProgressTimerHandle; // Timer for UI updates
+    float ForceActivateProgressElapsed = 0.0f; // Elapsed time for progress
+    const float ForceActivateDuration = 10.0f; // Total duration for force activation
+    void UpdateForceActivateProgress(); // Function to update the UI
+    void HideForceActivateProgress(); // Function to hide the UI
 
     UFUNCTION()
     void OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRenderTarget2D *RenderTarget);
@@ -140,6 +159,17 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Creature")
     void RemoveChaser();
     void SetChaseState(EChaseState NewState);
+
+    /* Environment Settings Widgets */
+    UFUNCTION(BlueprintCallable, Category = "UI")
+    void ToggleAudioSettings(const FInputActionValue& Value);
+
+    UFUNCTION(BlueprintCallable, Category = "UI")
+    void ShowSettings(TSubclassOf<UGameSettingsWidget> WidgetClassToShow);
+
+    UFUNCTION(BlueprintCallable, Category = "UI")
+    void HideSettings();
+
 
 protected:
     virtual void BeginPlay() override;
@@ -171,9 +201,11 @@ protected:
     void UpdateCameraLag();
 
     /* Input Mapping */
-    UPROPERTY(EditDefaultsOnly, Category = "Input")
-    TObjectPtr<UInputMappingContext> SurvivorMovingContext;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+    TObjectPtr<UInputMappingContext> UIMappingContext;
 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+    TObjectPtr<UInputMappingContext> SurvivorMovingContext;
     // Input Actions
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
     TObjectPtr<UInputAction> MoveAction;
@@ -191,8 +223,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> ForceActivateAction;
+
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     TObjectPtr<UInputAction> SwitchFlashAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+    TObjectPtr<UInputAction> InteractUIAction;
 
     bool bIsFlashing = true;
 
@@ -243,6 +279,7 @@ protected:
 
     float MentalRegenTickTime = 1.f;
     float MentalRegenPerTick = 6.f;
+    int ForceActiveCount = 3;
 
     void GameOver();
 
@@ -289,9 +326,12 @@ private:
     float RegenStartMental = 0.f;
     float RegenTargetAmount = 0.f;
 
-    // UI Update Functions
+    /* UI Var and Functions */
+    bool bIsAudioSettingsVisible;
     void UpdateStaminaBar();
     void UpdateMentalBar();
+    //void OnToggleAudioSettings(const FInputActionValue& Value);
+    void CreateAudioSettingsWidget();
 
     /*AI Perception Hearing*/
 public:
@@ -311,4 +351,14 @@ private:
     float WalkLoudness = 1.0f;
 
     USoundManager* GetSoundManager() const;
+
+    /*무적 시간 관리를 위한 변수*/
+    float InvincibleTime = 5.0f;
+    bool bIsinvincible = false;
+    FTimerHandle FInvincibleTimerHandle;
+
+public:
+    bool GetIsinvincible() { return bIsinvincible;};
+    void StartInvincible();
+    void EndInvincible();
 };

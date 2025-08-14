@@ -7,6 +7,7 @@
 #include "Creature/CreatureController.h"
 #include "Creature/CreatureBase.h"
 #include "Creature/CreatureState.h"
+#include "Network/Contents/NetworkPlayer.h"
 
 
 const FName UBTS_Attack::LastFoundLocation(TEXT("LastFoundLocation"));
@@ -32,6 +33,9 @@ void UBTS_Attack::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
     AActor* Target = Cast<AActor>(Blackboard->GetValueAsObject(TargetKey.SelectedKeyName));
     RETURN_IF_NULL(Target);
 
+    ANetworkPlayer* TargetPlayer = Cast<ANetworkPlayer>(Target);
+    RETURN_IF_NULL(TargetPlayer)
+
     UCreatureDataAsset* CreatureData = Creature->GetCreatureData();
     RETURN_IF_NULL(Creature);
 
@@ -43,7 +47,7 @@ void UBTS_Attack::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
     FVector LastTargetLocation = Target->GetActorLocation();
     Blackboard->SetValueAsVector(LastFoundLocation,LastTargetLocation);
     
-    if(Distance <= CreatureData->AttackRange)
+    if(Distance <= CreatureData->AttackRange && (TargetPlayer->GetIsinvincible() == false))
     {
         Creature->SetState(ECreatureState::Attack);
     }

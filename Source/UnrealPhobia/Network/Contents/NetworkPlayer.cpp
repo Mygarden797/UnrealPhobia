@@ -23,6 +23,8 @@
 #include "EngineUtils.h"
 #include "Assets/AudioAssets.h"
 #include "SurvivorController.h"
+#include "Blueprint/WidgetTree.h"
+#include "Components/ProgressBar.h"
 
 ANetworkPlayer::ANetworkPlayer(const FObjectInitializer& ObjectInitializer)
 {
@@ -68,6 +70,7 @@ void ANetworkPlayer::BeginPlay()
     CurrentMental = MaxMental;
     CurrentChaseState = EChaseState::Safe;
     ChaserCount = 0;
+    bIsAudioSettingsVisible = false;
 
     // Only setup UI for locally controlled players
     if (IsLocallyControlled())
@@ -102,6 +105,7 @@ void ANetworkPlayer::BeginPlay()
             }
         }
 
+        // Create Inventory Widget
         if (InventoryWidgetClass)
         {
             InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
@@ -113,6 +117,17 @@ void ANetworkPlayer::BeginPlay()
         else
         {
             UE_LOG(LogTemp, Error, TEXT("Failed to load Inventory"));
+        }
+
+        // Create force activate progress widget
+        if (ForceActivateProgressWidgetClass)
+        {
+            ForceActivateProgressWidget = CreateWidget<UUserWidget>(GetWorld(), ForceActivateProgressWidgetClass);
+            if (ForceActivateProgressWidget)
+            {
+                ForceActivateProgressWidget->AddToViewport();
+                ForceActivateProgressWidget->SetVisibility(ESlateVisibility::Hidden); // Start hidden
+            }
         }
     }
 
@@ -225,13 +240,30 @@ void ANetworkPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
     {
         if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
         {
-            Subsystem->AddMappingContext(SurvivorMovingContext, 0);
-            UE_LOG(LogTemp, Display, TEXT("Moving Key is ready"));
+            if (SurvivorMovingContext)
+            {
+                Subsystem->AddMappingContext(SurvivorMovingContext, 1);
+                UE_LOG(LogTemp, Display, TEXT("Moving Key is ready"));
+            }
+            else
+            {
+                UE_LOG(LogTemp, Error,
+                    TEXT("ASurvivorController::SetupEnhancedInput(): SurvivorMovingContext is null"));
+            }
+            if (UIMappingContext)
+            {
+                Subsystem->AddMappingContext(UIMappingContext, 0);
+            }
+            else
+            {
+                UE_LOG(LogTemp, Error,
+                    TEXT("ASurvivorController::SetupEnhancedInput(): UIMappingContext is null"));
+            }
         }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to Mapping Keys"));
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Failed to Mapping Keys"));
+        }
     }
 
     if (UEnhancedInputComponent* EIC = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
@@ -249,13 +281,21 @@ void ANetworkPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
         EIC->BindAction(SwitchFlashAction, ETriggerEvent::Started, this, &ANetworkPlayer::SwitchFlash);
 
-        UE_LOG(LogTemp, Display, TEXT("Key Binding is done"));
+        if (ForceActivateAction)
+        {
+            EIC->BindAction(ForceActivateAction, ETriggerEvent::Started, this, &ANetworkPlayer::OnForceActivatePressed);
+            EIC->BindAction(ForceActivateAction, ETriggerEvent::Completed, this, &ANetworkPlayer::OnForceActivateReleased);
+        }
+        if (InteractUIAction)
+        {
+            EIC->BindAction(InteractUIAction, ETriggerEvent::Started, this, &ANetworkPlayer::ToggleAudioSettings);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("InteractUIAction is null"));
+        }
 
-		if (ForceActivateAction)
-		{
-			EIC->BindAction(ForceActivateAction, ETriggerEvent::Started, this, &ANetworkPlayer::OnForceActivatePressed);
-			EIC->BindAction(ForceActivateAction, ETriggerEvent::Completed, this, &ANetworkPlayer::OnForceActivateReleased);
-		}
+        UE_LOG(LogTemp, Display, TEXT("Key Binding is done"));
     }
     else
     {
@@ -263,6 +303,22 @@ void ANetworkPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
         return;
     }
 }
+
+/*
+void ANetworkPlayer::ReinitializeInputBindings()
+{
+    if (InputComponent)
+    {
+        InputComponent->ClearActionBindings();
+        SetupPlayerInputComponent(InputComponent);
+        UE_LOG(LogTemp, Warning, TEXT("ANetworkPlayer::ReinitalizeInputBindings(): Done"));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("ANetworkPlayer::ReinitalizeInputBindings(): No InputComponent"));
+    }
+}
+*/
 
 void ANetworkPlayer::Tick(float DeltaTime)
 {
@@ -321,6 +377,13 @@ void ANetworkPlayer::Tick(float DeltaTime)
 // Network Movement Functions (from MyProtoPlayer)
 void ANetworkPlayer::Move(const FInputActionValue& Value)
 {
+    /*
+    if (bIsInUIMode)
+    {
+        UE_LOG(LogTemp, Display, TEXT("ANetworkPlayer::Move(): Now UI Mode"));
+        return;
+    }
+    */
     FVector2D MovementVector = Value.Get<FVector2D>();
 
     if (Controller != nullptr)
@@ -623,6 +686,9 @@ void ANetworkPlayer::GameWin()
 float ANetworkPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
     AController* EventInstigator, AActor* DamageCauser)
 {
+
+    StartInvincible();
+
     if (bIsDead)
         return 0.0f;
 
@@ -633,6 +699,7 @@ float ANetworkPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
     }
 
     //
+
     float AppliedDamage = FMath::Clamp(DamageAmount, 0.0f, CurrentMental);
     CurrentMental -= AppliedDamage;
 
@@ -705,7 +772,7 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
     }
 
     //   Ʈŵ ߿  ƮŰ ƴ ͸ 
-    TArray<AActor *> *AllTriggers = nullptr;
+    TArray<AActor*>* AllTriggers = nullptr;
 
     if (CurrentMapTag == FName("CandleRoom"))
     {
@@ -733,11 +800,11 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
         if (CurrentCandleRoom)
         {
             CurrentCandleRoom->Tags.Remove(FName("Active"));
-			ACandleRoom* OldCandleRoom = Cast<ACandleRoom>(CurrentCandleRoom);
-			if(OldCandleRoom)
-			{
-				OldCandleRoom->TurnOffEffects();
-			}
+            ACandleRoom* OldCandleRoom = Cast<ACandleRoom>(CurrentCandleRoom);
+            if (OldCandleRoom)
+            {
+                OldCandleRoom->TurnOffEffects();
+            }
         }
 
         SelectedTrigger->Tags.AddUnique(FName("Active"));
@@ -745,7 +812,7 @@ void ANetworkPlayer::ActivateRandomMentalTrigger()
 
         if (ACandleRoom* CandleRoom = Cast<ACandleRoom>(SelectedTrigger))
         {
-			CandleRoom->TurnOnEffects();
+            CandleRoom->TurnOnEffects();
         }
 
         UE_LOG(LogTemp, Log, TEXT("Activated Mental Trigger: %s"), *SelectedTrigger->GetName());
@@ -791,7 +858,7 @@ void ANetworkPlayer::MakeWalkNoiseEvent()
 }
 
 
-void ANetworkPlayer::OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRenderTarget2D *RenderTarget)
+void ANetworkPlayer::OnCreatureAttackCamera(ACreatureBase* Creature, UTextureRenderTarget2D* RenderTarget)
 {
     if (!AttackCameraWidget || !Creature || !RenderTarget)
     {
@@ -867,28 +934,56 @@ void ANetworkPlayer::UpdateCameraLag()
 
 void ANetworkPlayer::OnForceActivatePressed()
 {
-    if (TouchingCandleRoom != nullptr && !TouchingCandleRoom->ActorHasTag(FName("Active")))
+    if (TouchingCandleRoom != nullptr && !TouchingCandleRoom->ActorHasTag(FName("Active")) && ForceActiveCount > 0)
     {
         GetWorld()->GetTimerManager().SetTimer(
             ForceActivateTimerHandle,
             this,
             &ANetworkPlayer::ForceActivateCandleRoom,
-            10.0f,
+            ForceActivateDuration,
             false);
         UE_LOG(LogTemp, Log, TEXT("Force activation started."));
+
+        // Start UI timer
+        ForceActivateProgressElapsed = 0.0f; // Reset elapsed time
+        GetWorld()->GetTimerManager().SetTimer(
+            ForceActivateProgressTimerHandle,
+            this,
+            &ANetworkPlayer::UpdateForceActivateProgress,
+            0.05f, // Update frequently for smooth progress
+            true);
+
+        if (ForceActivateProgressWidget)
+        {
+            ForceActivateProgressWidget->SetVisibility(ESlateVisibility::Visible);
+        }
+    }
+    if (ForceActiveCount <= 0)
+    {
+        UE_LOG(LogTemp, Log, TEXT("ForceActiveCount is 0"))
     }
 }
 
 void ANetworkPlayer::OnForceActivateReleased()
 {
     // 버튼을 떼면 타이머 취소
-    GetWorld()->GetTimerManager().ClearTimer(ForceActivateTimerHandle);
-    UE_LOG(LogTemp, Log, TEXT("Force activation cancelled."));
+    if (ForceActiveCount > 0)
+    {
+        GetWorld()->GetTimerManager().ClearTimer(ForceActivateTimerHandle);
+        GetWorld()->GetTimerManager().ClearTimer(ForceActivateProgressTimerHandle);
+        ForceActivateProgressElapsed = 0;
+        UpdateForceActivateProgress();
+        UE_LOG(LogTemp, Log, TEXT("Force activation cancelled."));
+        HideForceActivateProgress(); // Call the new hide function
+
+    }
 }
 
 void ANetworkPlayer::ForceActivateCandleRoom()
 {
     GetWorld()->GetTimerManager().ClearTimer(ForceActivateTimerHandle);
+    HideForceActivateProgress(); // Call the new hide function
+
     if (TouchingCandleRoom == nullptr) return;
 
 
@@ -931,6 +1026,45 @@ void ANetworkPlayer::ForceActivateCandleRoom()
     CurrentCandleRoom->Tags.Add(FName("Active"));
     CurrentCandleRoom->TurnOnEffects();
     StartMentalRegen(10.f);
+    ForceActiveCount--;
+}
+
+void ANetworkPlayer::UpdateForceActivateProgress()
+{
+    constexpr float TimerInterval = 0.05f;
+    ForceActivateProgressElapsed += TimerInterval;
+
+    float Progress = FMath::Clamp(
+        ForceActivateProgressElapsed / ForceActivateDuration,
+        0.0f,
+        1.0f
+    );
+
+    if (ForceActivateProgressWidget && ForceActivateProgressWidget->WidgetTree)
+    {
+        UProgressBar* ProgressBar = Cast<UProgressBar>(
+            ForceActivateProgressWidget->WidgetTree->FindWidget("ProgressBar_Activation")
+        );
+        if (ProgressBar)
+        {
+            ProgressBar->SetPercent(Progress);
+        }
+    }
+
+    if (ForceActivateProgressElapsed >= ForceActivateDuration)
+    {
+        GetWorld()->GetTimerManager().ClearTimer(ForceActivateProgressTimerHandle);
+    }
+}
+
+void ANetworkPlayer::HideForceActivateProgress()
+{
+    if (ForceActivateProgressWidget)
+    {
+        ForceActivateProgressWidget->SetVisibility(ESlateVisibility::Hidden);
+    }
+    GetWorld()->GetTimerManager().ClearTimer(ForceActivateProgressTimerHandle);
+    ForceActivateProgressElapsed = 0.0f; // Reset elapsed time
 }
 
 void ANetworkPlayer::SwitchFlash(const FInputActionValue &value)
@@ -946,7 +1080,7 @@ void ANetworkPlayer::SwitchFlash(const FInputActionValue &value)
 
     if (AudioDataAssetClass)
     {
-        UAudioAssets *AA = AudioDataAssetClass->GetDefaultObject<UAudioAssets>();
+        UAudioAssets* AA = AudioDataAssetClass->GetDefaultObject<UAudioAssets>();
         if (AA && AA->SwitchFlashLight)
         {
             UGameplayStatics::PlaySoundAtLocation(
@@ -1047,4 +1181,132 @@ void ANetworkPlayer::DisplayChaserNumberDebug()
 USoundManager* ANetworkPlayer::GetSoundManager() const
 {
     return GetGameInstance() ? GetGameInstance()->GetSubsystem<USoundManager>() : nullptr;
+}
+
+
+
+void ANetworkPlayer::StartInvincible()
+{
+    if(bIsinvincible == false)
+    {
+         bIsinvincible = true;
+         GetWorldTimerManager().SetTimer(FInvincibleTimerHandle, this, &ANetworkPlayer::EndInvincible, InvincibleTime, true);
+         GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreOnlyPawn"));
+
+        if (USoundManager* SoundManager = GetSoundManager())
+        {
+            SoundManager->PlayScream();
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("NetworkPlayer::AddChaser(): SoundManager is null"));
+            return;
+        }
+
+    }
+
+}
+
+void ANetworkPlayer::EndInvincible()
+{
+    bIsinvincible = false;
+    GetWorld()->GetTimerManager().ClearTimer(FInvincibleTimerHandle);
+    GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
+
+}
+/*
+void ANetworkPlayer::OnToggleAudioSettings(const FInputActionValue& Value)
+{
+    if (ASurvivorController* PC = Cast<ASurvivorController>(Controller))
+    {
+        PC->ToggleAudioSettings(Value);
+    }
+}
+*/
+
+// Todo: Implement Closing Window when press key (Now: Only press 'Back' button to close window)
+void ANetworkPlayer::ToggleAudioSettings(const FInputActionValue& Value)
+{
+    const bool bPressed = Value.Get<bool>();
+    if (bPressed)
+    {
+        UE_LOG(LogTemp, Display, TEXT("SurvivorController::ToggleAudioSettings(): Key is pressed"));
+        if (bIsAudioSettingsVisible)
+        {
+            HideSettings();
+        }
+        else
+        {
+            ShowSettings(AudioSettingsWidgetClass);
+        }
+    }
+}
+
+void ANetworkPlayer::ShowSettings(TSubclassOf<UGameSettingsWidget> WidgetClassToShow)
+{
+    if (!IsLocallyControlled())
+    {
+        return;
+    }
+
+
+    if (APlayerController* PC = Cast<APlayerController>(GetController()))
+    {
+        if (CurrentSettingsWidget)
+        {
+            CurrentSettingsWidget->RemoveFromParent();
+            CurrentSettingsWidget = nullptr;
+        }
+
+        if (!WidgetClassToShow)
+        {
+            UE_LOG(LogTemp, Error, TEXT("ANetworkPlayer::ShowSettings(): WidgetClassToShow is null."));
+            return;
+        }
+
+        CurrentSettingsWidget = CreateWidget<UGameSettingsWidget>(PC, WidgetClassToShow);
+        if (!CurrentSettingsWidget) return;
+
+        CurrentSettingsWidget->OnBackRequested.BindUObject(this, &ANetworkPlayer::HideSettings);
+        CurrentSettingsWidget->AddToViewport();
+
+        FInputModeUIOnly InputModeData;
+        InputModeData.SetWidgetToFocus(CurrentSettingsWidget->TakeWidget());
+        InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+        PC->SetInputMode(FInputModeUIOnly());
+        PC->bShowMouseCursor = true;
+    }
+}
+
+void ANetworkPlayer::HideSettings()
+{
+    UE_LOG(LogTemp, Warning, TEXT("=== 2. HideSettings function called in Player! ==="));
+    if (!IsLocallyControlled())
+    {
+        return;
+    }
+
+    if (APlayerController* PC = Cast<APlayerController>(GetController()))
+    {
+        if (!CurrentSettingsWidget)
+        {
+            UE_LOG(LogTemp, Error,
+                TEXT("AMyPlayerController::HideAudioSettings(): AudioSettingsWidget is null"));
+            return;
+        }
+
+        CurrentSettingsWidget->RemoveFromParent();
+        CurrentSettingsWidget = nullptr;
+
+        UE_LOG(LogTemp, Log, TEXT("HideSettings Step: Setting input mode to GameOnly."));
+        FInputModeGameOnly InputModeData;
+        PC->SetInputMode(FInputModeGameOnly());
+        PC->bShowMouseCursor = false;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error,
+            TEXT("AMyPlayerController::HideAudioSettings(): Controller is null"));
+        return;
+    }
 }
