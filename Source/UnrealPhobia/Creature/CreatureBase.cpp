@@ -57,6 +57,17 @@ ACreatureBase::ACreatureBase()
 
     // 렌더 타겟 생성 (블루프린트에서 설정하거나 코드에서 동적 생성)
     AttackCameraRenderTarget = nullptr;
+
+    CurrentInfo = new Protocol::PosInfo();
+    DestInfo = new Protocol::PosInfo();
+}
+
+ACreatureBase::~ACreatureBase()
+{
+    delete CurrentInfo;
+    delete DestInfo;
+    CurrentInfo = nullptr;
+    DestInfo = nullptr;
 }
 
 // Called when the game starts or when spawned
@@ -64,6 +75,14 @@ void ACreatureBase::BeginPlay()
 {
     Super::BeginPlay();
     SetState(State);
+
+    //{
+    //    FVector Location = GetActorLocation();
+    //    CurrentInfo->set_x(Location.X);
+    //    CurrentInfo->set_y(Location.Y);
+    //    CurrentInfo->set_z(Location.Z);
+    //    CurrentInfo->set_yaw(GetControlRotation().Yaw);
+    //}
 }
 
 // Called every frame
@@ -84,6 +103,8 @@ void ACreatureBase::Tick(float DeltaTime)
         // Send 판정
         bool ForceSendPacket = false;
 
+        MovePacketSendTimer -= DeltaTime;
+
         if (MovePacketSendTimer <= 0 || ForceSendPacket)
         {
             MovePacketSendTimer = MOVE_PACKET_SEND_DELAY;
@@ -94,6 +115,7 @@ void ACreatureBase::Tick(float DeltaTime)
             {
                 Protocol::PosInfo* Info = MovePkt.mutable_info();
                 Info->CopyFrom(*CurrentInfo);
+                Info->set_object_id(ICreatureObjectId);
                 //크리쳐 스테이트 지정.
                 ECreatureState CreatureState = this->GetState();
                 
@@ -117,8 +139,21 @@ void ACreatureBase::Tick(float DeltaTime)
     else
     {
         {
-            SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
-            AddMovementInput(GetActorForwardVector());
+            /*SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
+            AddMovementInput(GetActorForwardVector());*/
+            FVector Location = GetActorLocation();
+            FVector DestLocation = FVector(DestInfo->x(), DestInfo->y(), DestInfo->z());
+
+            FVector MoveDir = (DestLocation - Location);
+            const float DistToDest = MoveDir.Length();
+            MoveDir.Normalize();
+
+            float speed = DestInfo->speed();
+            float MoveDist = (MoveDir * speed * DeltaTime).Length();
+            MoveDist = FMath::Min(MoveDist, DistToDest);
+            FVector NextLocation = Location + MoveDir* MoveDist;
+
+            SetActorLocation(NextLocation);
             //애니메이션 추가
         }
 
@@ -318,6 +353,15 @@ void ACreatureBase::SetCreatureState(Protocol::CreatureState CreatureState)
     CurrentInfo->set_creature_state(CreatureState);
 
     // TODO 각 애니메이션 지정
+}
+
+void ACreatureBase::SetObjectId(uint64 ObjectId)
+{
+    if (ICreatureObjectId != 0)
+    {
+        assert(ICreatureObjectId == ObjectId);
+    }
+    ICreatureObjectId = ObjectId;
 }
 
 void ACreatureBase::SetCurrentInfo(const Protocol::PosInfo& Info)

@@ -183,6 +183,7 @@ void UNetworkManager::HandleSpawn(const Protocol::S_SPAWN& SpawnPkt)
 
         auto* GameState = Cast<AProtoGameState>(World->GetGameState());
         GameState->SpawnCreature(
+            Creature.object_id(),
             FVector(Creature.pos_info().x(), Creature.pos_info().y(), Creature.pos_info().z()),
             FRotator(0.0f, Creature.pos_info().yaw(), 0.0f),
             Creature.creature_info().creature_type(),
@@ -256,9 +257,7 @@ void UNetworkManager::HandleCreatureBehavior(const Protocol::S_CREATURE_BEHAVIOR
     ACreatureBase* Creature = (*FindActor);
 
     const Protocol::PosInfo& Info = MovePkt.info();
-    //Player->SetPlayerInfo(Info);
-    
-    //크리쳐 행동 함수 여기에
+    Creature->SetDestInfo(Info);
 }
 
 //Ÿ�̸� ����

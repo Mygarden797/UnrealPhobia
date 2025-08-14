@@ -4,6 +4,7 @@
 #include "Network/ProtoGameState.h"
 #include "Creature/CreatureBase.h"
 #include "Trigger/Trigger.h"
+#include "AIController.h"
 #include "Kismet/GameplayStatics.h"
 
 AProtoGameState::AProtoGameState()
@@ -38,7 +39,7 @@ bool AProtoGameState::SpawnTrigger(Protocol::ObjectInfo objectInfo)
     return false;
 }
 
-bool AProtoGameState::SpawnCreature(FVector SpawnPoint, FRotator SpawnRotate, Protocol::CreatureType Creature, bool bAIControl)
+bool AProtoGameState::SpawnCreature(uint64 ObjectId, FVector SpawnPoint, FRotator SpawnRotate, Protocol::CreatureType Creature, bool bAIControl)
 {
     FString CreaturePath;
     if (Creature == Protocol::CreatureType::CREATURE_TYPE_NONE)
@@ -69,21 +70,39 @@ bool AProtoGameState::SpawnCreature(FVector SpawnPoint, FRotator SpawnRotate, Pr
     }
     FActorSpawnParameters Params;
 
-    ACreatureBase* SpawnActor = GetWorld()->SpawnActor<ACreatureBase>(BP_Creature, SpawnPoint, SpawnRotate, Params);
+    ACreatureBase* SpawnActor;
+
     //ACreatureBase* SpawnActor = GetWorld()->SpawnActor<ACreatureBase>(ACreatureBase::StaticClass(), SpawnPoint, SpawnRotate, Params);
+
+    SpawnActor = GetWorld()->SpawnActor<ACreatureBase>(BP_Creature, SpawnPoint, SpawnRotate, Params);
 
     if (bAIControl == false)
     {
-        if (SpawnActor->GetController())
+        //이거 왜 되지?
+        //SpawnActor = GetWorld()->SpawnActor<ACreatureBase>(BP_Creature, SpawnPoint, SpawnRotate, Params);
+ /*       if (SpawnActor->GetController())
         {
             SpawnActor->GetController()->UnPossess();
-        }
-        // 자동 AI 소유 비활성화
+        }*/
+
+
+        //// 자동 AI 소유 비활성화
+        //SpawnActor->AutoPossessAI = EAutoPossessAI::Disabled;
+        //SpawnActor->AIControllerClass = nullptr;
+        //SpawnActor->bHaveAIController = false;
+        // 자동 AI 소유 비활성화하되, 기본 AIController는 유지
         SpawnActor->AutoPossessAI = EAutoPossessAI::Disabled;
-        SpawnActor->AIControllerClass = nullptr;
-        SpawnActor->bHaveAIController = false;
+        SpawnActor->AIControllerClass = AAIController::StaticClass();
+        SpawnActor->bHaveAIController = false; 
     }
 
 
+
+    SpawnActor->SetObjectId(ObjectId);
+    
+    if (auto* GameInstance = Cast<UNetworkManager>(GWorld->GetGameInstance()))
+    {
+        GameInstance->Creatures.Add(ObjectId, SpawnActor);
+    }
     return true;
 }

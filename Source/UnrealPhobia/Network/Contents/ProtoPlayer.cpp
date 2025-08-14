@@ -107,14 +107,14 @@ void AProtoPlayer::Tick(float DeltaSeconds)
             bIsSprinting = true;
             UnCrouch();
             bIsCrouch = false;
-            FVector CurrentDirection = GetVelocity().GetSafeNormal();
-            GetCharacterMovement()->Velocity = CurrentDirection * speed;
+            GetCharacterMovement()->MaxWalkSpeed = speed;
             SetWalk();
         }
         
 
         if (State == Protocol::MOVE_STATE_RUN)
         { 
+            GetCharacterMovement()->MaxWalkSpeed = speed;
             SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             AddMovementInput(GetActorForwardVector());
 
@@ -124,7 +124,8 @@ void AProtoPlayer::Tick(float DeltaSeconds)
         }
         else if (State == Protocol::MOVE_STATE_SPRINT)
         {
-            SetSprint();
+            //SetSprint();
+            GetCharacterMovement()->MaxWalkSpeed = speed;
             SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             AddMovementInput(GetActorForwardVector());
         }

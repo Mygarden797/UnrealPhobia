@@ -26,6 +26,7 @@ class UNREALPHOBIA_API ACreatureBase : public ACharacter
 public:
     // Sets default values for this character's properties
     ACreatureBase();
+    ~ACreatureBase();
 
 protected:
     // Called when the game starts or when spawned
@@ -105,7 +106,8 @@ public:
 
     Protocol::MoveState GetCreatureState() { return CurrentInfo->state(); }
     void SetCreatureState(Protocol::CreatureState State);
-
+    uint64 ICreatureObjectId = 0;
+    void SetObjectId(uint64 ObjectId);
     void SetCurrentInfo(const Protocol::PosInfo& Info);
     void SetDestInfo(const Protocol::PosInfo& Info);
     Protocol::PosInfo* GetCurrentInfo() { return CurrentInfo; }

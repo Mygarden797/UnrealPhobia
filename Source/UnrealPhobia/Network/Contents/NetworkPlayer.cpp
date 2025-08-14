@@ -301,7 +301,7 @@ void ANetworkPlayer::Tick(float DeltaTime)
 
             Protocol::C_MOVE MovePkt;
 
-            float speed = GetVelocity().Size();
+            float speed = GetCharacterMovement()->MaxWalkSpeed;
 
             // Current position information
             {

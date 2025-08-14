@@ -31,6 +31,6 @@ public:
 
     bool SpawnTrigger(Protocol::ObjectInfo);
     
-    bool SpawnCreature(FVector SpawnPoint, FRotator SpawnRotate, Protocol::CreatureType Creature, bool bAIControl);
+    bool SpawnCreature(uint64 ObjectId, FVector SpawnPoint, FRotator SpawnRotate, Protocol::CreatureType Creature, bool bAIControl);
 
 };
