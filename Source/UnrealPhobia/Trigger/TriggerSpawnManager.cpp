@@ -107,7 +107,7 @@ bool ATriggerSpawnManager::SpawnTrigger(int32 index)
         CurrentTriggerCount++;
 
         // 스폰된 트리거에 트리거 종류 랜덤으로 부여
-        int32 RandValue = FMath::RandRange(0, static_cast<int32>(ETriggerName::None) - 1);
+        int32 RandValue = FMath::RandRange(1, 2); // 0은 none, 1~2 범위의 트리거 스폰
         SpawnedTrigger->SetTriggerName(static_cast<ETriggerName>(RandValue));
         SpawnedTrigger->TriggerSpawnPoint = SelectedPoint;
         return true;

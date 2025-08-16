@@ -8,9 +8,6 @@
 void UInventoryWidget::NativeConstruct()
 {
     Super::NativeConstruct();
-
-    Super::NativeConstruct();
-
     if (APlayerController *PC = GetOwningPlayer())
     {
         if (APawn *Pawn = PC->GetPawn())
@@ -18,9 +15,6 @@ void UInventoryWidget::NativeConstruct()
             InvComp = Pawn->FindComponentByClass<UTriggerInventory>();
         }
     }
-
-    if (!InvComp)
-        return;
 
     RefreshInventory();
 }
