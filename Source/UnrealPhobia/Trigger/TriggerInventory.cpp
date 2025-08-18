@@ -51,6 +51,7 @@ bool UTriggerInventory::SetCameraComponent()
 void UTriggerInventory::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
 
 void UTriggerInventory::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
@@ -170,7 +171,7 @@ void UTriggerInventory::DropOff()
 
 void UTriggerInventory::SelectSlot(int32 Index)
 {
-	if (Index <= MaxInventorySize)
+	if (Index <= MaxInventorySize && Index > 0)
 	{
 		SelectedIndex = Index - 1;
 		UE_LOG(LogTemp, Log, TEXT("Slot Changed to %d"), SelectedIndex + 1);

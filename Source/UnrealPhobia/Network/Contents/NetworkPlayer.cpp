@@ -1087,8 +1087,6 @@ void ANetworkPlayer::SwitchFlash(const FInputActionValue &value)
                 GetActorLocation());
         }
     }
-
-    UE_LOG(LogTemp, Log, TEXT("set"));
 }
 // 추적 상태 업데이트 및 컨트롤러에 전달
 void ANetworkPlayer::SetChaseState(EChaseState NewState)

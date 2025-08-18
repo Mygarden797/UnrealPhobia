@@ -21,7 +21,7 @@ void UInventoryWidget::NativeConstruct()
 
 void UInventoryWidget::RefreshInventory()
 {
-    if (!InvComp || !SlotGrid || !*InventorySlotClass)
+    if (!InvComp || !SlotGrid || !InventorySlotClass)
         return;
 
     const TArray<ETriggerName> &Slots = InvComp->Inventory;
