@@ -51,7 +51,6 @@ bool UTriggerInventory::SetCameraComponent()
 void UTriggerInventory::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void UTriggerInventory::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
@@ -107,7 +106,18 @@ void UTriggerInventory::PickUp()
 
 				UE_LOG(LogTemp, Log, TEXT("You got %s! [%d/%d], ID : %d"), *HitActor->GetName(), ++CurrentInventorySize, MaxInventorySize, TriggerIDs[ValidIndex]);
 				if (HitTrigger->TriggerSpawnPoint)
+				{
 					HitTrigger->TriggerSpawnPoint->bCanSpawn = true;
+				}
+
+				if (NetworkPlayer)
+				{
+					NetworkPlayer->PlaySelectedAnimMontage(NetworkPlayer->PickUpMontage, 2.0f);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Error, TEXT("PlaySelectedAnimMontage failed! (Failed to set NetworkPlayer)"));
+				}
 
 				HitActor->Destroy();
 			}

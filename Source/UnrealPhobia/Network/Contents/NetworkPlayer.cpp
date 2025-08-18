@@ -1301,3 +1301,14 @@ void ANetworkPlayer::HideSettings()
         return;
     }
 }
+
+void ANetworkPlayer::PlaySelectedAnimMontage(UAnimMontage *AnimMontage, float PlayRate)
+{
+    if (!AnimMontage)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Selected AnimMontage is null."));
+        return;
+    }
+    PlayAnimMontage(AnimMontage, PlayRate);
+    UE_LOG(LogTemp, Log, TEXT("Anim Montage Played"));
+}

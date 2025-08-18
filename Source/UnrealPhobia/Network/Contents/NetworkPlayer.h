@@ -5,27 +5,27 @@
 #include "CoreMinimal.h"
 #include "Network/Contents/ProtoPlayer.h"
 #include "InputActionValue.h"
-#include "Creature/CreatureBase.h"        // Creature Perception
-#include "AttackCameraWidget.h"          // 공격 카메라
+#include "Creature/CreatureBase.h" // Creature Perception
+#include "AttackCameraWidget.h"    // 공격 카메라
 #include "Types/ChaseSystemTypes.h"
 #include "Assets/AudioAssets.h"
 #include "Managers/SoundManager.h"
 #include "Settings/GameSettingsWidget.h"
 #include "NetworkPlayer.generated.h"
- 
+
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 class USpotLightComponent;
 class UAudioAssets;
-
+class UAnimMontage;
 /**
  *      Name				    : ANetworkPlayer
  *      Description		    : Network-enabled Player Character with Survivor features
  *      LastUpdate		    : 2025/08/09
  *      개선사항             : 위젯 생성을 템플릿으로 일반화
-*/
+ */
 
 UCLASS(Blueprintable)
 class UNREALPHOBIA_API ANetworkPlayer : public AProtoPlayer
@@ -53,7 +53,7 @@ public:
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<class UUserWidget> ForceActivateProgressWidgetClass;
-    
+
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<class UGameSettingsWidget> AudioSettingsWidgetClass;
 
@@ -88,14 +88,14 @@ public:
     UPROPERTY()
     class UUserWidget *ForceActivateProgressWidget; // Changed to UUserWidget
 
-    /* Movement Functions */ 
+    /* Movement Functions */
     void Move(const FInputActionValue &Value);
     void MoveReleased();
     void Look(const FInputActionValue &Value);
     // ChangeView
     void SwitchCameraView(const FInputActionValue &Value);
 
-    /* Sprint Handler */ 
+    /* Sprint Handler */
     void Sprint(const FInputActionValue &Value);
     void StartSprint();
     void StopSprint();
@@ -128,27 +128,27 @@ public:
     FORCEINLINE class UCameraComponent *GetFollowCamera() const { return FollowCamera; }
 
     UPROPERTY()
-    class ACandleRoom* CurrentCandleRoom;
-    class ACandleRoom* TouchingCandleRoom;
+    class ACandleRoom *CurrentCandleRoom;
+    class ACandleRoom *TouchingCandleRoom;
 
     void DecreaseMental();
     void RegenMental();
     void ActivateRandomMentalTrigger();
 
-	void OnForceActivatePressed();
+    void OnForceActivatePressed();
 
-	void OnForceActivateReleased();
+    void OnForceActivateReleased();
 
-	void ForceActivateCandleRoom();
+    void ForceActivateCandleRoom();
 
-	FTimerHandle ForceActivateTimerHandle;
+    FTimerHandle ForceActivateTimerHandle;
 
     // New: Force Activate Progress UI
     FTimerHandle ForceActivateProgressTimerHandle; // Timer for UI updates
-    float ForceActivateProgressElapsed = 0.0f; // Elapsed time for progress
-    const float ForceActivateDuration = 10.0f; // Total duration for force activation
-    void UpdateForceActivateProgress(); // Function to update the UI
-    void HideForceActivateProgress(); // Function to hide the UI
+    float ForceActivateProgressElapsed = 0.0f;     // Elapsed time for progress
+    const float ForceActivateDuration = 10.0f;     // Total duration for force activation
+    void UpdateForceActivateProgress();            // Function to update the UI
+    void HideForceActivateProgress();              // Function to hide the UI
 
     UFUNCTION()
     void OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRenderTarget2D *RenderTarget);
@@ -162,7 +162,7 @@ public:
 
     /* Environment Settings Widgets */
     UFUNCTION(BlueprintCallable, Category = "UI")
-    void ToggleAudioSettings(const FInputActionValue& Value);
+    void ToggleAudioSettings(const FInputActionValue &Value);
 
     UFUNCTION(BlueprintCallable, Category = "UI")
     void ShowSettings(TSubclassOf<UGameSettingsWidget> WidgetClassToShow);
@@ -170,6 +170,10 @@ public:
     UFUNCTION(BlueprintCallable, Category = "UI")
     void HideSettings();
 
+    UPROPERTY(EditDefaultsOnly, Category = "Animation")
+    UAnimMontage *PickUpMontage;
+
+    void PlaySelectedAnimMontage(UAnimMontage *AnimMontage, float PlayRate);
 
 protected:
     virtual void BeginPlay() override;
@@ -221,8 +225,8 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     TObjectPtr<UInputAction> CrouchAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UInputAction> ForceActivateAction;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<UInputAction> ForceActivateAction;
 
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     TObjectPtr<UInputAction> SwitchFlashAction;
@@ -236,12 +240,12 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
     float BaseSpeed = 400.0f;
 
-    //ProtoPlayer로 이전
-    //UPROPERTY(BlueprintReadWrite, Category = "Stamina")
-    //bool bIsSprinting = false;
+    // ProtoPlayer로 이전
+    // UPROPERTY(BlueprintReadWrite, Category = "Stamina")
+    // bool bIsSprinting = false;
 
-    //UPROPERTY(BlueprintReadWrite, Category = "Stamina")
-    //bool bIsCrouch = false;
+    // UPROPERTY(BlueprintReadWrite, Category = "Stamina")
+    // bool bIsCrouch = false;
 
     UPROPERTY(BlueprintReadWrite, Category = "Mental")
     bool bIsFear = false;
@@ -273,7 +277,6 @@ protected:
     FTimerHandle MentalDecayTimerHandle;
     FTimerHandle MentalRegenTimerHandle;
     FTimerHandle MentalRegenDurationHandle;
- 
 
     bool bIsInMentalRegenZone = false;
 
@@ -330,7 +333,7 @@ private:
     bool bIsAudioSettingsVisible;
     void UpdateStaminaBar();
     void UpdateMentalBar();
-    //void OnToggleAudioSettings(const FInputActionValue& Value);
+    // void OnToggleAudioSettings(const FInputActionValue& Value);
     void CreateAudioSettingsWidget();
 
     /*AI Perception Hearing*/
@@ -341,8 +344,6 @@ public:
     UFUNCTION(BlueprintCallable)
     void MakeWalkNoiseEvent();
 
-
-    
 private:
     float RunNoise = 3000.f;
     float RunLoudness = 1.3f;
@@ -350,7 +351,7 @@ private:
     float WalkNoise = 750.f;
     float WalkLoudness = 1.0f;
 
-    USoundManager* GetSoundManager() const;
+    USoundManager *GetSoundManager() const;
 
     /*무적 시간 관리를 위한 변수*/
     float InvincibleTime = 5.0f;
@@ -358,7 +359,7 @@ private:
     FTimerHandle FInvincibleTimerHandle;
 
 public:
-    bool GetIsinvincible() { return bIsinvincible;};
+    bool GetIsinvincible() { return bIsinvincible; };
     void StartInvincible();
     void EndInvincible();
 };
