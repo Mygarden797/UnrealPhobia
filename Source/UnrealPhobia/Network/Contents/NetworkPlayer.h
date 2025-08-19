@@ -13,6 +13,13 @@
 #include "Settings/GameSettingsWidget.h"
 #include "NetworkPlayer.generated.h"
 
+/**
+ *      Name				    : ANetworkPlayer
+ *      Description		    : Network-enabled Player Character with Survivor features
+ *      LastUpdate		    : 2025/08/09
+ *      개선사항             : 위젯 생성을 템플릿으로 일반화
+ */
+
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
@@ -20,12 +27,8 @@ class UInputAction;
 class USpotLightComponent;
 class UAudioAssets;
 class UAnimMontage;
-/**
- *      Name				    : ANetworkPlayer
- *      Description		    : Network-enabled Player Character with Survivor features
- *      LastUpdate		    : 2025/08/09
- *      개선사항             : 위젯 생성을 템플릿으로 일반화
- */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPlayMontageNotifyBegin, FName, NotifyName, const FBranchingPointNotifyPayload&, BranchingPointNotifyPayload);
 
 UCLASS(Blueprintable)
 class UNREALPHOBIA_API ANetworkPlayer : public AProtoPlayer
@@ -190,6 +193,8 @@ protected:
 
     UPROPERTY(EditAnywhere, Category = "Audio")
     TSubclassOf<UAudioAssets> AudioDataAssetClass;
+
+
 
     FTimerHandle CameraLerpTimer;
     FVector StartOffset;
@@ -363,4 +368,19 @@ public:
     bool GetIsinvincible() { return bIsinvincible; };
     void StartInvincible();
     void EndInvincible();
+
+
+    // NotifyState 시작
+    UFUNCTION()
+    void OnNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& Payload);
+
+    // NotifyState 종료
+    //UFUNCTION()
+    //void OnNotifyEnd(FName NotifyName, const FBranchingPointNotifyPayload& Payload);
+
+    // 사운드 에셋
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+    USoundBase* WalkSound;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+    USoundBase* RunSound;
 };

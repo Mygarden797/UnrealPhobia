@@ -38,7 +38,10 @@ public:
     TObjectPtr<USoundBase> Scream;
 
     UPROPERTY(EditAnywhere, Category = "Survivor")
-    TObjectPtr<USoundBase> WalkingSteps;
+    TObjectPtr<USoundBase> WalkSteps;
+
+    UPROPERTY(EditAnywhere, Category = "Survivor")
+    TObjectPtr<USoundBase> RunSteps;
 
     UPROPERTY(EditAnywhere, Category = "Survivor")
     TObjectPtr<USoundBase> SwitchFlashLight;
