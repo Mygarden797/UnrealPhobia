@@ -198,6 +198,12 @@ void ACreatureBase::Tick(float DeltaTime)
 
 
             SetActorLocation(NextLocation);
+
+            // 크리쳐 상태 지정하는 코드
+            if (DestInfo->creature_state() == Protocol::CreatureState::CREATURE_STATE_ATTACK)
+            {
+                ActivateAttackCamera();
+            }
         }
     }
 
@@ -455,11 +461,6 @@ void ACreatureBase::SetDestInfo(const Protocol::PosInfo& Info)
     // Dest에 최종 상태 복사.
     DestInfo->CopyFrom(Info);
 
-    // 크리쳐 상태 지정하는 코드
-    if (DestInfo->creature_state() == Protocol::CreatureState::CREATURE_STATE_ATTACK)
-    {
-        ActivateAttackCamera();
-    }
 }
 
 void ACreatureBase::OnAttackCameraTimerEnd()
