@@ -376,9 +376,7 @@ void ANetworkPlayer::Tick(float DeltaTime)
 
             if (DesiredSpeed > 400.f || DesiredSpeed < 400.f)
             {
-
             }
-
 
             SEND_PACKET(MovePkt);
         }
@@ -686,9 +684,6 @@ void ANetworkPlayer::GameWin()
             PlayerController->bShowMouseCursor = true;
         }
     }
-    Protocol::C_DEFEAT Pkt;
-
-    SEND_PACKET(Pkt);
 
     UNetworkManager* GameInstance = Cast<UNetworkManager>(GetGameInstance());
     GameInstance->DisconnectFromGameServer();
@@ -886,7 +881,7 @@ void ANetworkPlayer::MakeWalkNoiseEvent()
     /* 1.of는 Loudness, WalkNoise는 Max Range로 아무리 소리가 커도 Max Range 이후로는 전달되지 않는다.*/
 }
 
-void ANetworkPlayer::OnCreatureAttackCamera(ACreatureBase* Creature, UTextureRenderTarget2D* RenderTarget)
+void ANetworkPlayer::OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRenderTarget2D *RenderTarget, AProtoPlayer* AttackedPlayer)
 {
     if (!AttackCameraWidget || !Creature || !RenderTarget)
     {
@@ -895,9 +890,10 @@ void ANetworkPlayer::OnCreatureAttackCamera(ACreatureBase* Creature, UTextureRen
 
     // 여기 어떤 플레이어가 화면을 봐야 하는지
 
-    // 일단 모든 플레이어에게 보여주기
-    AttackCameraWidget->ShowAttackCamera(RenderTarget, 3.0f);
-    SetMoveState(Protocol::MOVE_STATE_ATTACKED);
+    if (Cast<AProtoPlayer>(this) != AttackedPlayer)
+    {
+        AttackCameraWidget->ShowAttackCamera(RenderTarget, 3.0f);
+    }
 
     UE_LOG(LogTemp, Log, TEXT("Player Controller received attack camera from %s"), *Creature->GetName());
 }
