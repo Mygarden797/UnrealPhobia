@@ -292,6 +292,7 @@ protected:
     FVector2D DesiredInput;
     FVector DesiredMoveDirection;
     float DesiredYaw;
+    float DesiredSpeed;
 
     // Dirty Flag Test
     FVector2D LastDesiredInput;

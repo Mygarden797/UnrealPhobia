@@ -35,6 +35,7 @@ AProtoPlayer::AProtoPlayer()
     GetCharacterMovement()->JumpZVelocity = 700.f;
     GetCharacterMovement()->AirControl = 0.35f;
     GetCharacterMovement()->MaxWalkSpeed = 400.f;
+    GetCharacterMovement()->MaxWalkSpeedCrouched = 200.f;
     GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
     GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
@@ -91,30 +92,32 @@ void AProtoPlayer::Tick(float DeltaSeconds)
         FVector NextLocation = Location + MoveDir* MoveDist;
 
         SetActorLocation(NextLocation);*/
+
         const Protocol::MoveState State = PlayerInfo->state();
         const Protocol::CrouchState IsCrouch = PlayerInfo->crouch();
-        float speed = PlayerInfo->speed();
+        float speed = DestInfo->speed();
+        GetCharacterMovement()->MaxWalkSpeed = speed;
+        GetCharacterMovement()->MaxWalkSpeedCrouched = speed * 0.5f;
 
         if (IsCrouch == Protocol::CROUCH_STATE_CROUCH)
         {
             bIsCrouch = true;
             Crouch();
             bIsSprinting = false;
-            SetCrouch();
+            GetCharacterMovement()->MaxWalkSpeed = speed * 0.5f;
+            //SetCrouch();
         }
         else if (IsCrouch == Protocol::CROUCH_STATE_UNCROUCH)
         {
             bIsSprinting = true;
             UnCrouch();
             bIsCrouch = false;
-            GetCharacterMovement()->MaxWalkSpeed = speed;
-            SetWalk();
+            //SetWalk();
         }
         
 
         if (State == Protocol::MOVE_STATE_RUN)
         { 
-            GetCharacterMovement()->MaxWalkSpeed = speed;
             SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             AddMovementInput(GetActorForwardVector());
 
@@ -125,9 +128,12 @@ void AProtoPlayer::Tick(float DeltaSeconds)
         else if (State == Protocol::MOVE_STATE_SPRINT)
         {
             //SetSprint();
-            GetCharacterMovement()->MaxWalkSpeed = speed;
             SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             AddMovementInput(GetActorForwardVector());
+        }
+        else if (State == Protocol::MOVE_STATE_ATTACKED)
+        {
+            SetActorLocation(FVector(DestInfo->x(), DestInfo->y(), DestInfo->z()));
         }
 
     }
