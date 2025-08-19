@@ -860,6 +860,7 @@ void ANetworkPlayer::MakeRunNoiseEvent()
         UGameplayStatics::PlaySoundAtLocation(this, WalkSound, GetActorLocation());
         // UGameplayStatics::SpawnSoundAttached(WalkSound, GetMesh(), TEXT("LeftFoot_Socket"));
         // UGameplayStatics::SpawnSoundAttached(WalkSound, GetMesh(), TEXT("RightFoot_Socket"));
+        UE_LOG(LogTemp, Log, TEXT("Walk"));
     }
     UE_LOG(LogTemp, Warning, TEXT("MakeRunNoiseEvent is Activate"));
     UAISense_Hearing::ReportNoiseEvent(GetWorld(), GetActorLocation(), RunLoudness, this, RunNoise, FName(TEXT("RunFootprint")));
@@ -874,6 +875,7 @@ void ANetworkPlayer::MakeWalkNoiseEvent()
         UGameplayStatics::PlaySoundAtLocation(this, RunSound, GetActorLocation());
         //  UGameplayStatics::SpawnSoundAttached(WalkSound, GetMesh(), TEXT("LeftFoot_Socket"));
         //  UGameplayStatics::SpawnSoundAttached(WalkSound, GetMesh(), TEXT("RightFoot_Socket"));
+        UE_LOG(LogTemp, Log, TEXT("Run"));
     }
 
     UE_LOG(LogTemp, Warning, TEXT("MakeWalkNoiseEvent is Activate"));
