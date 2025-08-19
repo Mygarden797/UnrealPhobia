@@ -364,14 +364,12 @@ void ANetworkPlayer::Tick(float DeltaTime)
                 Info->set_yaw(DesiredYaw);
                 Info->set_state(GetMoveState());
                 Info->set_crouch(GetCrouchState());
-                Info->set_speed(DesiredSpeed); 
+                Info->set_speed(DesiredSpeed);
             }
 
             if (DesiredSpeed > 400.f || DesiredSpeed < 400.f)
             {
-
             }
-
 
             SEND_PACKET(MovePkt);
         }
@@ -679,9 +677,6 @@ void ANetworkPlayer::GameWin()
             PlayerController->bShowMouseCursor = true;
         }
     }
-    Protocol::C_DEFEAT Pkt;
-
-    SEND_PACKET(Pkt);
 
     UNetworkManager *GameInstance = Cast<UNetworkManager>(GetGameInstance());
     GameInstance->DisconnectFromGameServer();

@@ -1,15 +1,13 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Managers/SoundManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundBase.h"
 #include "Components/AudioComponent.h"
 #include "Misc/ConfigCacheIni.h"
 
-
 // Initalize External Resources
-void USoundManager::Initialize(FSubsystemCollectionBase& Collection)
+void USoundManager::Initialize(FSubsystemCollectionBase &Collection)
 {
     Super::Initialize(Collection);
     // UE_LOG(LogTemp, Warning, TEXT("USoundManager::Initalize(), should be called only one time"));
@@ -51,36 +49,36 @@ void USoundManager::Deinitialize()
 
 void USoundManager::Tick(float DeltaTime)
 {
-    if (GEngine)
-    {
-        // 1. AudioAssets 데이터 에셋 자체의 유효성 검사
-        if (IsValid(AudioAssets))
+    /*     if (GEngine)
         {
-            GEngine->AddOnScreenDebugMessage(3, 0.f, FColor::Green, TEXT("SoundManager: AudioAssets is Valid"));
-
-            if (IsValid(AudioAssets->BeingChased))
+            // 1. AudioAssets 데이터 에셋 자체의 유효성 검사
+            if (IsValid(AudioAssets))
             {
-                GEngine->AddOnScreenDebugMessage(4, 0.f, FColor::Green, TEXT("SoundManager: AudioAssets->BeingChased is Valid"));
+                GEngine->AddOnScreenDebugMessage(3, 0.f, FColor::Green, TEXT("SoundManager: AudioAssets is Valid"));
+
+                if (IsValid(AudioAssets->BeingChased))
+                {
+                    GEngine->AddOnScreenDebugMessage(4, 0.f, FColor::Green, TEXT("SoundManager: AudioAssets->BeingChased is Valid"));
+                }
+                else
+                {
+                    GEngine->AddOnScreenDebugMessage(4, 0.f, FColor::Red, TEXT("SoundManager: AudioAssets->BeingChased is NOT Valid"));
+                }
             }
             else
             {
-                GEngine->AddOnScreenDebugMessage(4, 0.f, FColor::Red, TEXT("SoundManager: AudioAssets->BeingChased is NOT Valid"));
+                GEngine->AddOnScreenDebugMessage(3, 0.f, FColor::Red, TEXT("SoundManager: AudioAssets is NOT Valid"));
             }
-        }
-        else
-        {
-            GEngine->AddOnScreenDebugMessage(3, 0.f, FColor::Red, TEXT("SoundManager: AudioAssets is NOT Valid"));
-        }
 
-        if (IsValid(BeingChasedSource))
-        {
-            GEngine->AddOnScreenDebugMessage(5, 0.f, FColor::Green, TEXT("SoundManager: BeingChaseSource is Valid"));
-        }
-        else
-        {
-            GEngine->AddOnScreenDebugMessage(5, 0.f, FColor::Red, TEXT("SoundManager: BeingChaseSource is NOT Valid"));
-        }
-    }
+            if (IsValid(BeingChasedSource))
+            {
+                GEngine->AddOnScreenDebugMessage(5, 0.f, FColor::Green, TEXT("SoundManager: BeingChaseSource is Valid"));
+            }
+            else
+            {
+                GEngine->AddOnScreenDebugMessage(5, 0.f, FColor::Red, TEXT("SoundManager: BeingChaseSource is NOT Valid"));
+            }
+        } */
 }
 
 // [5] Tickable 시스템이 통계 정보를 수집하기 위해 필요한 함수입니다. 아래와 같이 그대로 작성하면 됩니다.
@@ -145,20 +143,21 @@ void USoundManager::PlayScream()
 }
 
 // 공간계에서 출력
-void USoundManager::PlaySFX3D(UObject* Object, USoundBase* SFX, FVector Location, FRotator Rotation, USoundAttenuation* AttenuationSettings)
+void USoundManager::PlaySFX3D(UObject *Object, USoundBase *SFX, FVector Location, FRotator Rotation, USoundAttenuation *AttenuationSettings)
 {
-    if (!SFX) return;
+    if (!SFX)
+        return;
     else
     {
         UGameplayStatics::PlaySoundAtLocation(
             Object,
             SFX,
             Location,
-            Rotation,                               // Rotation
-            1.0f,                                       // Volume
-            1.0f,                                       // Pitch
-            0.0f,                                       // Start Time
-            AttenuationSettings);           // Attenuation Asset
+            Rotation,             // Rotation
+            1.0f,                 // Volume
+            1.0f,                 // Pitch
+            0.0f,                 // Start Time
+            AttenuationSettings); // Attenuation Asset
     }
 }
 
@@ -183,7 +182,6 @@ void USoundManager::PlayBeingChased(EChaseState CurrentState)
         BeingChasedSource->bAutoDestroy = false;
     }
 
-
     switch (CurrentState)
     {
     case EChaseState::BeingChased:
@@ -195,7 +193,6 @@ void USoundManager::PlayBeingChased(EChaseState CurrentState)
         else
         {
             BeingChasedSource->FadeIn(0.4f, 1.0f);
-
         }
         // UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayingBeingChased(): Fade In"));
         break;
@@ -243,7 +240,6 @@ void USoundManager::ApplyVolume()
     }
     // UE_LOG(LogTemp, Warning, TEXT("=== 3. SoundManager Received Signal and is Applying Volume! ==="));
 
-
     const float MasterVolume = AudioSettings->GetVolume(EAudioCategory::Master);
     const float MusicVolume = AudioSettings->GetVolume(EAudioCategory::Music);
     const float SFXVolume = AudioSettings->GetVolume(EAudioCategory::SFX);
@@ -254,7 +250,7 @@ void USoundManager::ApplyVolume()
     UGameplayStatics::SetSoundMixClassOverride(this, AudioAssets->GlobalSoundMix, AudioAssets->SFXSoundClass, SFXVolume, 1.0f, 0.0f);
     UGameplayStatics::SetSoundMixClassOverride(this, AudioAssets->GlobalSoundMix, AudioAssets->UISoundClass, UIVolume, 1.0f, 0.0f);
 
-    //UE_LOG(LogTemp, Log,
-     //   TEXT("Applied volume settings: Master=%.2f, Music=%.2f, SFX=%.2f, UI=%.2f"),
-      //   MasterVolume, MusicVolume, SFXVolume, UIVolume);
+    // UE_LOG(LogTemp, Log,
+    //    TEXT("Applied volume settings: Master=%.2f, Music=%.2f, SFX=%.2f, UI=%.2f"),
+    //    MasterVolume, MusicVolume, SFXVolume, UIVolume);
 }

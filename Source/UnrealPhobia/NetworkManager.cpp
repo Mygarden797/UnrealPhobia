@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "NetworkManager.h"
 #include "Sockets.h"
 #include "Common/TcpSocketBuilder.h"
@@ -50,7 +49,7 @@ void UNetworkManager::ConnectToGameServer()
     }
 }
 
-//매치메이킹전용
+// 매치메이킹전용
 void UNetworkManager::ConnectToGameServer(FString ServerIP, FString RoomId)
 {
     Socket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(TEXT("Stream"), TEXT("Client Socket"));
@@ -77,9 +76,9 @@ void UNetworkManager::ConnectToGameServer(FString ServerIP, FString RoomId)
         // TEMP : Lobby���� ĳ���� ����â ��
         {
             Protocol::C_MATCH Pkt;
-            const TCHAR* Str = *RoomId;
+            const TCHAR *Str = *RoomId;
             uint64 ParsedValue = FCString::Strtoui64(Str, nullptr, 10);
-            Pkt.set_room_id(ParsedValue); 
+            Pkt.set_room_id(ParsedValue);
             SendBufferRef SendBuffer = ClientPacketHandler::MakeSendBuffer(Pkt);
             SendPacket(SendBuffer);
         }
@@ -97,7 +96,6 @@ void UNetworkManager::DisconnectFromGameServer()
 
     Protocol::C_LEAVE_GAME LeavePkt;
     SEND_PACKET(LeavePkt);
-
 }
 
 void UNetworkManager::HandleRecvPackets()
@@ -116,12 +114,12 @@ void UNetworkManager::SendPacket(SendBufferRef SendBuffer)
     GameServerSession->SendPacket(SendBuffer);
 }
 
-void UNetworkManager::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool IsMine)
+void UNetworkManager::HandleSpawn(const Protocol::ObjectInfo &ObjectInfo, bool IsMine)
 {
     if (Socket == nullptr || GameServerSession == nullptr)
         return;
 
-    auto* World = GetWorld();
+    auto *World = GetWorld();
     if (World == nullptr)
         return;
 
@@ -134,8 +132,8 @@ void UNetworkManager::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool I
 
     if (IsMine)
     {
-        auto* PC = UGameplayStatics::GetPlayerController(this, 0);
-        AProtoPlayer* Player = Cast<AProtoPlayer>(PC->GetPawn());
+        auto *PC = UGameplayStatics::GetPlayerController(this, 0);
+        AProtoPlayer *Player = Cast<AProtoPlayer>(PC->GetPawn());
         if (Player == nullptr)
             return;
 
@@ -149,46 +147,44 @@ void UNetworkManager::HandleSpawn(const Protocol::ObjectInfo& ObjectInfo, bool I
         // 또는 충돌 처리 옵션 추가
         FActorSpawnParameters SpawnParams;
         SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-        AProtoPlayer* Player = World->SpawnActor<AProtoPlayer>(OtherPlayerClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
-        //AProtoPlayer* Player = Cast<AProtoPlayer>(World->SpawnActor(OtherPlayerClass, &SpawnLocation));
+        AProtoPlayer *Player = World->SpawnActor<AProtoPlayer>(OtherPlayerClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+        // AProtoPlayer* Player = Cast<AProtoPlayer>(World->SpawnActor(OtherPlayerClass, &SpawnLocation));
         Player->SetPlayerInfo(ObjectInfo.pos_info());
         Players.Add(ObjectInfo.object_id(), Player);
     }
 }
 
-void UNetworkManager::HandleSpawn(const Protocol::S_ENTER_GAME& EnterGamePkt)
+void UNetworkManager::HandleSpawn(const Protocol::S_ENTER_GAME &EnterGamePkt)
 {
     HandleSpawn(EnterGamePkt.player(), true);
 }
 
-
-void UNetworkManager::HandleSpawn(const Protocol::S_SPAWN& SpawnPkt)
+void UNetworkManager::HandleSpawn(const Protocol::S_SPAWN &SpawnPkt)
 {
-    for (auto& Player : SpawnPkt.players())
+    for (auto &Player : SpawnPkt.players())
     {
         HandleSpawn(Player, false);
     }
-    for (auto& Creature : SpawnPkt.creatures())
+    for (auto &Creature : SpawnPkt.creatures())
     {
         //****소환 가져오기에서 수정 필요
-        auto* World = GetWorld();
+        auto *World = GetWorld();
         if (World == nullptr)
             return;
 
         bool bAIContol;
-        if (MyPlayer->MyPlayerId % 2 == Creature.creature_info().creature_control()%2)
+        if (MyPlayer->MyPlayerId % 2 == Creature.creature_info().creature_control() % 2)
             bAIContol = true;
         else
             bAIContol = false;
 
-        auto* GameState = Cast<AProtoGameState>(World->GetGameState());
+        auto *GameState = Cast<AProtoGameState>(World->GetGameState());
         GameState->SpawnCreature(
             Creature.object_id(),
             FVector(Creature.pos_info().x(), Creature.pos_info().y(), Creature.pos_info().z()),
             FRotator(0.0f, Creature.pos_info().yaw(), 0.0f),
             Creature.creature_info().creature_type(),
-            bAIContol
-        );
+            bAIContol);
     }
 }
 
@@ -197,95 +193,94 @@ void UNetworkManager::HandleDespawn(uint64 ObjectId)
     if (Socket == nullptr || GameServerSession == nullptr)
         return;
 
-    auto* World = GetWorld();
+    auto *World = GetWorld();
     if (World == nullptr)
         return;
 
-    AProtoPlayer** FindActor = Players.Find(ObjectId);
+    AProtoPlayer **FindActor = Players.Find(ObjectId);
     if (FindActor == nullptr)
         return;
 
     World->DestroyActor(*FindActor);
 }
 
-
-void UNetworkManager::HandleDespawn(const Protocol::S_DESPAWN& DespawnPkt)
+void UNetworkManager::HandleDespawn(const Protocol::S_DESPAWN &DespawnPkt)
 {
-    for (auto& ObjectId : DespawnPkt.object_ids())
+    for (auto &ObjectId : DespawnPkt.object_ids())
     {
         HandleDespawn(ObjectId);
     }
 }
 
-void UNetworkManager::HandleMove(const Protocol::S_MOVE& MovePkt)
+void UNetworkManager::HandleMove(const Protocol::S_MOVE &MovePkt)
 {
     if (Socket == nullptr || GameServerSession == nullptr)
         return;
 
-    auto* World = GetWorld();
+    auto *World = GetWorld();
     if (World == nullptr)
         return;
 
     const uint64 ObjectId = MovePkt.info().object_id();
-    AProtoPlayer** FindActor = Players.Find(ObjectId);
+    AProtoPlayer **FindActor = Players.Find(ObjectId);
     if (FindActor == nullptr)
         return;
 
-    AProtoPlayer* Player = (*FindActor);
+    AProtoPlayer *Player = (*FindActor);
     if (Player->IsMyPlayer())
         return;
 
-    const Protocol::PosInfo& Info = MovePkt.info();
-    //Player->SetPlayerInfo(Info);
+    const Protocol::PosInfo &Info = MovePkt.info();
+    // Player->SetPlayerInfo(Info);
     Player->SetDestInfo(Info);
 }
 
-void UNetworkManager::HandleCreatureBehavior(const Protocol::S_CREATURE_BEHAVIOR& MovePkt)
+void UNetworkManager::HandleCreatureBehavior(const Protocol::S_CREATURE_BEHAVIOR &MovePkt)
 {
     if (Socket == nullptr || GameServerSession == nullptr)
         return;
 
-    auto* World = GetWorld();
+    auto *World = GetWorld();
     if (World == nullptr)
         return;
 
     const uint64 ObjectId = MovePkt.info().object_id();
-    ACreatureBase** FindActor = Creatures.Find(ObjectId);
+    ACreatureBase **FindActor = Creatures.Find(ObjectId);
     if (FindActor == nullptr)
         return;
 
-    ACreatureBase* Creature = (*FindActor);
+    ACreatureBase *Creature = (*FindActor);
 
-    const Protocol::PosInfo& Info = MovePkt.info();
+    const Protocol::PosInfo &Info = MovePkt.info();
     Creature->SetDestInfo(Info);
 }
 
-//Ÿ�̸� ����
-void UNetworkManager::HandleTimer(const Protocol::S_TIMER& TimerPkt)
+// Ÿ�̸� ����
+void UNetworkManager::HandleTimer(const Protocol::S_TIMER &TimerPkt)
 {
     const uint64 Timer = TimerPkt.timer();
     UE_LOG(LogTemp, Log, TEXT("Timer : %llu"), Timer);
 }
 
-//SpawnTrigger로 바꾸면 좋을 듯
-void UNetworkManager::HandleStart(const Protocol::S_START& StartPkt)
+// SpawnTrigger로 바꾸면 좋을 듯
+void UNetworkManager::HandleStart(const Protocol::S_START &StartPkt)
 {
     if (Socket == nullptr || GameServerSession == nullptr)
         return;
 
-    auto* World = GetWorld();
+    auto *World = GetWorld();
     if (World == nullptr)
         return;
 
-    auto* GameState = Cast<AProtoGameState>(World->GetGameState());
+    auto *GameState = Cast<AProtoGameState>(World->GetGameState());
 
-    for (auto& Trigger : StartPkt.triggers())
+    for (auto &Trigger : StartPkt.triggers())
     {
         GameState->SpawnTrigger(Trigger);
     }
 }
 
-//매치 요청
+// 매치 요청
 void UNetworkManager::RequestMatch()
 {
     UE_LOG(LogTemp, Log, TEXT("Requesting match%s"));
@@ -308,7 +303,7 @@ void UNetworkManager::RequestMatch()
     Request->ProcessRequest();
 }
 
-FHttpRequestRef UNetworkManager::CreateAPIRequest(const FString& Endpoint, const FString& Method)
+FHttpRequestRef UNetworkManager::CreateAPIRequest(const FString &Endpoint, const FString &Method)
 {
     FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
 
@@ -348,6 +343,7 @@ void UNetworkManager::OnMatchRequestResponse(FHttpRequestPtr Request, FHttpRespo
                 UE_LOG(LogTemp, Log, TEXT("Match found! room ID: %s, Message: %s"), *RoomId, *Message);
 
                 // 여기서 게임서버 연결 로직 추가 가능
+                UGameplayStatics::OpenLevel(this, FName(TEXT("Demo")));
                 ConnectToGameServer(ServerIP, RoomId);
             }
         }
@@ -359,7 +355,7 @@ void UNetworkManager::OnMatchRequestResponse(FHttpRequestPtr Request, FHttpRespo
     OnMatchRequestComplete.Broadcast(bRequestSuccess, ResponseData);
 }
 
-void UNetworkManager::LogAPIResponse(const FString& RequestType, bool bSuccess, const FString& ResponseData)
+void UNetworkManager::LogAPIResponse(const FString &RequestType, bool bSuccess, const FString &ResponseData)
 {
     if (bSuccess)
     {
@@ -371,9 +367,9 @@ void UNetworkManager::LogAPIResponse(const FString& RequestType, bool bSuccess, 
     }
 }
 
-void UNetworkManager::HandleWin(const Protocol::S_WIN& WinPkt)
+void UNetworkManager::HandleWin(const Protocol::S_WIN &WinPkt)
 {
-    ANetworkPlayer* WinPlayer;
+    ANetworkPlayer *WinPlayer;
     WinPlayer = Cast<ANetworkPlayer>(MyPlayer);
     WinPlayer->GameWin();
 }

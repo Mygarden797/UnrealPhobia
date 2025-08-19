@@ -128,7 +128,7 @@ public:
     Protocol::PosInfo* GetCurrentInfo() { return CurrentInfo; }
 
 private:
-    float AttackDamage = 10;
+    float AttackDamage = 30;
     AActor *AttackTarget;
 
     // 크리쳐 데이터
