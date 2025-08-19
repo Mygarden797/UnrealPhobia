@@ -266,15 +266,15 @@ void ACreatureBase::Attack()
 
     //  카메라 관련
     //   공격 시 카메라 활성화
-    if (AttackTarget)
-    {
-        if (AttackTarget->IsA<AProtoPlayer>())
-        {
-            if(!(AttackTarget->IsA<ANetworkPlayer>()))
-                UE_LOG(LogTemp, Warning, TEXT("sdfsdf"));
-                ActivateAttackCamera();
-        }
-    }
+    //if (AttackTarget)
+    //{
+    //    if (AttackTarget->IsA<AProtoPlayer>())
+    //    {
+    //        if(!(AttackTarget->IsA<ANetworkPlayer>()))
+    //            UE_LOG(LogTemp, Warning, TEXT("sdfsdf"));
+    //            ActivateAttackCamera();
+    //    }
+    //}
 }
 
 void ACreatureBase::LocateTargetCamera()
@@ -456,6 +456,10 @@ void ACreatureBase::SetDestInfo(const Protocol::PosInfo& Info)
     DestInfo->CopyFrom(Info);
 
     // 크리쳐 상태 지정하는 코드
+    if (DestInfo->creature_state() == Protocol::CreatureState::CREATURE_STATE_ATTACK)
+    {
+        ActivateAttackCamera();
+    }
 }
 
 void ACreatureBase::OnAttackCameraTimerEnd()
