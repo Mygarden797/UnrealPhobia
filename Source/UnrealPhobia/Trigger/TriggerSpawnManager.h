@@ -27,7 +27,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	// 기본 트리거 개수
-	int32 DefaultTriggerCount = 8;
+	UPROPERTY(EditAnywhere)
+	int32 DefaultTriggerCount = 31;
 	// 현재 트리거 개수
 	int32 CurrentTriggerCount = DefaultTriggerCount;
 	FTimerHandle CooldownTimerHandle; // Timer Handle

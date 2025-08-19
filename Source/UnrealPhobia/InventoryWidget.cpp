@@ -8,9 +8,6 @@
 void UInventoryWidget::NativeConstruct()
 {
     Super::NativeConstruct();
-
-    Super::NativeConstruct();
-
     if (APlayerController *PC = GetOwningPlayer())
     {
         if (APawn *Pawn = PC->GetPawn())
@@ -19,15 +16,12 @@ void UInventoryWidget::NativeConstruct()
         }
     }
 
-    if (!InvComp)
-        return;
-
     RefreshInventory();
 }
 
 void UInventoryWidget::RefreshInventory()
 {
-    if (!InvComp || !SlotGrid || !*InventorySlotClass)
+    if (!InvComp || !SlotGrid || !InventorySlotClass)
         return;
 
     const TArray<ETriggerName> &Slots = InvComp->Inventory;

@@ -106,7 +106,18 @@ void UTriggerInventory::PickUp()
 
 				UE_LOG(LogTemp, Log, TEXT("You got %s! [%d/%d], ID : %d"), *HitActor->GetName(), ++CurrentInventorySize, MaxInventorySize, TriggerIDs[ValidIndex]);
 				if (HitTrigger->TriggerSpawnPoint)
+				{
 					HitTrigger->TriggerSpawnPoint->bCanSpawn = true;
+				}
+
+				if (NetworkPlayer)
+				{
+					NetworkPlayer->PlaySelectedAnimMontage(NetworkPlayer->PickUpMontage, 2.0f);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Error, TEXT("PlaySelectedAnimMontage failed! (Failed to set NetworkPlayer)"));
+				}
 
 				HitActor->Destroy();
 			}
@@ -170,7 +181,7 @@ void UTriggerInventory::DropOff()
 
 void UTriggerInventory::SelectSlot(int32 Index)
 {
-	if (Index <= MaxInventorySize)
+	if (Index <= MaxInventorySize && Index > 0)
 	{
 		SelectedIndex = Index - 1;
 		UE_LOG(LogTemp, Log, TEXT("Slot Changed to %d"), SelectedIndex + 1);

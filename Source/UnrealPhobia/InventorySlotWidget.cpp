@@ -15,28 +15,43 @@ void UInventorySlotWidget::InitSlot(ETriggerName InTrigger, bool bIsSelected)
         UE_LOG(LogTemp, Warning, TEXT("SlotBackgroundImage Binding Failed!"));
         return;
     }
-    else
-        // UE_LOG(LogTemp, Log, TEXT("SlotBackgroundImage is Successfully Bound"));
 
-        if (TriggerIcons.Contains(InTrigger))
+    if (TriggerIcons.Contains(InTrigger))
+    {
+        UTexture2D *Icon = TriggerIcons[InTrigger].LoadSynchronous();
+        if (Icon)
         {
-            // 동기 로드
-            UTexture2D *Icon = TriggerIcons[InTrigger].LoadSynchronous();
-            // UImage 헬퍼로 바로 세팅 (두 번째 인자는 bMatchSize)
-            SlotImage->SetBrushFromTexture(Icon, true);
+            FSlateBrush Brush;
+            Brush.SetResourceObject(Icon);
+            Brush.ImageSize = FVector2D(240, 240);
 
-            // UE_LOG(LogTemp, Log, TEXT("SlotImage is Successfully Bound"));
+            SlotImage->SetBrush(Brush);
+            SlotImage->SetDesiredSizeOverride(Brush.ImageSize); // 추가 안전장치
         }
         else
-        { // 빈 슬롯은 기본 브러시로 리셋
+        {
             SlotImage->SetBrush(FSlateNoResource());
         }
+    }
+    else
+    {
+        SlotImage->SetBrush(FSlateNoResource());
+    }
 
     if (BackgroundImages.Contains(bIsSelected))
     {
-        // UE_LOG(LogTemp, Log, TEXT("BackgroundImage is Successfully Bound"));
         UTexture2D *Background = BackgroundImages[bIsSelected].LoadSynchronous();
-        SlotBackgroundImage->SetBrushFromTexture(Background, true);
+        if (Background)
+        {
+            FSlateBrush BgBrush;
+            BgBrush.SetResourceObject(Background);
+            BgBrush.ImageSize = FVector2D(240, 240);
+            SlotBackgroundImage->SetBrush(BgBrush);
+        }
+        else
+        {
+            SlotBackgroundImage->SetBrush(FSlateNoResource());
+        }
     }
     else
     {
