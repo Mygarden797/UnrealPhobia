@@ -200,10 +200,10 @@ void ACreatureBase::Tick(float DeltaTime)
             SetActorLocation(NextLocation);
 
             // 크리쳐 상태 지정하는 코드
-            if (DestInfo->creature_state() == Protocol::CreatureState::CREATURE_STATE_ATTACK)
-            {
-                ActivateAttackCamera();
-            }
+            //if (DestInfo->creature_state() == Protocol::CreatureState::CREATURE_STATE_ATTACK)
+            //{
+            //    ActivateAttackCamera();
+            //}
         }
     }
 
@@ -272,15 +272,14 @@ void ACreatureBase::Attack()
 
     //  카메라 관련
     //   공격 시 카메라 활성화
-    //if (AttackTarget)
-    //{
-    //    if (AttackTarget->IsA<AProtoPlayer>())
-    //    {
-    //        if(!(AttackTarget->IsA<ANetworkPlayer>()))
-    //            UE_LOG(LogTemp, Warning, TEXT("sdfsdf"));
-    //            ActivateAttackCamera();
-    //    }
-    //}
+    AProtoPlayer* AttackedPlayer = Cast<AProtoPlayer>(AttackTarget);
+    if (AttackTarget)
+    {
+        if (AttackTarget->IsA<AProtoPlayer>())
+        {
+                ActivateAttackCamera(AttackedPlayer);
+        }
+    }
 }
 
 void ACreatureBase::LocateTargetCamera()
@@ -369,7 +368,7 @@ void ACreatureBase::Communicate()
     CreatureAnimInstance->PlayCommunicateMontage();
 }
 
-void ACreatureBase::ActivateAttackCamera()
+void ACreatureBase::ActivateAttackCamera(AProtoPlayer* AttackedPlayer)
 {
     if (AttackCamera && AttackCameraRenderTarget)
     {
@@ -378,7 +377,7 @@ void ACreatureBase::ActivateAttackCamera()
         AttackCamera->CaptureScene();
 
         // 델리게이트 브로드캐스트 - 다른 플레이어에게 알림
-        OnCreatureAttackCamera.Broadcast(this, AttackCameraRenderTarget);
+        OnCreatureAttackCamera.Broadcast(this, AttackCameraRenderTarget, AttackedPlayer);
 
         // 타이머 설정 - 일정 시간 후 비활성화
         GetWorld()->GetTimerManager().SetTimer(
