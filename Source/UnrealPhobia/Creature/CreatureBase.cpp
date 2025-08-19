@@ -14,6 +14,7 @@
 #include "Engine/TextureRenderTarget2D.h"
 #include "Network/Contents/ProtoPlayer.h"
 #include "Network/NetworkBase.h"
+#include "Network/Contents/NetworkPlayer.h"
 #include "Sound/SoundBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -176,6 +177,7 @@ void ACreatureBase::Tick(float DeltaTime)
         {
             /*SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             AddMovementInput(GetActorForwardVector());*/
+
             FVector Location = GetActorLocation();
             FVector DestLocation = FVector(DestInfo->x(), DestInfo->y(), DestInfo->z());
 
@@ -183,10 +185,17 @@ void ACreatureBase::Tick(float DeltaTime)
             const float DistToDest = MoveDir.Length();
             MoveDir.Normalize();
 
+            if (DistToDest >= 140.0f)
+            {
+                SetActorLocation(DestLocation);
+            }
+
             float speed = DestInfo->speed();
             float MoveDist = (MoveDir * speed * DeltaTime).Length();
             MoveDist = FMath::Min(MoveDist, DistToDest);
             FVector NextLocation = Location + MoveDir * MoveDist;
+
+
 
             SetActorLocation(NextLocation);
         }
@@ -257,9 +266,14 @@ void ACreatureBase::Attack()
 
     //  카메라 관련
     //   공격 시 카메라 활성화
-    if (Cast<AProtoPlayer>(AttackTarget))
+    if (AttackTarget)
     {
-        ActivateAttackCamera();
+        if (AttackTarget->IsA<AProtoPlayer>())
+        {
+            if(!(AttackTarget->IsA<ANetworkPlayer>()))
+                UE_LOG(LogTemp, Warning, TEXT("sdfsdf"));
+                ActivateAttackCamera();
+        }
     }
 }
 

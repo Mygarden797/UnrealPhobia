@@ -339,7 +339,7 @@ void ANetworkPlayer::Tick(float DeltaTime)
         }
 
         // 입력과 실제 속도 모두 고려
-        if (DesiredInput == FVector2D::Zero())
+        if (DesiredInput == FVector2D::Zero() && (GetMoveState() != Protocol::MOVE_STATE_ATTACKED))
             SetMoveState(Protocol::MOVE_STATE_IDLE);
         else
             SetMoveState(Protocol::MOVE_STATE_RUN);
@@ -357,8 +357,6 @@ void ANetworkPlayer::Tick(float DeltaTime)
 
             Protocol::C_MOVE MovePkt;
 
-            float speed = GetCharacterMovement()->MaxWalkSpeed;
-
             // Current position information
             {
                 Protocol::PosInfo *Info = MovePkt.mutable_info();
@@ -366,8 +364,14 @@ void ANetworkPlayer::Tick(float DeltaTime)
                 Info->set_yaw(DesiredYaw);
                 Info->set_state(GetMoveState());
                 Info->set_crouch(GetCrouchState());
-                Info->set_speed(speed);
+                Info->set_speed(DesiredSpeed); 
             }
+
+            if (DesiredSpeed > 400.f || DesiredSpeed < 400.f)
+            {
+
+            }
+
 
             SEND_PACKET(MovePkt);
         }
@@ -412,6 +416,7 @@ void ANetworkPlayer::Move(const FInputActionValue &Value)
             const FVector Location = GetActorLocation();
             FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(Location, Location + DesiredMoveDirection);
             DesiredYaw = Rotator.Yaw;
+            DesiredSpeed = GetCharacterMovement()->MaxWalkSpeed;
         }
     }
 }
@@ -868,6 +873,7 @@ void ANetworkPlayer::OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRen
 
     // 일단 모든 플레이어에게 보여주기
     AttackCameraWidget->ShowAttackCamera(RenderTarget, 3.0f);
+    SetMoveState(Protocol::MOVE_STATE_ATTACKED);
 
     UE_LOG(LogTemp, Log, TEXT("Player Controller received attack camera from %s"), *Creature->GetName());
 }
