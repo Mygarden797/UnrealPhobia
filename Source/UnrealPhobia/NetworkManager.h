@@ -48,6 +48,8 @@ public: //매치메이킹용 함수
     // 델리게이트
     FOnMatchRequestComplete OnMatchRequestComplete;
 
+    FString NextMapName = TEXT("Final");
+
 
     // 플레이어 ID, 화면 생기기전 임시용
     UPROPERTY(BlueprintReadWrite, Category = "Player")

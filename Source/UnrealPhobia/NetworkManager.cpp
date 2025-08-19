@@ -342,6 +342,8 @@ void UNetworkManager::OnMatchRequestResponse(FHttpRequestPtr Request, FHttpRespo
 
                 UE_LOG(LogTemp, Log, TEXT("Match found! room ID: %s, Message: %s"), *RoomId, *Message);
 
+
+                UGameplayStatics::OpenLevel(this, FName(TEXT("Demo")));
                 // 여기서 게임서버 연결 로직 추가 가능
                 UGameplayStatics::OpenLevel(this, FName(TEXT("Demo")));
                 ConnectToGameServer(ServerIP, RoomId);
