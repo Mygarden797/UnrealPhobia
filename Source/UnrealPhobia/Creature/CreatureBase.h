@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,7 +9,7 @@
 #include "Creature/Animation/CreatureAnimationDataAsset.h"
 #include "CreatureBase.generated.h"
 
-// 크리처 상탱 변경을 위한 델리게이트
+// 크리처 상태 변경을 위한 델리게이트
 DECLARE_MULTICAST_DELEGATE_TwoParams(FCreatureStateChangedDelegate, ECreatureState, ECreatureState);
 
 // 크리쳐 공격 시 카메라 전환을 위한 델리게이트 (크리쳐, 렌더 타겟)

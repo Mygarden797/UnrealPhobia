@@ -30,7 +30,7 @@ void USoundManager::Initialize(FSubsystemCollectionBase& Collection)
     if (IsValidAssets() && AudioAssets->GlobalSoundMix)
     {
         UGameplayStatics::PushSoundMixModifier(this, AudioAssets->GlobalSoundMix);
-        UE_LOG(LogTemp, Warning, TEXT("=== Global Sound Mix Activated! ==="));
+        // UE_LOG(LogTemp, Warning, TEXT("=== Global Sound Mix Activated! ==="));
     }
     else
     {
@@ -107,7 +107,7 @@ void USoundManager::PlayDetectedSound()
         if (IsValid(AudioAssets->BeDetected))
         {
             UGameplayStatics::PlaySound2D(GetWorld(), AudioAssets->BeDetected);
-            UE_LOG(LogTemp, Display, TEXT("USoundManager::PlayDetectedSound()"));
+            // UE_LOG(LogTemp, Display, TEXT("USoundManager::PlayDetectedSound()"));
         }
         else
         {
@@ -129,7 +129,7 @@ void USoundManager::PlayScream()
         if (IsValid(AudioAssets->BeDetected))
         {
             UGameplayStatics::PlaySound2D(GetWorld(), AudioAssets->BeDetected);
-            UE_LOG(LogTemp, Display, TEXT("USoundManager::PlayDetectedSound()"));
+            // UE_LOG(LogTemp, Display, TEXT("USoundManager::PlayDetectedSound()"));
         }
         else
         {
@@ -178,7 +178,7 @@ void USoundManager::PlayBeingChased(EChaseState CurrentState)
 
     if (!IsValid(BeingChasedSource))
     {
-        UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayingBeingChased():  BeingChasedSource is not valid, Initalizing..."));
+        // UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayingBeingChased():  BeingChasedSource is not valid, Initalizing..."));
         BeingChasedSource = UGameplayStatics::SpawnSound2D(GetWorld(), AudioAssets->BeingChased);
         BeingChasedSource->bAutoDestroy = false;
     }
@@ -241,7 +241,7 @@ void USoundManager::ApplyVolume()
             return;
         }
     }
-    UE_LOG(LogTemp, Warning, TEXT("=== 3. SoundManager Received Signal and is Applying Volume! ==="));
+    // UE_LOG(LogTemp, Warning, TEXT("=== 3. SoundManager Received Signal and is Applying Volume! ==="));
 
 
     const float MasterVolume = AudioSettings->GetVolume(EAudioCategory::Master);
@@ -254,7 +254,7 @@ void USoundManager::ApplyVolume()
     UGameplayStatics::SetSoundMixClassOverride(this, AudioAssets->GlobalSoundMix, AudioAssets->SFXSoundClass, SFXVolume, 1.0f, 0.0f);
     UGameplayStatics::SetSoundMixClassOverride(this, AudioAssets->GlobalSoundMix, AudioAssets->UISoundClass, UIVolume, 1.0f, 0.0f);
 
-    UE_LOG(LogTemp, Log,
-        TEXT("Applied volume settings: Master=%.2f, Music=%.2f, SFX=%.2f, UI=%.2f"),
-        MasterVolume, MusicVolume, SFXVolume, UIVolume);
+    //UE_LOG(LogTemp, Log,
+     //   TEXT("Applied volume settings: Master=%.2f, Music=%.2f, SFX=%.2f, UI=%.2f"),
+      //   MasterVolume, MusicVolume, SFXVolume, UIVolume);
 }

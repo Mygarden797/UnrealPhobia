@@ -15,14 +15,14 @@ UGameAudioSettings* UGameAudioSettings::GetGameAudioSettings()
 {
     if (UGameUserSettings* Settings = GEngine->GetGameUserSettings())
     {
-        UE_LOG(LogTemp, Warning, TEXT("Class path: %s"), *Settings->GetClass()->GetPathName());
-        UE_LOG(LogTemp, Warning, TEXT("IsA<UGameAudioSettings>: %d"), Settings->IsA(UGameAudioSettings::StaticClass()));
+        // UE_LOG(LogTemp, Warning, TEXT("Class path: %s"), *Settings->GetClass()->GetPathName());
+        // UE_LOG(LogTemp, Warning, TEXT("IsA<UGameAudioSettings>: %d"), Settings->IsA(UGameAudioSettings::StaticClass()));
 
-        UE_LOG(LogTemp, Warning, TEXT("Loaded class path: %s"), *Settings->GetClass()->GetPathName());
-        UE_LOG(LogTemp, Warning, TEXT("Loaded class outer: %s"), *Settings->GetClass()->GetOuter()->GetName());
+        // UE_LOG(LogTemp, Warning, TEXT("Loaded class path: %s"), *Settings->GetClass()->GetPathName());
+        // UE_LOG(LogTemp, Warning, TEXT("Loaded class outer: %s"), *Settings->GetClass()->GetOuter()->GetName());
     }
 
-    UE_LOG(LogTemp, Log, TEXT("%s"), *UGameAudioSettings::StaticClass()->GetPathName());
+    // UE_LOG(LogTemp, Log, TEXT("%s"), *UGameAudioSettings::StaticClass()->GetPathName());
     if (GEngine)
         return Cast<UGameAudioSettings>(GEngine->GetGameUserSettings());
     return nullptr;
@@ -53,7 +53,7 @@ void UGameAudioSettings::SetVolume(EAudioCategory Category, float Value)
     }
 
     OnAudioSettingsChanged.Broadcast();
-    UE_LOG(LogTemp, Warning, TEXT("=== 2. Settings Broadcasted! ==="));
+    // UE_LOG(LogTemp, Warning, TEXT("=== 2. Settings Broadcasted! ==="));
 }
 
 float UGameAudioSettings::GetVolume(EAudioCategory Category) const

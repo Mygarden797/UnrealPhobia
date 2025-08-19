@@ -69,7 +69,7 @@ void UGameAudioSettingsWidget::LoadCurrentSettings()
                 Settings->OnAudioSettingsChanged.AddDynamic(this, 
                     &UGameAudioSettingsWidget::OnAudioSettingsChanged);
                 bIsDelegateBound = true;
-                UE_LOG(LogTemp, Log, TEXT("GameAudioSettingsWidget: Successfully performed lazy delegate binding."));
+                // UE_LOG(LogTemp, Log, TEXT("GameAudioSettingsWidget: Successfully performed lazy delegate binding."));
             }
             const TMap<EAudioCategory, TPair<USlider*, UTextBlock*>> UIMap =
             {
@@ -140,8 +140,7 @@ void UGameAudioSettingsWidget::OnAudioSettingsChanged()
 
 void UGameAudioSettingsWidget::OnMasterVolumeChanged(float Value)
 {
-    UE_LOG(LogTemp, Warning, 
-        TEXT("=== 1. Widget Event Fired: Master Volume Changed to %.2f ==="), Value);
+    //UE_LOG(LogTemp, Warning, TEXT("=== 1. Widget Event Fired: Master Volume Changed to %.2f ==="), Value);
     if (UGameAudioSettings* Settings = UGameAudioSettings::GetGameAudioSettings())
     {
         Settings->SetVolume(EAudioCategory::Master, Value);
@@ -157,8 +156,7 @@ void UGameAudioSettingsWidget::OnMasterVolumeChanged(float Value)
 
 void UGameAudioSettingsWidget::OnMusicVolumeChanged(float Value)
 {  
-    UE_LOG(LogTemp, Warning, 
-        TEXT("=== 1. Widget Event Fired: Music Volume Changed to %.2f ==="), Value);
+    //UE_LOG(LogTemp, Warning, TEXT("=== 1. Widget Event Fired: Music Volume Changed to %.2f ==="), Value);
     if (UGameAudioSettings* Settings = UGameAudioSettings::GetGameAudioSettings())
     {
         Settings->SetVolume(EAudioCategory::Music, Value);
@@ -174,8 +172,7 @@ void UGameAudioSettingsWidget::OnMusicVolumeChanged(float Value)
 
 void UGameAudioSettingsWidget::OnSFXVolumeChanged(float Value)
 {
-    UE_LOG(LogTemp, Warning, 
-        TEXT("=== 1. Widget Event Fired: SFX Volume Changed to %.2f ==="), Value);
+    // UE_LOG(LogTemp, Warning, TEXT("=== 1. Widget Event Fired: SFX Volume Changed to %.2f ==="), Value);
     if (UGameAudioSettings* Settings = UGameAudioSettings::GetGameAudioSettings())
     {
         Settings->SetVolume(EAudioCategory::SFX, Value);
@@ -191,8 +188,7 @@ void UGameAudioSettingsWidget::OnSFXVolumeChanged(float Value)
 
 void UGameAudioSettingsWidget::OnUIVolumeChanged(float Value)
 {
-    UE_LOG(LogTemp, Warning, 
-        TEXT("=== 1. Widget Event Fired: UI Volume Changed to %.2f ==="), Value);
+    // UE_LOG(LogTemp, Warning, TEXT("=== 1. Widget Event Fired: UI Volume Changed to %.2f ==="), Value);
     if (UGameAudioSettings* Settings = UGameAudioSettings::GetGameAudioSettings())
     {
         Settings->SetVolume(EAudioCategory::UI, Value);

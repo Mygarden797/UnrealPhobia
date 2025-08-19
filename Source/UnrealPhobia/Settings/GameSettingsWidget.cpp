@@ -40,20 +40,20 @@ void UGameSettingsWidget::NativeConstruct()
 void UGameSettingsWidget::OnApplyClicked()
 {
     ApplyCurrentSettings();
-    UE_LOG(LogTemp, Warning, TEXT("UGameSettingsWidget::OnApplyClicked(): Settings Applied"));
+    // UE_LOG(LogTemp, Warning, TEXT("UGameSettingsWidget::OnApplyClicked(): Settings Applied"));
 }
 
 void UGameSettingsWidget::OnResetClicked()
 {
     ResetCurrentSettings();
     LoadCurrentSettings();
-    UE_LOG(LogTemp, Warning, TEXT("UGameSettingsWidget::OnResetClicked(): Settings Reset"));
+    // UE_LOG(LogTemp, Warning, TEXT("UGameSettingsWidget::OnResetClicked(): Settings Reset"));
 }
 
 void UGameSettingsWidget::OnBackClicked()
 {
-    UE_LOG(LogTemp, Warning, TEXT("UGameSettingsWidget::OnBackClicked(): Go back"));
+    // UE_LOG(LogTemp, Warning, TEXT("UGameSettingsWidget::OnBackClicked(): Go back"));
     // RemoveFromParent();
-    UE_LOG(LogTemp, Warning, TEXT("=== 1. Back Button Clicked in Widget! ==="));
+    // UE_LOG(LogTemp, Warning, TEXT("=== 1. Back Button Clicked in Widget! ==="));
     OnBackRequested.ExecuteIfBound();
 }

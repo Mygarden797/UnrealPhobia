@@ -1098,7 +1098,7 @@ void ANetworkPlayer::SetChaseState(EChaseState NewState)
         if (USoundManager* SoundManager = GetSoundManager())
         {
             SoundManager->PlayBeingChased(CurrentChaseState);
-            UE_LOG(LogTemp, Display, TEXT("NetworkPlayer::SetChaseState(): SoundManager->PlayBeingChased()"));
+            // UE_LOG(LogTemp, Display, TEXT("NetworkPlayer::SetChaseState(): SoundManager->PlayBeingChased()"));
         }
         else
         {
@@ -1107,7 +1107,7 @@ void ANetworkPlayer::SetChaseState(EChaseState NewState)
         }
         // OnChaseStateChanged.Broadcast(NewState);
         FString StateString = StaticEnum<EChaseState>()->GetValueAsString(CurrentChaseState);
-        UE_LOG(LogTemp, Display, TEXT("SetChaseState: %s"), *StateString);
+        // UE_LOG(LogTemp, Display, TEXT("SetChaseState: %s"), *StateString);
     }
 }
 
@@ -1125,7 +1125,7 @@ void ANetworkPlayer::AddChaser()
         return;
     }
 
-    UE_LOG(LogTemp, Display, TEXT("AddChaser()"));
+    // UE_LOG(LogTemp, Display, TEXT("AddChaser()"));
 
     GetWorld()->GetTimerManager().ClearTimer(ChaseCooldownTimerHandle);
     if (CurrentChaseState != EChaseState::BeingChased)
@@ -1138,7 +1138,7 @@ void ANetworkPlayer::AddChaser()
 void ANetworkPlayer::RemoveChaser()
 {
     ChaserCount = FMath::Max(0, ChaserCount - 1);
-    UE_LOG(LogTemp, Display, TEXT("RemoveChaser()"));
+    // UE_LOG(LogTemp, Display, TEXT("RemoveChaser()"));
 
     if (ChaserCount == 0 && CurrentChaseState == EChaseState::BeingChased)
     {
@@ -1277,7 +1277,7 @@ void ANetworkPlayer::ShowSettings(TSubclassOf<UGameSettingsWidget> WidgetClassTo
 
 void ANetworkPlayer::HideSettings()
 {
-    UE_LOG(LogTemp, Warning, TEXT("=== 2. HideSettings function called in Player! ==="));
+    // UE_LOG(LogTemp, Warning, TEXT("=== 2. HideSettings function called in Player! ==="));
     if (!IsLocallyControlled())
     {
         return;
@@ -1287,15 +1287,14 @@ void ANetworkPlayer::HideSettings()
     {
         if (!CurrentSettingsWidget)
         {
-            UE_LOG(LogTemp, Error,
-                TEXT("AMyPlayerController::HideAudioSettings(): AudioSettingsWidget is null"));
+            UE_LOG(LogTemp, Error, TEXT("AMyPlayerController::HideAudioSettings(): AudioSettingsWidget is null"));
             return;
         }
 
         CurrentSettingsWidget->RemoveFromParent();
         CurrentSettingsWidget = nullptr;
 
-        UE_LOG(LogTemp, Log, TEXT("HideSettings Step: Setting input mode to GameOnly."));
+        // UE_LOG(LogTemp, Log, TEXT("HideSettings Step: Setting input mode to GameOnly."));
         FInputModeGameOnly InputModeData;
         PC->SetInputMode(FInputModeGameOnly());
         PC->bShowMouseCursor = false;
