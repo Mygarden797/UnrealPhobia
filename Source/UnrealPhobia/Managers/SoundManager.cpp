@@ -26,11 +26,11 @@ void USoundManager::Initialize(FSubsystemCollectionBase& Collection)
     {
         UE_LOG(LogTemp, Error, TEXT("USoundManager::Initalize(): Failed to get AudioSettings"));
     }
-    
+
     if (IsValidAssets() && AudioAssets->GlobalSoundMix)
     {
         UGameplayStatics::PushSoundMixModifier(this, AudioAssets->GlobalSoundMix);
-        UE_LOG(LogTemp, Warning, TEXT("=== Global Sound Mix Activated! ==="));
+        // UE_LOG(LogTemp, Warning, TEXT("=== Global Sound Mix Activated! ==="));
     }
     else
     {
@@ -38,15 +38,6 @@ void USoundManager::Initialize(FSubsystemCollectionBase& Collection)
     }
 
     ApplyVolume();
-
-
-    BeingChasedSource = UGameplayStatics::SpawnSound2D(GetWorld(), AudioAssets->BeingChased);
-    if (BeingChasedSource && AudioAssets && AudioAssets->BeingChased)
-    {
-        BeingChasedSource->bAutoDestroy = false;
-        BeingChasedSource->SetVolumeMultiplier(1.0f);
-        UE_LOG(LogTemp, Display, TEXT("USoundManager::Initalize(): Set BeingChasedSource"));
-    }
 }
 
 void USoundManager::Deinitialize()
@@ -58,12 +49,51 @@ void USoundManager::Deinitialize()
     Super::Deinitialize();
 }
 
+void USoundManager::Tick(float DeltaTime)
+{
+    if (GEngine)
+    {
+        // 1. AudioAssets 데이터 에셋 자체의 유효성 검사
+        if (IsValid(AudioAssets))
+        {
+            GEngine->AddOnScreenDebugMessage(3, 0.f, FColor::Green, TEXT("SoundManager: AudioAssets is Valid"));
+
+            if (IsValid(AudioAssets->BeingChased))
+            {
+                GEngine->AddOnScreenDebugMessage(4, 0.f, FColor::Green, TEXT("SoundManager: AudioAssets->BeingChased is Valid"));
+            }
+            else
+            {
+                GEngine->AddOnScreenDebugMessage(4, 0.f, FColor::Red, TEXT("SoundManager: AudioAssets->BeingChased is NOT Valid"));
+            }
+        }
+        else
+        {
+            GEngine->AddOnScreenDebugMessage(3, 0.f, FColor::Red, TEXT("SoundManager: AudioAssets is NOT Valid"));
+        }
+
+        if (IsValid(BeingChasedSource))
+        {
+            GEngine->AddOnScreenDebugMessage(5, 0.f, FColor::Green, TEXT("SoundManager: BeingChaseSource is Valid"));
+        }
+        else
+        {
+            GEngine->AddOnScreenDebugMessage(5, 0.f, FColor::Red, TEXT("SoundManager: BeingChaseSource is NOT Valid"));
+        }
+    }
+}
+
+// [5] Tickable 시스템이 통계 정보를 수집하기 위해 필요한 함수입니다. 아래와 같이 그대로 작성하면 됩니다.
+TStatId USoundManager::GetStatId() const
+{
+    RETURN_QUICK_DECLARE_CYCLE_STAT(USoundManager, STATGROUP_Tickables);
+}
 
 bool USoundManager::IsValidAssets() const
 {
-    if (!AudioAssets)
+    if (!IsValid(AudioAssets))
     {
-        UE_LOG(LogTemp, Error, TEXT("USoundManager: AudioAssets is NULL!!"));
+        UE_LOG(LogTemp, Error, TEXT("USoundManager: AudioAssets is NOT valid!!"));
         return false;
     }
     return true;
@@ -74,10 +104,10 @@ void USoundManager::PlayDetectedSound()
 {
     if (IsValidAssets())
     {
-        if (AudioAssets->BeDetected)
+        if (IsValid(AudioAssets->BeDetected))
         {
             UGameplayStatics::PlaySound2D(GetWorld(), AudioAssets->BeDetected);
-            UE_LOG(LogTemp, Display, TEXT("USoundManager::PlayDetectedSound()"));
+            // UE_LOG(LogTemp, Display, TEXT("USoundManager::PlayDetectedSound()"));
         }
         else
         {
@@ -96,10 +126,10 @@ void USoundManager::PlayScream()
 {
     if (IsValidAssets())
     {
-        if (AudioAssets->BeDetected)
+        if (IsValid(AudioAssets->BeDetected))
         {
             UGameplayStatics::PlaySound2D(GetWorld(), AudioAssets->BeDetected);
-            UE_LOG(LogTemp, Display, TEXT("USoundManager::PlayDetectedSound()"));
+            // UE_LOG(LogTemp, Display, TEXT("USoundManager::PlayDetectedSound()"));
         }
         else
         {
@@ -140,53 +170,57 @@ void USoundManager::PlayBeingChased(EChaseState CurrentState)
         return;
     }
 
-    if (!BeingChasedSource)
-    {
-        UE_LOG(LogTemp, Error, TEXT("USoundManager::PlayingBeingChased(): No BeingChasedSource"));
-        return;
-    }
-
     if (!AudioAssets->BeingChased)
     {
         UE_LOG(LogTemp, Error, TEXT("No BeginChased BGM"));
         return;
     }
 
- 
-    BeingChasedSource->SetVolumeMultiplier(1.0f);
+    if (!IsValid(BeingChasedSource))
+    {
+        // UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayingBeingChased():  BeingChasedSource is not valid, Initalizing..."));
+        BeingChasedSource = UGameplayStatics::SpawnSound2D(GetWorld(), AudioAssets->BeingChased);
+        BeingChasedSource->bAutoDestroy = false;
+    }
+
 
     switch (CurrentState)
     {
-        case EChaseState::BeingChased:
+    case EChaseState::BeingChased:
+    {
+        if (!(BeingChasedSource->IsPlaying()))
         {
-            if (!BeingChasedSource->IsPlaying())
-            {
-                BeingChasedSource->FadeIn(0.1f, 1.0f);
-            }
-            else
-            {
-                BeingChasedSource->FadeIn(0.4f, 1.0f);
-            }
-            break;
+            BeingChasedSource->FadeIn(0.1f, 1.0f);
         }
-        case EChaseState::Cooldown:
+        else
         {
-            BeingChasedSource->FadeOut(1.0f, 0.1f);
-            break;
+            BeingChasedSource->FadeIn(0.4f, 1.0f);
+
         }
-        case EChaseState::Safe:
+        // UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayingBeingChased(): Fade In"));
+        break;
+    }
+    case EChaseState::Cooldown:
+    {
+        BeingChasedSource->FadeOut(1.0f, 0.1f);
+        // UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayingBeingChased(): Fade Out"));
+        break;
+    }
+    case EChaseState::Safe:
+    {
+        if (BeingChasedSource->IsPlaying())
         {
-            if (BeingChasedSource->IsPlaying())
-            {
-                BeingChasedSource->FadeOut(0.1f, 0.0f);
-            }
-            break;
+            BeingChasedSource->FadeOut(0.1f, 0.0f);
         }
-        default:
-        {
-            UE_LOG(LogTemp, Error, TEXT("USoundManager::PlayBeingChased(): Wrong EChaseState"));
-            break;
-        }
+        BeingChasedSource = nullptr;
+        // UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayingBeingChased(): Stop"));
+        break;
+    }
+    default:
+    {
+        UE_LOG(LogTemp, Error, TEXT("USoundManager::PlayBeingChased(): Wrong EChaseState"));
+        break;
+    }
     }
 }
 
@@ -207,7 +241,7 @@ void USoundManager::ApplyVolume()
             return;
         }
     }
-    UE_LOG(LogTemp, Warning, TEXT("=== 3. SoundManager Received Signal and is Applying Volume! ==="));
+    // UE_LOG(LogTemp, Warning, TEXT("=== 3. SoundManager Received Signal and is Applying Volume! ==="));
 
 
     const float MasterVolume = AudioSettings->GetVolume(EAudioCategory::Master);
@@ -220,7 +254,7 @@ void USoundManager::ApplyVolume()
     UGameplayStatics::SetSoundMixClassOverride(this, AudioAssets->GlobalSoundMix, AudioAssets->SFXSoundClass, SFXVolume, 1.0f, 0.0f);
     UGameplayStatics::SetSoundMixClassOverride(this, AudioAssets->GlobalSoundMix, AudioAssets->UISoundClass, UIVolume, 1.0f, 0.0f);
 
-    UE_LOG(LogTemp, Log, 
-        TEXT("Applied volume settings: Master=%.2f, Music=%.2f, SFX=%.2f, UI=%.2f"), 
-        MasterVolume, MusicVolume, SFXVolume, UIVolume);
+    //UE_LOG(LogTemp, Log,
+     //   TEXT("Applied volume settings: Master=%.2f, Music=%.2f, SFX=%.2f, UI=%.2f"),
+      //   MasterVolume, MusicVolume, SFXVolume, UIVolume);
 }

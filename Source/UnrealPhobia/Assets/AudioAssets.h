@@ -34,17 +34,14 @@ public:
     UPROPERTY(EditAnywhere, Category = "Creature")
     TObjectPtr<USoundBase> Growling;
 
+    UPROPERTY(EditAnywhere, Category = "Creature")
+    TObjectPtr<USoundBase> Scream;
+
     UPROPERTY(EditAnywhere, Category = "Survivor")
     TObjectPtr<USoundBase> WalkingSteps;
 
     UPROPERTY(EditAnywhere, Category = "Survivor")
     TObjectPtr<USoundBase> SwitchFlashLight;
-
-    UPROPERTY(EditAnywhere, Category = "Survivor")
-    TObjectPtr<USoundBase> HandLightButton;
-
-    UPROPERTY(EditAnywhere, Category = "Player")
-    TObjectPtr<USoundBase> Scream;
 
     UPROPERTY(EditAnywhere, Category = "Player")
     TObjectPtr<USoundBase> BeDetected;

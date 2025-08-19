@@ -20,7 +20,7 @@ void UBTS_CountChaserNumber::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
     UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
     if (!BlackboardComp)
     {
-        UE_LOG(LogTemp, Error, TEXT("BTS_CountChaserNumber: BlackboardComponent is null"));
+        // UE_LOG(LogTemp, Error, TEXT("BTS_CountChaserNumber: BlackboardComponent is null"));
         return;
     }
 
@@ -31,20 +31,20 @@ void UBTS_CountChaserNumber::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
         if (LastChasedPlayer.IsValid())
         {
             LastChasedPlayer->RemoveChaser();
-            UE_LOG(LogTemp, Display, TEXT("BTS_CountChaserNumber: RemoveChaser()"));
+            // UE_LOG(LogTemp, Display, TEXT("BTS_CountChaserNumber: RemoveChaser()"));
         }
         else
         {
-            UE_LOG(LogTemp, Error, TEXT("BTS_CountChaserNumber: LastChasedPlayer is null"));
+            // UE_LOG(LogTemp, Warning, TEXT("BTS_CountChaserNumber: LastChasedPlayer is null"));
         }
         if (CurrentTargetPlayer)
         {
             CurrentTargetPlayer->AddChaser();
-            UE_LOG(LogTemp, Display, TEXT("BTS_CountChaserNumber: AddChaser()"));
+            // UE_LOG(LogTemp, Display, TEXT("BTS_CountChaserNumber: AddChaser()"));
         }
         else
         {
-            UE_LOG(LogTemp, Error, TEXT("BTS_CountChaserNumber: CurrentTargetPlayer is null"));
+            // UE_LOG(LogTemp, Warning, TEXT("BTS_CountChaserNumber: CurrentTargetPlayer is null"));
         }
         LastChasedPlayer = CurrentTargetPlayer;
     }
@@ -53,12 +53,12 @@ void UBTS_CountChaserNumber::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 void UBTS_CountChaserNumber::OnCeaseRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
     Super::OnCeaseRelevant(OwnerComp, NodeMemory);
-    UE_LOG(LogTemp, Display, TEXT("CountChaserNumber: OnCeaseRelevant Entered"));
+    // UE_LOG(LogTemp, Display, TEXT("CountChaserNumber: OnCeaseRelevant Entered"));
 
     if (LastChasedPlayer.IsValid())
     {
         LastChasedPlayer->RemoveChaser();
-        UE_LOG(LogTemp, Display, TEXT("BTS_CountChaserNumber: RemoveChaser()"));
+        // UE_LOG(LogTemp, Display, TEXT("BTS_CountChaserNumber: RemoveChaser()"));
     }
     LastChasedPlayer = nullptr;
 }
