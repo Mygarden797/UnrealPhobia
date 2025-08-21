@@ -151,12 +151,9 @@ public:
     void HideForceActivateProgress(); // Function to hide the UI
 
     UFUNCTION()
-<<<<<<< Updated upstream
-    void OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRenderTarget2D *RenderTarget);
-=======
-    void OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRenderTarget2D *RenderTarget, AProtoPlayer *AttackedPlayer);
+    //void OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRenderTarget2D *RenderTarget, AProtoPlayer *AttackedPlayer);
     void CreatureAttackCamera(ACreatureBase* Creature);
->>>>>>> Stashed changes
+
 
     // ChaseState
     UFUNCTION(BlueprintCallable, Category = "Creature")

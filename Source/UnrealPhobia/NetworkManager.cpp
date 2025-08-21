@@ -176,12 +176,9 @@ void UNetworkManager::HandleSpawn(const Protocol::S_SPAWN& SpawnPkt)
             return;
 
         bool bAIContol;
-<<<<<<< Updated upstream
-        if (MyPlayer->MyPlayerId % 2 == Creature.creature_info().creature_control()%2)
-=======
+
         if ((MyPlayer->MyPlayerId % 2) == (Creature.creature_info().creature_control() % 2))
         {
->>>>>>> Stashed changes
             bAIContol = true;
         }           
         else

@@ -14,7 +14,7 @@
 DECLARE_MULTICAST_DELEGATE_TwoParams(FCreatureStateChangedDelegate, ECreatureState, ECreatureState);
 
 // 크리쳐 공격 시 카메라 전환을 위한 델리게이트 (크리쳐, 렌더 타겟)
-DECLARE_MULTICAST_DELEGATE_TwoParams(FCreatureAttackCameraDelegate, ACreatureBase *, UTextureRenderTarget2D *);
+//DECLARE_MULTICAST_DELEGATE_ThreeParams(FCreatureAttackCameraDelegate, ACreatureBase *, UTextureRenderTarget2D *, AProtoPlayer *);
 
 class USpotLightComponent;
 class USoundBase;
@@ -77,7 +77,7 @@ public:
     FCreatureStateChangedDelegate OnCreatureStateChanged;
 
     // 공격 카메라 델리게이트
-    static FCreatureAttackCameraDelegate OnCreatureAttackCamera;
+    //static FCreatureAttackCameraDelegate OnCreatureAttackCamera;
 
     // Called to bind functionality to input
     virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
@@ -100,12 +100,12 @@ public:
 
     // 공격 카메라 관련 함수들
     UFUNCTION(BlueprintCallable, Category = "Camera")
-<<<<<<< Updated upstream
+
     void ActivateAttackCamera();
-=======
-    void ActivateAttackCamera(AProtoPlayer* AttackedPlayer);
+
+   // void ActivateAttackCamera(AProtoPlayer* AttackedPlayer);
     void ActivateAttackCamera_packet();
->>>>>>> Stashed changes
+
 
     UFUNCTION(BlueprintCallable, Category = "Camera")
     void DeactivateAttackCamera();

@@ -19,7 +19,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 // 정적 델리게이트 정의
-FCreatureAttackCameraDelegate ACreatureBase::OnCreatureAttackCamera;
+//FCreatureAttackCameraDelegate ACreatureBase::OnCreatureAttackCamera;
 
 // Sets default values
 ACreatureBase::ACreatureBase()
@@ -182,8 +182,6 @@ void ACreatureBase::Tick(float DeltaTime)
 
 
             SetActorLocation(NextLocation);
-<<<<<<< Updated upstream
-=======
             SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             if (GetCreatureState() == Protocol::CreatureState::CREATURE_STATE_ATTACK)
             {
@@ -191,8 +189,6 @@ void ACreatureBase::Tick(float DeltaTime)
                 RETURN_IF_NULL(CreatureAnimInstance)
                 CreatureAnimInstance->PlayAttackMontage();
             }
-
->>>>>>> Stashed changes
         }
     }
 
@@ -277,19 +273,7 @@ void ACreatureBase::Attack()
         1.5f,                               // 카메라 전환 지속 시간(초)
         false);
 
-<<<<<<< Updated upstream
-    //  카메라 관련
-    //   공격 시 카메라 활성화
-    if (AttackTarget)
-    {
-        if (AttackTarget->IsA<AProtoPlayer>())
-        {
-            if(!(AttackTarget->IsA<ANetworkPlayer>()))
-                UE_LOG(LogTemp, Warning, TEXT("sdfsdf"));
-                ActivateAttackCamera();
-        }
-    }
-=======
+
     Protocol::C_CREATURE_ATTACK AttackPkt;
 
     Protocol::ObjectInfo* Info = AttackPkt.mutable_creature_info();
@@ -298,7 +282,6 @@ void ACreatureBase::Attack()
     CreatureInfo->set_target_id(Cast<AProtoPlayer>(AttackTarget)->MyPlayerId);
 
     SEND_PACKET(AttackPkt);
->>>>>>> Stashed changes
 }
 
 void ACreatureBase::LocateTargetCamera()
@@ -396,7 +379,7 @@ void ACreatureBase::ActivateAttackCamera()
         AttackCamera->CaptureScene();
 
         // 델리게이트 브로드캐스트 - 다른 플레이어에게 알림
-        OnCreatureAttackCamera.Broadcast(this, AttackCameraRenderTarget);
+        //OnCreatureAttackCamera.Broadcast(this, AttackCameraRenderTarget);
 
         // 타이머 설정 - 일정 시간 후 비활성화
         GetWorld()->GetTimerManager().SetTimer(
@@ -497,11 +480,8 @@ void ACreatureBase::SetDestInfo(const Protocol::PosInfo& Info)
     // Dest에 최종 상태 복사.
     DestInfo->CopyFrom(Info);
 
-<<<<<<< Updated upstream
     // 크리쳐 상태 지정하는 코드
-=======
     SetCreatureState(Info.creature_state());
->>>>>>> Stashed changes
 }
 
 void ACreatureBase::OnAttackCameraTimerEnd()
