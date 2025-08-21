@@ -341,6 +341,8 @@ void ANetworkPlayer::Tick(float DeltaTime)
         // 입력과 실제 속도 모두 고려
         if (DesiredInput == FVector2D::Zero() && (GetMoveState() != Protocol::MOVE_STATE_ATTACKED))
             SetMoveState(Protocol::MOVE_STATE_IDLE);
+        else if(DesiredInput == FVector2D::Zero() && (GetMoveState() == Protocol::MOVE_STATE_ATTACKED))
+            SetMoveState(Protocol::MOVE_STATE_ATTACKED);
         else
             SetMoveState(Protocol::MOVE_STATE_RUN);
 
@@ -367,12 +369,15 @@ void ANetworkPlayer::Tick(float DeltaTime)
                 Info->set_speed(DesiredSpeed); 
             }
 
+<<<<<<< Updated upstream
             if (DesiredSpeed > 400.f || DesiredSpeed < 400.f)
             {
 
             }
 
 
+=======
+>>>>>>> Stashed changes
             SEND_PACKET(MovePkt);
         }
     }
@@ -691,6 +696,8 @@ void ANetworkPlayer::GameWin()
 float ANetworkPlayer::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
     AController* EventInstigator, AActor* DamageCauser)
 {
+    SetMoveState(Protocol::MoveState::MOVE_STATE_ATTACKED);
+    
 
     StartInvincible();
 
@@ -879,7 +886,18 @@ void ANetworkPlayer::OnCreatureAttackCamera(ACreatureBase* Creature, UTextureRen
     UE_LOG(LogTemp, Log, TEXT("Player Controller received attack camera from %s"), *Creature->GetName());
 }
 
+<<<<<<< Updated upstream
 void ANetworkPlayer::SwitchCameraView(const FInputActionValue& Value)
+=======
+void ANetworkPlayer::CreatureAttackCamera(ACreatureBase* Creature)
+{
+    Creature->ActivateAttackCamera_packet();
+    UTextureRenderTarget2D* RenderTarget = Creature->GetAttackCameraRenderTarget();
+    AttackCameraWidget->ShowAttackCamera(RenderTarget, 3.0f);
+}
+
+void ANetworkPlayer::SwitchCameraView(const FInputActionValue &Value)
+>>>>>>> Stashed changes
 {
     float ChangedY = -CameraBoom->SocketOffset.Y;
     StartCameraLerp(FVector(0, ChangedY, CameraBoom->SocketOffset.Z));

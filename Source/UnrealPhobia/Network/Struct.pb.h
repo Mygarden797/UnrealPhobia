@@ -1044,6 +1044,7 @@ class CreatureInfo final :
     kSpawnPointFieldNumber = 2,
     kCreatureTypeFieldNumber = 3,
     kCreatureControlFieldNumber = 4,
+    kTargetIdFieldNumber = 5,
   };
   // uint64 object_id = 1;
   void clear_object_id();
@@ -1081,6 +1082,15 @@ class CreatureInfo final :
   void _internal_set_creature_control(::Protocol::CreatureControl value);
   public:
 
+  // uint64 target_id = 5;
+  void clear_target_id();
+  uint64_t target_id() const;
+  void set_target_id(uint64_t value);
+  private:
+  uint64_t _internal_target_id() const;
+  void _internal_set_target_id(uint64_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.CreatureInfo)
  private:
   class _Internal;
@@ -1093,6 +1103,7 @@ class CreatureInfo final :
     uint64_t spawn_point_;
     int creature_type_;
     int creature_control_;
+    uint64_t target_id_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1963,6 +1974,26 @@ inline void CreatureInfo::_internal_set_creature_control(::Protocol::CreatureCon
 inline void CreatureInfo::set_creature_control(::Protocol::CreatureControl value) {
   _internal_set_creature_control(value);
   // @@protoc_insertion_point(field_set:Protocol.CreatureInfo.creature_control)
+}
+
+// uint64 target_id = 5;
+inline void CreatureInfo::clear_target_id() {
+  _impl_.target_id_ = uint64_t{0u};
+}
+inline uint64_t CreatureInfo::_internal_target_id() const {
+  return _impl_.target_id_;
+}
+inline uint64_t CreatureInfo::target_id() const {
+  // @@protoc_insertion_point(field_get:Protocol.CreatureInfo.target_id)
+  return _internal_target_id();
+}
+inline void CreatureInfo::_internal_set_target_id(uint64_t value) {
+  
+  _impl_.target_id_ = value;
+}
+inline void CreatureInfo::set_target_id(uint64_t value) {
+  _internal_set_target_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.CreatureInfo.target_id)
 }
 
 #ifdef __GNUC__

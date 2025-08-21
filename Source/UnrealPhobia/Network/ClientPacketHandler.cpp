@@ -142,3 +142,12 @@ bool Handle_S_CREATURE_BEHAVIOR(PacketSessionRef& session, Protocol::S_CREATURE_
 
     return true;
 }
+
+bool Handle_S_CREATURE_ATTACK(PacketSessionRef& session, Protocol::S_CREATURE_ATTACK& pkt)
+{
+    if (auto* GameInstance = Cast<UNetworkManager>(GWorld->GetGameInstance()))
+    {
+        GameInstance->HandleCreatureAttack(pkt);
+    }
+    return true;
+}

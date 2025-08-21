@@ -100,7 +100,12 @@ public:
 
     // 공격 카메라 관련 함수들
     UFUNCTION(BlueprintCallable, Category = "Camera")
+<<<<<<< Updated upstream
     void ActivateAttackCamera();
+=======
+    void ActivateAttackCamera(AProtoPlayer* AttackedPlayer);
+    void ActivateAttackCamera_packet();
+>>>>>>> Stashed changes
 
     UFUNCTION(BlueprintCallable, Category = "Camera")
     void DeactivateAttackCamera();
@@ -113,13 +118,15 @@ public:
     }
 
     //멀티 이동관련
-    const float MOVE_PACKET_SEND_DELAY = 0.2f;
+    const float MOVE_PACKET_SEND_DELAY = 0.1f;
     float MovePacketSendTimer = MOVE_PACKET_SEND_DELAY;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bHaveAIController = true; // AI 컨트롤러가 있는지 여부
+
     void MultiBehaveior(const Protocol::PosInfo& PosInfo);
 
-    Protocol::MoveState GetCreatureState() { return CurrentInfo->state(); }
+    Protocol::CreatureState GetCreatureState() { return CurrentInfo->creature_state(); }
     void SetCreatureState(Protocol::CreatureState State);
     uint64 ICreatureObjectId = 0;
     void SetObjectId(uint64 ObjectId);
