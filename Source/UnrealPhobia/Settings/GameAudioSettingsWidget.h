@@ -4,7 +4,6 @@
 #include "Components/Slider.h"
 #include "Components/TextBlock.h"
 #include "Types/GameAudioTypes.h"
-#include "Settings/GameAudioSettings.h"
 #include "Settings/GameSettingsWidget.h"
 #include "GameAudioSettingsWidget.generated.h"
 

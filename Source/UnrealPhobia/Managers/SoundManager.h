@@ -3,7 +3,6 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Tickable.h"
-#include "Sound/SoundBase.h"
 #include "Types/ChaseSystemTypes.h"
 #include "Assets/AudioAssets.h"
 #include "Settings/GameAudioSettings.h"
@@ -48,7 +47,6 @@ private:
 
     UPROPERTY()
     TObjectPtr<UGameAudioSettings> AudioSettings;
-
 
     TObjectPtr<UAudioComponent> BeingChasedSource;
     UPROPERTY()
