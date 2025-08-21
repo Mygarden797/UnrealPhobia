@@ -364,7 +364,7 @@ void ACreatureBase::Communicate()
     CreatureAnimInstance->PlayCommunicateMontage();
 }
 
-void ACreatureBase::ActivateAttackCamera(AProtoPlayer *AttackedPlayer)
+/* void ACreatureBase::ActivateAttackCamera(AProtoPlayer *AttackedPlayer)
 {
     if (AttackCamera && AttackCameraRenderTarget)
     {
@@ -382,10 +382,10 @@ void ACreatureBase::ActivateAttackCamera(AProtoPlayer *AttackedPlayer)
             &ACreatureBase::OnAttackCameraTimerEnd,
             AttackCameraShowTime,
             false);
-
+void ACreatureBase::ActivateAttackCamera(AProtoPlayer *AttackedPlayer)
         UE_LOG(LogTemp, Log, TEXT("Attack Camera Activated for %s"), *GetName());
     }
-}
+} */
 
 void ACreatureBase::ActivateAttackCamera_packet()
 {

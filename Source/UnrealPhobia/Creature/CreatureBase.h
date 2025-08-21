@@ -101,7 +101,7 @@ public:
     // 공격 카메라 관련 함수들
     UFUNCTION(BlueprintCallable, Category = "Camera")
 
-    void ActivateAttackCamera();
+    // void ActivateAttackCamera();
 
     // void ActivateAttackCamera(AProtoPlayer* AttackedPlayer);
     void ActivateAttackCamera_packet();
