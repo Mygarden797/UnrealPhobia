@@ -131,12 +131,14 @@ void ANetworkPlayer::BeginPlay()
         }
     }
 
-    // Animation
-    if (UAnimInstance *AnimInst = GetMesh()->GetAnimInstance())
+    /*
+        // Animation
+    if (UAnimInstance* AnimInst = GetMesh()->GetAnimInstance())
     {
         AnimInst->OnPlayMontageNotifyBegin.AddDynamic(this, &ANetworkPlayer::OnNotifyBegin); // NotifyState 시작(NotifyBegin) 바인딩
         // AnimInst->OnPlayMontageNotifyEnd.AddDynamic(this, &ANetworkPlayer::OnNotifyEnd);       // NotifyState 종료(NotifyEnd) 바인딩
     }
+    */
 
     // Mental decay timer
     GetWorldTimerManager().SetTimer(
@@ -858,13 +860,14 @@ void ANetworkPlayer::MakeRunNoiseEvent()
     // FVector LeftFootLocation = GetMesh()->GetSocketLocation(TEXT("LeftFoot_Socket"));
     // FVector RightFootLocation = GetMesh()->GetSocketLocation(TEXT("RightFoot_Socket"));
 
-    if (IsLocallyControlled() && WalkSound)
+    if (IsLocallyControlled() && RunSound)
     {
-        UGameplayStatics::PlaySoundAtLocation(this, WalkSound, GetActorLocation());
-        // UGameplayStatics::SpawnSoundAttached(WalkSound, GetMesh(), TEXT("LeftFoot_Socket"));
-        // UGameplayStatics::SpawnSoundAttached(WalkSound, GetMesh(), TEXT("RightFoot_Socket"));
-        UE_LOG(LogTemp, Log, TEXT("Walk"));
+        UGameplayStatics::PlaySoundAtLocation(this, RunSound, GetActorLocation());
+        //  UGameplayStatics::SpawnSoundAttached(WalkSound, GetMesh(), TEXT("LeftFoot_Socket"));
+        //  UGameplayStatics::SpawnSoundAttached(WalkSound, GetMesh(), TEXT("RightFoot_Socket"));
+        UE_LOG(LogTemp, Log, TEXT("Run"));
     }
+
     UE_LOG(LogTemp, Warning, TEXT("MakeRunNoiseEvent is Activate"));
     UAISense_Hearing::ReportNoiseEvent(GetWorld(), GetActorLocation(), RunLoudness, this, RunNoise, FName(TEXT("RunFootprint")));
     /* 1.of는 Loudness, RunNoise는 Max Range로 아무리 소리가 커도 Max Range 이후로는 전달되지 않는다.*/
@@ -872,12 +875,12 @@ void ANetworkPlayer::MakeRunNoiseEvent()
 
 void ANetworkPlayer::MakeWalkNoiseEvent()
 {
-    if (IsLocallyControlled() && RunSound)
+    if (IsLocallyControlled() && WalkSound)
     {
-        UGameplayStatics::PlaySoundAtLocation(this, RunSound, GetActorLocation());
-        //  UGameplayStatics::SpawnSoundAttached(WalkSound, GetMesh(), TEXT("LeftFoot_Socket"));
-        //  UGameplayStatics::SpawnSoundAttached(WalkSound, GetMesh(), TEXT("RightFoot_Socket"));
-        UE_LOG(LogTemp, Log, TEXT("Run"));
+        UGameplayStatics::PlaySoundAtLocation(this, WalkSound, GetActorLocation());
+        // UGameplayStatics::SpawnSoundAttached(WalkSound, GetMesh(), TEXT("LeftFoot_Socket"));
+        // UGameplayStatics::SpawnSoundAttached(WalkSound, GetMesh(), TEXT("RightFoot_Socket"));
+        UE_LOG(LogTemp, Log, TEXT("Walk"));
     }
 
     UE_LOG(LogTemp, Warning, TEXT("MakeWalkNoiseEvent is Activate"));
