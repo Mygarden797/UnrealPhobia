@@ -8,27 +8,6 @@
 UTriggerInventory::UTriggerInventory()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-	UE_LOG(LogTemp, Log, TEXT("UTriggerInventory Created"));
-	Inventory.Init(ETriggerName::None, MaxInventorySize);
-	TriggerIDs.Init(0, MaxInventorySize);
-	// Survivor = Cast<ASurvivor>(GetOwner());
-	NetworkPlayer = Cast<ANetworkPlayer>(GetOwner());
-	if (NetworkPlayer)
-	{
-		UE_LOG(LogTemp, Display, TEXT("NetworkPlayer is set"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed To Set NetworkPlayer"));
-	}
-	if (SetCameraComponent())
-	{
-		UE_LOG(LogTemp, Display, TEXT("CameraComponent is set"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Display, TEXT("Failed To Set CameraComponent"));
-	}
 }
 
 // 트리거 줍기/버리기 동작을 수행하기 위해 카메라 컴포넌트를 설정
@@ -51,6 +30,26 @@ bool UTriggerInventory::SetCameraComponent()
 void UTriggerInventory::BeginPlay()
 {
 	Super::BeginPlay();
+	Inventory.Init(ETriggerName::None, MaxInventorySize);
+	TriggerIDs.Init(0, MaxInventorySize);
+	// Survivor = Cast<ASurvivor>(GetOwner());
+	NetworkPlayer = Cast<ANetworkPlayer>(GetOwner());
+	if (NetworkPlayer)
+	{
+		UE_LOG(LogTemp, Display, TEXT("NetworkPlayer is set"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed To Set NetworkPlayer"));
+	}
+	if (SetCameraComponent())
+	{
+		UE_LOG(LogTemp, Display, TEXT("CameraComponent is set"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Display, TEXT("Failed To Set CameraComponent"));
+	}
 }
 
 void UTriggerInventory::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
