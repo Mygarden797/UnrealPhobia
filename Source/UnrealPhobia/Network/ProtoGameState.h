@@ -12,7 +12,7 @@
 
 /*
  - Name        : AProtoGameState
- - Description : ¸ÊÀÇ »óÅÂ¸¦ ÀúÀåÇÏ´Â Å¬·¡½º -> ÀúÀåÇÒ ÇÊ¿ä°¡ ÀÖ³ª...?
+ - Description : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ä°¡ ï¿½Ö³ï¿½...?
 */
 
 UCLASS()
@@ -23,11 +23,11 @@ class UNREALPHOBIA_API AProtoGameState : public AGameStateBase
 public:
     AProtoGameState();
 
-    //const FString CreatureGrey = TEXT("/Game/AI/BP_CreatureGrey.BP_CreatureGrey_C"); //ÃÊ±â À§Ä¡ Ç¥Çö
-    //const FString CreatureGhost = TEXT("/Game/AI/BP_CreatureGhost.BP_CreatureGhost_C"); //ÃÊ±â À§Ä¡ Ç¥Çö
+    //const FString CreatureGrey = TEXT("/Game/AI/BP_CreatureGrey.BP_CreatureGrey_C"); //ï¿½Ê±ï¿½ ï¿½ï¿½Ä¡ Ç¥ï¿½ï¿½
+    //const FString CreatureGhost = TEXT("/Game/AI/BP_CreatureGhost.BP_CreatureGhost_C"); //ï¿½Ê±ï¿½ ï¿½ï¿½Ä¡ Ç¥ï¿½ï¿½
 
-    const FString CreatureGrey = TEXT("/Game/Creature/AI/BP_CreatureGrey.BP_CreatureGrey_C"); //ÃÊ±â À§Ä¡ Ç¥Çö
-    const FString CreatureGhost = TEXT("/Game/Creature/AI/BP_Ghost.BP_Ghost_C"); //ÃÊ±â À§Ä¡ Ç¥Çö
+    const FString CreatureGrey = TEXT("/Game/Creature/Blueprints/BP_CreatureGrey.BP_CreatureGrey_C"); //ï¿½Ê±ï¿½ ï¿½ï¿½Ä¡ Ç¥ï¿½ï¿½
+    const FString CreatureGhost = TEXT("/Game/Creature/Blueprints/BP_Ghost.BP_Ghost_C"); //ï¿½Ê±ï¿½ ï¿½ï¿½Ä¡ Ç¥ï¿½ï¿½
 
     bool SpawnTrigger(Protocol::ObjectInfo);
     
