@@ -13,11 +13,8 @@
 // 크리처 상태 변경을 위한 델리게이트
 DECLARE_MULTICAST_DELEGATE_TwoParams(FCreatureStateChangedDelegate, ECreatureState, ECreatureState);
 
-// 크리쳐 공격 시 카메라 전환을 위한 델리게이트 (크리쳐, 렌더 타겟, 공격대상)
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FCreatureAttackCameraDelegate,
-    ACreatureBase*,
-    UTextureRenderTarget2D*,
-    AProtoPlayer*);
+// 크리쳐 공격 시 카메라 전환을 위한 델리게이트 (크리쳐, 렌더 타겟)
+// DECLARE_MULTICAST_DELEGATE_ThreeParams(FCreatureAttackCameraDelegate, ACreatureBase *, UTextureRenderTarget2D *, AProtoPlayer *);
 
 class USpotLightComponent;
 class USoundBase;
@@ -80,7 +77,7 @@ public:
     FCreatureStateChangedDelegate OnCreatureStateChanged;
 
     // 공격 카메라 델리게이트
-    static FCreatureAttackCameraDelegate OnCreatureAttackCamera;
+    // static FCreatureAttackCameraDelegate OnCreatureAttackCamera;
 
     // Called to bind functionality to input
     virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
@@ -103,7 +100,11 @@ public:
 
     // 공격 카메라 관련 함수들
     UFUNCTION(BlueprintCallable, Category = "Camera")
-    void ActivateAttackCamera(AProtoPlayer* AttackedPlayer);
+
+    void ActivateAttackCamera();
+
+    // void ActivateAttackCamera(AProtoPlayer* AttackedPlayer);
+    void ActivateAttackCamera_packet();
 
     UFUNCTION(BlueprintCallable, Category = "Camera")
     void DeactivateAttackCamera();
@@ -115,20 +116,22 @@ public:
         return AttackCameraRenderTarget;
     }
 
-    //멀티 이동관련
-    const float MOVE_PACKET_SEND_DELAY = 0.2f;
+    // 멀티 이동관련
+    const float MOVE_PACKET_SEND_DELAY = 0.1f;
     float MovePacketSendTimer = MOVE_PACKET_SEND_DELAY;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bHaveAIController = true; // AI 컨트롤러가 있는지 여부
-    void MultiBehaveior(const Protocol::PosInfo& PosInfo);
 
-    Protocol::MoveState GetCreatureState() { return CurrentInfo->state(); }
+    void MultiBehaveior(const Protocol::PosInfo &PosInfo);
+
+    Protocol::CreatureState GetCreatureState() { return CurrentInfo->creature_state(); }
     void SetCreatureState(Protocol::CreatureState State);
     uint64 ICreatureObjectId = 0;
     void SetObjectId(uint64 ObjectId);
-    void SetCurrentInfo(const Protocol::PosInfo& Info);
-    void SetDestInfo(const Protocol::PosInfo& Info);
-    Protocol::PosInfo* GetCurrentInfo() { return CurrentInfo; }
+    void SetCurrentInfo(const Protocol::PosInfo &Info);
+    void SetDestInfo(const Protocol::PosInfo &Info);
+    Protocol::PosInfo *GetCurrentInfo() { return CurrentInfo; }
 
 private:
     float AttackDamage = 30;
@@ -142,9 +145,8 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Creature")
     UCreatureAnimationDataAsset *CreatureAnimationData;
 
-    class Protocol::PosInfo* CurrentInfo; // 현재 위치
-    class Protocol::PosInfo* DestInfo; // 목적지
-
+    class Protocol::PosInfo *CurrentInfo; // 현재 위치
+    class Protocol::PosInfo *DestInfo;    // 목적지
 
 public:
     UCreatureDataAsset *GetCreatureData() const { return CreatureData; }

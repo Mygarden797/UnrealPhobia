@@ -173,10 +173,15 @@ void UNetworkManager::HandleSpawn(const Protocol::S_SPAWN &SpawnPkt)
             return;
 
         bool bAIContol;
-        if (MyPlayer->MyPlayerId % 2 == Creature.creature_info().creature_control() % 2)
+
+        if ((MyPlayer->MyPlayerId % 2) == (Creature.creature_info().creature_control() % 2))
+        {
             bAIContol = true;
+        }
         else
+        {
             bAIContol = false;
+        }
 
         auto *GameState = Cast<AProtoGameState>(World->GetGameState());
         GameState->SpawnCreature(
@@ -342,7 +347,6 @@ void UNetworkManager::OnMatchRequestResponse(FHttpRequestPtr Request, FHttpRespo
 
                 UE_LOG(LogTemp, Log, TEXT("Match found! room ID: %s, Message: %s"), *RoomId, *Message);
 
-
                 UGameplayStatics::OpenLevel(this, FName(TEXT("Demo")));
                 // 여기서 게임서버 연결 로직 추가 가능
                 UGameplayStatics::OpenLevel(this, FName(TEXT("Demo")));
@@ -374,4 +378,37 @@ void UNetworkManager::HandleWin(const Protocol::S_WIN &WinPkt)
     ANetworkPlayer *WinPlayer;
     WinPlayer = Cast<ANetworkPlayer>(MyPlayer);
     WinPlayer->GameWin();
+}
+
+void UNetworkManager::HandleCreatureAttack(const Protocol::S_CREATURE_ATTACK &CreatureAttackPkt)
+{
+
+    if (Socket == nullptr || GameServerSession == nullptr)
+        return;
+
+    auto *World = GetWorld();
+    if (World == nullptr)
+        return;
+
+    const uint64 ObjectId = CreatureAttackPkt.creature_info().object_id();
+    ACreatureBase **FindCreature = Creatures.Find(ObjectId);
+    if (FindCreature == nullptr)
+        return;
+
+    ACreatureBase *Creature = (*FindCreature);
+
+    // const uint64 TargetId = CreatureAttackPkt.creature_info().creature_info().target_id();
+
+    // AProtoPlayer** FindActor = Players.Find(TargetId);
+    // if (FindActor == nullptr)
+    //     return;
+    // AProtoPlayer* Player = (*FindActor);
+    // if (Player->IsMyPlayer())
+    //{
+    //     return;
+    // }
+    // else
+    {
+        Cast<ANetworkPlayer>(MyPlayer)->CreatureAttackCamera(Creature);
+    }
 }

@@ -98,6 +98,7 @@ PROTOBUF_CONSTEXPR CreatureInfo::CreatureInfo(
   , /*decltype(_impl_.spawn_point_)*/uint64_t{0u}
   , /*decltype(_impl_.creature_type_)*/0
   , /*decltype(_impl_.creature_control_)*/0
+  , /*decltype(_impl_.target_id_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct CreatureInfoDefaultTypeInternal {
   PROTOBUF_CONSTEXPR CreatureInfoDefaultTypeInternal()
@@ -171,6 +172,7 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::Protocol::CreatureInfo, _impl_.spawn_point_),
   PROTOBUF_FIELD_OFFSET(::Protocol::CreatureInfo, _impl_.creature_type_),
   PROTOBUF_FIELD_OFFSET(::Protocol::CreatureInfo, _impl_.creature_control_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::CreatureInfo, _impl_.target_id_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::Protocol::PosInfo)},
@@ -207,18 +209,19 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "iggerInfo\022\034\n\004team\030\005 \001(\0162\016.Protocol.Team\""
   "d\n\013TriggerInfo\022\021\n\tobject_id\030\001 \001(\004\022\023\n\013tri"
   "gger_lid\030\002 \001(\004\022-\n\rcreature_type\030\003 \001(\0162\026."
-  "Protocol.CreatureType\"\232\001\n\014CreatureInfo\022\021"
+  "Protocol.CreatureType\"\255\001\n\014CreatureInfo\022\021"
   "\n\tobject_id\030\001 \001(\004\022\023\n\013spawn_point\030\002 \001(\004\022-"
   "\n\rcreature_type\030\003 \001(\0162\026.Protocol.Creatur"
   "eType\0223\n\020creature_control\030\004 \001(\0162\031.Protoc"
-  "ol.CreatureControlb\006proto3"
+  "ol.CreatureControl\022\021\n\ttarget_id\030\005 \001(\004b\006p"
+  "roto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Struct_2eproto_deps[1] = {
   &::descriptor_table_Enum_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_Struct_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Struct_2eproto = {
-    false, false, 906, descriptor_table_protodef_Struct_2eproto,
+    false, false, 925, descriptor_table_protodef_Struct_2eproto,
     "Struct.proto",
     &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 5,
     schemas, file_default_instances, TableStruct_Struct_2eproto::offsets,
@@ -1637,12 +1640,13 @@ CreatureInfo::CreatureInfo(const CreatureInfo& from)
     , decltype(_impl_.spawn_point_){}
     , decltype(_impl_.creature_type_){}
     , decltype(_impl_.creature_control_){}
+    , decltype(_impl_.target_id_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&_impl_.object_id_, &from._impl_.object_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.creature_control_) -
-    reinterpret_cast<char*>(&_impl_.object_id_)) + sizeof(_impl_.creature_control_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.target_id_) -
+    reinterpret_cast<char*>(&_impl_.object_id_)) + sizeof(_impl_.target_id_));
   // @@protoc_insertion_point(copy_constructor:Protocol.CreatureInfo)
 }
 
@@ -1655,6 +1659,7 @@ inline void CreatureInfo::SharedCtor(
     , decltype(_impl_.spawn_point_){uint64_t{0u}}
     , decltype(_impl_.creature_type_){0}
     , decltype(_impl_.creature_control_){0}
+    , decltype(_impl_.target_id_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -1683,8 +1688,8 @@ void CreatureInfo::Clear() {
   (void) cached_has_bits;
 
   ::memset(&_impl_.object_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.creature_control_) -
-      reinterpret_cast<char*>(&_impl_.object_id_)) + sizeof(_impl_.creature_control_));
+      reinterpret_cast<char*>(&_impl_.target_id_) -
+      reinterpret_cast<char*>(&_impl_.object_id_)) + sizeof(_impl_.target_id_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1725,6 +1730,14 @@ const char* CreatureInfo::_InternalParse(const char* ptr, ::_pbi::ParseContext* 
           uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           _internal_set_creature_control(static_cast<::Protocol::CreatureControl>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      // uint64 target_id = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          _impl_.target_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
@@ -1783,6 +1796,12 @@ uint8_t* CreatureInfo::_InternalSerialize(
       4, this->_internal_creature_control(), target);
   }
 
+  // uint64 target_id = 5;
+  if (this->_internal_target_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(5, this->_internal_target_id(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1821,6 +1840,11 @@ size_t CreatureInfo::ByteSizeLong() const {
       ::_pbi::WireFormatLite::EnumSize(this->_internal_creature_control());
   }
 
+  // uint64 target_id = 5;
+  if (this->_internal_target_id() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_target_id());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -1851,6 +1875,9 @@ void CreatureInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::P
   if (from._internal_creature_control() != 0) {
     _this->_internal_set_creature_control(from._internal_creature_control());
   }
+  if (from._internal_target_id() != 0) {
+    _this->_internal_set_target_id(from._internal_target_id());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1869,8 +1896,8 @@ void CreatureInfo::InternalSwap(CreatureInfo* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(CreatureInfo, _impl_.creature_control_)
-      + sizeof(CreatureInfo::_impl_.creature_control_)
+      PROTOBUF_FIELD_OFFSET(CreatureInfo, _impl_.target_id_)
+      + sizeof(CreatureInfo::_impl_.target_id_)
       - PROTOBUF_FIELD_OFFSET(CreatureInfo, _impl_.object_id_)>(
           reinterpret_cast<char*>(&_impl_.object_id_),
           reinterpret_cast<char*>(&other->_impl_.object_id_));

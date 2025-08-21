@@ -80,13 +80,13 @@ void AProtoPlayer::Tick(float DeltaSeconds)
 
     if (IsMyPlayer() == false)
     {
-        /*FVector Location = GetActorLocation();
+        FVector Location = GetActorLocation();
         FVector DestLocation = FVector(DestInfo->x(), DestInfo->y(), DestInfo->z());
 
         FVector MoveDir = (DestLocation - Location);
         const float DistToDest = MoveDir.Length();
         MoveDir.Normalize();
-
+        /*
         float MoveDist = (MoveDir * 600.f * DeltaSeconds).Length();
         MoveDist = FMath::Min(MoveDist, DistToDest);
         FVector NextLocation = Location + MoveDir* MoveDist;
@@ -115,6 +115,11 @@ void AProtoPlayer::Tick(float DeltaSeconds)
             //SetWalk();
         }
         
+        if (DistToDest >= 400.0f)
+        {
+            SetActorLocation(DestLocation);
+        }
+
 
         if (State == Protocol::MOVE_STATE_RUN)
         { 
@@ -133,6 +138,7 @@ void AProtoPlayer::Tick(float DeltaSeconds)
         }
         else if (State == Protocol::MOVE_STATE_ATTACKED)
         {
+            SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             SetActorLocation(FVector(DestInfo->x(), DestInfo->y(), DestInfo->z()));
         }
 

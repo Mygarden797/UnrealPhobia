@@ -32,6 +32,8 @@ enum : uint16
 	PKT_S_WIN = 1019,
 	PKT_S_CREATURE_BEHAVIOR = 1020,
 	PKT_C_CREATURE_BEHAVIOR = 1021,
+	PKT_S_CREATURE_ATTACK = 1022,
+	PKT_C_CREATURE_ATTACK = 1023,
 };
 
 // Custom Handlers
@@ -49,6 +51,7 @@ bool Handle_S_TIMER(PacketSessionRef& session, Protocol::S_TIMER& pkt);
 bool Handle_S_START(PacketSessionRef& session, Protocol::S_START& pkt);
 bool Handle_S_WIN(PacketSessionRef& session, Protocol::S_WIN& pkt);
 bool Handle_S_CREATURE_BEHAVIOR(PacketSessionRef& session, Protocol::S_CREATURE_BEHAVIOR& pkt);
+bool Handle_S_CREATURE_ATTACK(PacketSessionRef& session, Protocol::S_CREATURE_ATTACK& pkt);
 
 class ClientPacketHandler
 {
@@ -70,6 +73,7 @@ public:
 		GPacketHandler[PKT_S_START] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_START>(Handle_S_START, session, buffer, len); };
 		GPacketHandler[PKT_S_WIN] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_WIN>(Handle_S_WIN, session, buffer, len); };
 		GPacketHandler[PKT_S_CREATURE_BEHAVIOR] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_CREATURE_BEHAVIOR>(Handle_S_CREATURE_BEHAVIOR, session, buffer, len); };
+		GPacketHandler[PKT_S_CREATURE_ATTACK] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::S_CREATURE_ATTACK>(Handle_S_CREATURE_ATTACK, session, buffer, len); };
 	}
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len)
@@ -86,6 +90,7 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::C_SPAWN_CREATURE& pkt) { return MakeSendBuffer(pkt, PKT_C_SPAWN_CREATURE); }
 	static SendBufferRef MakeSendBuffer(Protocol::C_DEFEAT& pkt) { return MakeSendBuffer(pkt, PKT_C_DEFEAT); }
 	static SendBufferRef MakeSendBuffer(Protocol::C_CREATURE_BEHAVIOR& pkt) { return MakeSendBuffer(pkt, PKT_C_CREATURE_BEHAVIOR); }
+	static SendBufferRef MakeSendBuffer(Protocol::C_CREATURE_ATTACK& pkt) { return MakeSendBuffer(pkt, PKT_C_CREATURE_ATTACK); }
 
 private:
 	template<typename PacketType, typename ProcessFunc>

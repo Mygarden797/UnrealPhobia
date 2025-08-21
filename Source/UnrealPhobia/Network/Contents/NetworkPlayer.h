@@ -28,7 +28,7 @@ class USpotLightComponent;
 class UAudioAssets;
 class UAnimMontage;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPlayMontageNotifyBegin, FName, NotifyName, const FBranchingPointNotifyPayload&, BranchingPointNotifyPayload);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPlayMontageNotifyBegin, FName, NotifyName, const FBranchingPointNotifyPayload &, BranchingPointNotifyPayload);
 
 UCLASS(Blueprintable)
 class UNREALPHOBIA_API ANetworkPlayer : public AProtoPlayer
@@ -154,7 +154,8 @@ public:
     void HideForceActivateProgress();              // Function to hide the UI
 
     UFUNCTION()
-    void OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRenderTarget2D *RenderTarget, AProtoPlayer *AttackedPlayer);
+    // void OnCreatureAttackCamera(ACreatureBase *Creature, UTextureRenderTarget2D *RenderTarget, AProtoPlayer *AttackedPlayer);
+    void CreatureAttackCamera(ACreatureBase *Creature);
 
     // ChaseState
     UFUNCTION(BlueprintCallable, Category = "Creature")
@@ -193,8 +194,6 @@ protected:
 
     UPROPERTY(EditAnywhere, Category = "Audio")
     TSubclassOf<UAudioAssets> AudioDataAssetClass;
-
-
 
     FTimerHandle CameraLerpTimer;
     FVector StartOffset;
@@ -369,18 +368,17 @@ public:
     void StartInvincible();
     void EndInvincible();
 
-
     // NotifyState 시작
     UFUNCTION()
-    void OnNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& Payload);
+    void OnNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload &Payload);
 
     // NotifyState 종료
-    //UFUNCTION()
-    //void OnNotifyEnd(FName NotifyName, const FBranchingPointNotifyPayload& Payload);
+    // UFUNCTION()
+    // void OnNotifyEnd(FName NotifyName, const FBranchingPointNotifyPayload& Payload);
 
     // 사운드 에셋
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
-    USoundBase* WalkSound;
+    USoundBase *WalkSound;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
-    USoundBase* RunSound;
+    USoundBase *RunSound;
 };

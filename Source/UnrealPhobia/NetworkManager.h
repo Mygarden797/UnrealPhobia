@@ -88,6 +88,8 @@ public:
 
     void HandleWin(const Protocol::S_WIN& WinPkt);
 
+    void HandleCreatureAttack(const Protocol::S_CREATURE_ATTACK& CreatureAttackPkt);
+
 public:
     // GameServer
     class FSocket* Socket;

@@ -19,7 +19,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 // 정적 델리게이트 정의
-FCreatureAttackCameraDelegate ACreatureBase::OnCreatureAttackCamera;
+// FCreatureAttackCameraDelegate ACreatureBase::OnCreatureAttackCamera;
 
 // Sets default values
 ACreatureBase::ACreatureBase()
@@ -117,24 +117,7 @@ void ACreatureBase::Tick(float DeltaTime)
         CurrentInfo->set_yaw(GetControlRotation().Yaw);
     }
 
-    if (!bIsFOVChanging || !CameraComp)
-        return;
-
-    FOVElapsed += DeltaTime;
-    float Alpha = FMath::Clamp(FOVElapsed / FOVDuration, 0.f, 1.f);
-    float SmoothAlpha = Alpha * Alpha * (3.f - 2.f * Alpha);
-
-    float NewFOV = FMath::Lerp(FOVStart, FOVTarget, SmoothAlpha);
-    CameraComp->SetFieldOfView(NewFOV);
-
-    if (Alpha >= 1.f)
-    {
-        // 완료
-        bIsFOVChanging = false;
-        FOVElapsed = 0.f;
-    }
-
-    if (bHaveAIController) //AI컨트롤러 있으면 패킷 보내고 없으면 DestInfo로 이동
+    if (bHaveAIController == true) // AI컨트롤러 있으면 패킷 보내고 없으면 DestInfo로 이동
     {
         // Send 판정
         bool ForceSendPacket = false;
@@ -149,12 +132,12 @@ void ACreatureBase::Tick(float DeltaTime)
 
             // 현재 위치 정보
             {
-                Protocol::PosInfo* Info = MovePkt.mutable_info();
+                Protocol::PosInfo *Info = MovePkt.mutable_info();
                 Info->CopyFrom(*CurrentInfo);
                 Info->set_object_id(ICreatureObjectId);
-                //크리쳐 스테이트 지정.
+                // 크리쳐 스테이트 지정.
                 ECreatureState CreatureState = this->GetState();
-                
+
                 if (CreatureState == ECreatureState::Attack)
                 {
                     Info->set_creature_state(Protocol::CreatureState::CREATURE_STATE_ATTACK);
@@ -195,18 +178,33 @@ void ACreatureBase::Tick(float DeltaTime)
             MoveDist = FMath::Min(MoveDist, DistToDest);
             FVector NextLocation = Location + MoveDir * MoveDist;
 
-
-
             SetActorLocation(NextLocation);
-
-            // 크리쳐 상태 지정하는 코드
-            //if (DestInfo->creature_state() == Protocol::CreatureState::CREATURE_STATE_ATTACK)
-            //{
-            //    ActivateAttackCamera();
-            //}
+            SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
+            if (GetCreatureState() == Protocol::CreatureState::CREATURE_STATE_ATTACK)
+            {
+                UCreatureAnimInstance *CreatureAnimInstance = Cast<UCreatureAnimInstance>(GetMesh()->GetAnimInstance());
+                RETURN_IF_NULL(CreatureAnimInstance)
+                CreatureAnimInstance->PlayAttackMontage();
+            }
         }
     }
 
+    if (!bIsFOVChanging || !CameraComp)
+        return;
+
+    FOVElapsed += DeltaTime;
+    float Alpha = FMath::Clamp(FOVElapsed / FOVDuration, 0.f, 1.f);
+    float SmoothAlpha = Alpha * Alpha * (3.f - 2.f * Alpha);
+
+    float NewFOV = FMath::Lerp(FOVStart, FOVTarget, SmoothAlpha);
+    CameraComp->SetFieldOfView(NewFOV);
+
+    if (Alpha >= 1.f)
+    {
+        // 완료
+        bIsFOVChanging = false;
+        FOVElapsed = 0.f;
+    }
 }
 
 // Called to bind functionality to input
@@ -270,16 +268,14 @@ void ACreatureBase::Attack()
         1.5f,                               // 카메라 전환 지속 시간(초)
         false);
 
-    //  카메라 관련
-    //   공격 시 카메라 활성화
-    AProtoPlayer* AttackedPlayer = Cast<AProtoPlayer>(AttackTarget);
-    if (AttackTarget)
-    {
-        if (AttackTarget->IsA<AProtoPlayer>())
-        {
-                ActivateAttackCamera(AttackedPlayer);
-        }
-    }
+    Protocol::C_CREATURE_ATTACK AttackPkt;
+
+    Protocol::ObjectInfo *Info = AttackPkt.mutable_creature_info();
+    Protocol::CreatureInfo *CreatureInfo = Info->mutable_creature_info();
+    Info->set_object_id(ICreatureObjectId);
+    CreatureInfo->set_target_id(Cast<AProtoPlayer>(AttackTarget)->MyPlayerId);
+
+    SEND_PACKET(AttackPkt);
 }
 
 void ACreatureBase::LocateTargetCamera()
@@ -368,7 +364,7 @@ void ACreatureBase::Communicate()
     CreatureAnimInstance->PlayCommunicateMontage();
 }
 
-void ACreatureBase::ActivateAttackCamera(AProtoPlayer* AttackedPlayer)
+void ACreatureBase::ActivateAttackCamera(AProtoPlayer *AttackedPlayer)
 {
     if (AttackCamera && AttackCameraRenderTarget)
     {
@@ -377,7 +373,7 @@ void ACreatureBase::ActivateAttackCamera(AProtoPlayer* AttackedPlayer)
         AttackCamera->CaptureScene();
 
         // 델리게이트 브로드캐스트 - 다른 플레이어에게 알림
-        OnCreatureAttackCamera.Broadcast(this, AttackCameraRenderTarget, AttackedPlayer);
+        // OnCreatureAttackCamera.Broadcast(this, AttackCameraRenderTarget);
 
         // 타이머 설정 - 일정 시간 후 비활성화
         GetWorld()->GetTimerManager().SetTimer(
@@ -388,6 +384,24 @@ void ACreatureBase::ActivateAttackCamera(AProtoPlayer* AttackedPlayer)
             false);
 
         UE_LOG(LogTemp, Log, TEXT("Attack Camera Activated for %s"), *GetName());
+    }
+}
+
+void ACreatureBase::ActivateAttackCamera_packet()
+{
+    if (AttackCamera && AttackCameraRenderTarget)
+    {
+        // 카메라 활성화
+        AttackCamera->bCaptureEveryFrame = true;
+        AttackCamera->CaptureScene();
+
+        // 타이머 설정 - 일정 시간 후 비활성화
+        GetWorld()->GetTimerManager().SetTimer(
+            AttackCameraTimerHandle,
+            this,
+            &ACreatureBase::OnAttackCameraTimerEnd,
+            AttackCameraShowTime,
+            false);
     }
 }
 
@@ -406,9 +420,9 @@ void ACreatureBase::DeactivateAttackCamera()
     }
 }
 
-void ACreatureBase::MultiBehaveior(const Protocol::PosInfo& PosInfo)
+void ACreatureBase::MultiBehaveior(const Protocol::PosInfo &PosInfo)
 {
-    //AI 컨트롤러가 없을 때 작동
+    // AI 컨트롤러가 없을 때 작동
     if (this->AIControllerClass != nullptr)
     {
         UE_LOG(LogTemp, Warning, TEXT("AIControllerClass is not nullptr"));
@@ -437,7 +451,7 @@ void ACreatureBase::SetObjectId(uint64 ObjectId)
     ICreatureObjectId = ObjectId;
 }
 
-void ACreatureBase::SetCurrentInfo(const Protocol::PosInfo& Info)
+void ACreatureBase::SetCurrentInfo(const Protocol::PosInfo &Info)
 {
     if (CurrentInfo->object_id() != 0)
     {
@@ -450,7 +464,7 @@ void ACreatureBase::SetCurrentInfo(const Protocol::PosInfo& Info)
     SetActorLocation(Location);
 }
 
-void ACreatureBase::SetDestInfo(const Protocol::PosInfo& Info)
+void ACreatureBase::SetDestInfo(const Protocol::PosInfo &Info)
 {
     if (CurrentInfo->object_id() != 0)
     {
@@ -460,6 +474,8 @@ void ACreatureBase::SetDestInfo(const Protocol::PosInfo& Info)
     // Dest에 최종 상태 복사.
     DestInfo->CopyFrom(Info);
 
+    // 크리쳐 상태 지정하는 코드
+    SetCreatureState(Info.creature_state());
 }
 
 void ACreatureBase::OnAttackCameraTimerEnd()
