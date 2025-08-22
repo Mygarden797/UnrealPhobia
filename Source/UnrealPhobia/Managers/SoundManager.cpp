@@ -7,7 +7,7 @@
 #include "Misc/ConfigCacheIni.h"
 
 // Initalize External Resources
-void USoundManager::Initialize(FSubsystemCollectionBase &Collection)
+void USoundManager::Initialize(FSubsystemCollectionBase& Collection)
 {
     Super::Initialize(Collection);
     // UE_LOG(LogTemp, Warning, TEXT("USoundManager::Initalize(), should be called only one time"));
@@ -98,14 +98,22 @@ bool USoundManager::IsValidAssets() const
 }
 
 // 플레이어에게 직접 전달
-void USoundManager::PlayDetectedSound()
+void USoundManager::PlayDetectedSound(AActor* Actor)
 {
     if (IsValidAssets())
     {
         if (IsValid(AudioAssets->BeDetected))
         {
-            UGameplayStatics::PlaySound2D(GetWorld(), AudioAssets->BeDetected);
-            // UE_LOG(LogTemp, Display, TEXT("USoundManager::PlayDetectedSound()"));
+            if (UWorld* World = Actor->GetWorld()) 
+            {
+                UGameplayStatics::PlaySound2D(World, AudioAssets->BeDetected);
+                // UE_LOG(LogTemp, Display, TEXT("USoundManager::PlayDetectedSound()"));
+            }
+            else
+            {
+                UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayDetectedSound(): Failed to get Actor's World"));
+                return;
+            }
         }
         else
         {
@@ -143,7 +151,7 @@ void USoundManager::PlayScream()
 }
 
 // 공간계에서 출력
-void USoundManager::PlaySFX3D(UObject *Object, USoundBase *SFX, FVector Location, FRotator Rotation, USoundAttenuation *AttenuationSettings)
+void USoundManager::PlaySFX3D(UObject* Object, USoundBase* SFX, FVector Location, FRotator Rotation, USoundAttenuation* AttenuationSettings)
 {
     if (!SFX)
         return;
