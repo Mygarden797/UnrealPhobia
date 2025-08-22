@@ -34,7 +34,7 @@ public:
     void PlayDetectedSound(AActor* Actor);
     UFUNCTION(BlueprintCallable)
     void PlaySFX3D(UObject* Object, USoundBase* SFX, FVector Location, FRotator Rotation, USoundAttenuation* AttenuationSettings);
-    void PlayBeingChased(EChaseState CurrentState);
+    void PlayBeingChased(AActor* Actor, EChaseState CurrentState);
     void PlayScream();
 
     /* Sound Mix Settings */
@@ -48,6 +48,7 @@ private:
     UPROPERTY()
     TObjectPtr<UGameAudioSettings> AudioSettings;
 
+    UPROPERTY()
     TObjectPtr<UAudioComponent> BeingChasedSource;
     UPROPERTY()
     TObjectPtr<AActor> AudioActor;

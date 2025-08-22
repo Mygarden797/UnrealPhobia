@@ -1138,7 +1138,7 @@ void ANetworkPlayer::SetChaseState(EChaseState NewState)
         CurrentChaseState = NewState;
         if (USoundManager *SoundManager = GetSoundManager())
         {
-            SoundManager->PlayBeingChased(CurrentChaseState);
+            SoundManager->PlayBeingChased(this, CurrentChaseState);
             // UE_LOG(LogTemp, Display, TEXT("NetworkPlayer::SetChaseState(): SoundManager->PlayBeingChased()"));
         }
         else
@@ -1158,6 +1158,7 @@ void ANetworkPlayer::AddChaser()
     ChaserCount++;
     if (USoundManager *SoundManager = GetSoundManager())
     {
+        UE_LOG(LogTemp, Log, TEXT("ANetworkPlayer::AddChaser(): Call PlayDetectedSound()"));
         SoundManager->PlayDetectedSound(this);
     }
     else
