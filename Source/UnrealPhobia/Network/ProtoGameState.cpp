@@ -92,8 +92,8 @@ bool AProtoGameState::SpawnCreature(uint64 ObjectId, FVector SpawnPoint, FRotato
         //SpawnActor->bHaveAIController = false;
         // 자동 AI 소유 비활성화하되, 기본 AIController는 유지
         SpawnActor->AutoPossessAI = EAutoPossessAI::Disabled;
-        SpawnActor->AIControllerClass = nullptr;
-        //SpawnActor->AIControllerClass = AAIController::StaticClass();
+        //SpawnActor->AIControllerClass = nullptr;
+        SpawnActor->AIControllerClass = AAIController::StaticClass();
         SpawnActor->bHaveAIController = false; 
     }
 

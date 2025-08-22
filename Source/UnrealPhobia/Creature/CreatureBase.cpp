@@ -171,21 +171,19 @@ void ACreatureBase::Tick(float DeltaTime)
             if (DistToDest >= 140.0f)
             {
                 SetActorLocation(DestLocation);
+                SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             }
-
-            float speed = DestInfo->speed();
-            float MoveDist = (MoveDir * speed * DeltaTime).Length();
-            MoveDist = FMath::Min(MoveDist, DistToDest);
-            FVector NextLocation = Location + MoveDir * MoveDist;
-
-            SetActorLocation(NextLocation);
-            SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
-            if (GetCreatureState() == Protocol::CreatureState::CREATURE_STATE_ATTACK)
+            else
             {
-                UCreatureAnimInstance *CreatureAnimInstance = Cast<UCreatureAnimInstance>(GetMesh()->GetAnimInstance());
-                RETURN_IF_NULL(CreatureAnimInstance)
-                CreatureAnimInstance->PlayAttackMontage();
+                float speed = DestInfo->speed();
+                float MoveDist = (MoveDir * speed * DeltaTime).Length();
+                MoveDist = FMath::Min(MoveDist, DistToDest);
+                FVector NextLocation = Location + MoveDir * MoveDist;
+
+                SetActorLocation(NextLocation);
+                SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             }
+
         }
     }
 
