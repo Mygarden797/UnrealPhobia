@@ -340,8 +340,13 @@ void ANetworkPlayer::Tick(float DeltaTime)
 
         // 입력과 실제 속도 모두 고려
         if (DesiredInput == FVector2D::Zero() && (GetMoveState() != Protocol::MOVE_STATE_ATTACKED))
+<<<<<<< Updated upstream
             SetMoveState(Protocol::MOVE_STATE_IDLE);
         else if(DesiredInput == FVector2D::Zero() && (GetMoveState() == Protocol::MOVE_STATE_ATTACKED))
+=======
+            SetMoveState(Protocol::MOVE_STATE_ATTACKED);
+        else if (DesiredInput == FVector2D::Zero() && (GetMoveState() == Protocol::MOVE_STATE_ATTACKED))
+>>>>>>> Stashed changes
             SetMoveState(Protocol::MOVE_STATE_ATTACKED);
         else
             SetMoveState(Protocol::MOVE_STATE_RUN);

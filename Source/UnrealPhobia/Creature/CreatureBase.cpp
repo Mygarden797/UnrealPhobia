@@ -169,9 +169,18 @@ void ACreatureBase::Tick(float DeltaTime)
             const float DistToDest = MoveDir.Length();
             MoveDir.Normalize();
 
-            if (DistToDest >= 140.0f)
+            if (GetCreatureState() == Protocol::CreatureState::CREATURE_STATE_ATTACK)
+            {
+                UCreatureAnimInstance* CreatureAnimInstance = Cast<UCreatureAnimInstance>(GetMesh()->GetAnimInstance());
+                RETURN_IF_NULL(CreatureAnimInstance)
+                    CreatureAnimInstance->PlayAttackMontage();
+            }
+
+            if (DistToDest >= 80.0f)
             {
                 SetActorLocation(DestLocation);
+                SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
+                return;
             }
 
             float speed = DestInfo->speed();
@@ -183,12 +192,15 @@ void ACreatureBase::Tick(float DeltaTime)
 
             SetActorLocation(NextLocation);
             SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
+<<<<<<< Updated upstream
             if (GetCreatureState() == Protocol::CreatureState::CREATURE_STATE_ATTACK)
             {
                 UCreatureAnimInstance* CreatureAnimInstance = Cast<UCreatureAnimInstance>(GetMesh()->GetAnimInstance());
                 RETURN_IF_NULL(CreatureAnimInstance)
                 CreatureAnimInstance->PlayAttackMontage();
             }
+=======
+>>>>>>> Stashed changes
         }
     }
 
