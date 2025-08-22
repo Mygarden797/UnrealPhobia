@@ -1158,7 +1158,7 @@ void ANetworkPlayer::AddChaser()
     ChaserCount++;
     if (USoundManager *SoundManager = GetSoundManager())
     {
-        SoundManager->PlayDetectedSound();
+        SoundManager->PlayDetectedSound(this);
     }
     else
     {

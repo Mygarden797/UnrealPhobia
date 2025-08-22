@@ -31,7 +31,7 @@ public:
 
     /* Play Audio Sources */
     UFUNCTION(BlueprintCallable)
-    void PlayDetectedSound();
+    void PlayDetectedSound(AActor* Actor);
     UFUNCTION(BlueprintCallable)
     void PlaySFX3D(UObject* Object, USoundBase* SFX, FVector Location, FRotator Rotation, USoundAttenuation* AttenuationSettings);
     void PlayBeingChased(EChaseState CurrentState);
