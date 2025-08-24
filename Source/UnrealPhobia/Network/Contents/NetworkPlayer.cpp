@@ -239,6 +239,12 @@ void ANetworkPlayer::BeginPlay()
     {
         UE_LOG(LogTemp, Log, TEXT("Failed To Find Flash Light Component"));
     }
+
+    SoundManager = GetSoundManager();
+    if (!SoundManager)
+    {
+        UE_LOG(LogTemp, Error, TEXT("ANetworkPlayer::BeginPlay(): SoundManager is null"));
+    }
 }
 
 void ANetworkPlayer::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
@@ -863,9 +869,11 @@ void ANetworkPlayer::MakeRunNoiseEvent()
     if (IsLocallyControlled() && RunSound)
     {
         UGameplayStatics::PlaySoundAtLocation(this, RunSound, GetActorLocation());
+
+
         //  UGameplayStatics::SpawnSoundAttached(WalkSound, GetMesh(), TEXT("LeftFoot_Socket"));
         //  UGameplayStatics::SpawnSoundAttached(WalkSound, GetMesh(), TEXT("RightFoot_Socket"));
-        UE_LOG(LogTemp, Log, TEXT("Run"));
+        // UE_LOG(LogTemp, Log, TEXT("Run"));
     }
 
     UE_LOG(LogTemp, Warning, TEXT("MakeRunNoiseEvent is Activate"));
@@ -880,7 +888,7 @@ void ANetworkPlayer::MakeWalkNoiseEvent()
         UGameplayStatics::PlaySoundAtLocation(this, WalkSound, GetActorLocation());
         // UGameplayStatics::SpawnSoundAttached(WalkSound, GetMesh(), TEXT("LeftFoot_Socket"));
         // UGameplayStatics::SpawnSoundAttached(WalkSound, GetMesh(), TEXT("RightFoot_Socket"));
-        UE_LOG(LogTemp, Log, TEXT("Walk"));
+        // UE_LOG(LogTemp, Log, TEXT("Walk"));
     }
 
     UE_LOG(LogTemp, Warning, TEXT("MakeWalkNoiseEvent is Activate"));
@@ -1136,14 +1144,14 @@ void ANetworkPlayer::SetChaseState(EChaseState NewState)
     if (CurrentChaseState != NewState)
     {
         CurrentChaseState = NewState;
-        if (USoundManager *SoundManager = GetSoundManager())
+        if (SoundManager)
         {
             SoundManager->PlayBeingChased(this, CurrentChaseState);
             // UE_LOG(LogTemp, Display, TEXT("NetworkPlayer::SetChaseState(): SoundManager->PlayBeingChased()"));
         }
         else
         {
-            UE_LOG(LogTemp, Warning, TEXT("NetworkPlayer::SetChaseState(): SoundManager is null"));
+           UE_LOG(LogTemp, Warning, TEXT("NetworkPlayer::SetChaseState(): SoundManager is null"));
             return;
         }
         // OnChaseStateChanged.Broadcast(NewState);
@@ -1156,9 +1164,9 @@ void ANetworkPlayer::SetChaseState(EChaseState NewState)
 void ANetworkPlayer::AddChaser()
 {
     ChaserCount++;
-    if (USoundManager *SoundManager = GetSoundManager())
+    if (SoundManager)
     {
-        UE_LOG(LogTemp, Log, TEXT("ANetworkPlayer::AddChaser(): Call PlayDetectedSound()"));
+        // UE_LOG(LogTemp, Log, TEXT("ANetworkPlayer::AddChaser(): Call PlayDetectedSound()"));
         SoundManager->PlayDetectedSound(this);
     }
     else
@@ -1230,7 +1238,7 @@ void ANetworkPlayer::StartInvincible()
         GetWorldTimerManager().SetTimer(FInvincibleTimerHandle, this, &ANetworkPlayer::EndInvincible, InvincibleTime, true);
         GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreOnlyPawn"));
 
-        if (USoundManager *SoundManager = GetSoundManager())
+        if (SoundManager)
         {
             SoundManager->PlayScream();
         }

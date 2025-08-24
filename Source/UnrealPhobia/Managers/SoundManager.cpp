@@ -150,30 +150,12 @@ void USoundManager::PlayScream()
     }
 }
 
-// 공간계에서 출력
-void USoundManager::PlaySFX3D(UObject* Object, USoundBase* SFX, FVector Location, FRotator Rotation, USoundAttenuation* AttenuationSettings)
-{
-    if (!SFX)
-        return;
-    else
-    {
-        UGameplayStatics::PlaySoundAtLocation(
-            Object,
-            SFX,
-            Location,
-            Rotation,             // Rotation
-            1.0f,                 // Volume
-            1.0f,                 // Pitch
-            0.0f,                 // Start Time
-            AttenuationSettings); // Attenuation Asset
-    }
-}
 
 void USoundManager::PlayBeingChased(AActor* Actor, EChaseState CurrentState)
 {
     if (!IsValidAssets())
     {
-        UE_LOG(LogTemp, Error, TEXT("USoundManager::PlayingBeingChased(): No AudioAsset"));
+        UE_LOG(LogTemp, Error, TEXT("USoundManager::PlayingBeingChased(): InValid AudioAsset"));
         return;
     }
 
@@ -188,7 +170,7 @@ void USoundManager::PlayBeingChased(AActor* Actor, EChaseState CurrentState)
         if (UWorld* World = Actor->GetWorld())
         {
             // UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayingBeingChased():  BeingChasedSource is not valid, Initalizing..."));
-            BeingChasedSource = UGameplayStatics::SpawnSound2D(GetWorld(), AudioAssets->BeingChased);
+            BeingChasedSource = UGameplayStatics::SpawnSound2D(World, AudioAssets->BeingChased);
             BeingChasedSource->bAutoDestroy = false;
         }
         else
