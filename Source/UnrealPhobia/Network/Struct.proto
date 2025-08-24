@@ -1,9 +1,0 @@
-syntax = "proto3";
-package Protocol;
-
-import "Enum.proto";
-
-message Player
-{
-	uint64 playerId = 1;
-}
