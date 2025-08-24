@@ -28,7 +28,7 @@ protected:
 
 	// 기본 트리거 개수
 	UPROPERTY(EditAnywhere)
-	int32 DefaultTriggerCount = 31;
+	int32 DefaultTriggerCount = 62;
 	// 현재 트리거 개수
 	int32 CurrentTriggerCount = DefaultTriggerCount;
 	FTimerHandle CooldownTimerHandle; // Timer Handle
