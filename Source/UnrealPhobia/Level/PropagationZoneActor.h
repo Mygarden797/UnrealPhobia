@@ -16,6 +16,40 @@
 class UBoxComponent;
 class USoundPropagationManager;
 
+UENUM(BlueprintType)
+enum class EVoxelType : uint8
+{
+    Empty,
+    Wall,
+    Door,
+    DogHole
+};
+
+struct FVoxel
+{
+    EVoxelType Type = EVoxelType::Empty;
+    int32 RoomID = -1;
+};
+
+USTRUCT(BlueprintType)
+struct FRoomData
+{
+    GENERATED_BODY()
+
+    UPROPERTY()
+    int32 ID = -1;
+    UPROPERTY()
+    FBox Bounds = FBox(EForceInit::ForceInit);
+
+    UPROPERTY()
+    int32 VoxelVolume;
+
+    UPROPERTY()
+    bool bHasDoor = false;
+    UPROPERTY()
+    bool hHasDogHole = false;
+};
+
 UCLASS()
 class UNREALPHOBIA_API APropagationZoneActor : public AActor
 {
@@ -27,6 +61,8 @@ public:
 	virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+
+    /* Define Bounds and Detect Existed Actors */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Propagtion Zone")
     TObjectPtr<UBoxComponent> PropagationBounds;
 
@@ -37,6 +73,18 @@ public:
     bool ContainsLocation(const FVector& WorldLocation) const;
 
     const TSet<AActor*>& GetActors() const { return RegisteredActors; };
+
+
+    /* Separate Room with Flood Fill Algorithm */
+    void ComputeRooms();
+    void FloodFillRoom(TArray<TArray<TArray<int32>>>& Grid,
+        int32 StartX, int32 StartY, int32 StartZ,
+        int32 RoomId,
+        FRoomInfo& OutRoom,
+        const FVector& Origin);
+
+    bool CheckDoorInRoom(const FRoomInfo& Room);
+    bool CheckDogHoleInRoom(const FRoomInfo& Room);
         
 protected:
     UFUNCTION()
@@ -51,4 +99,13 @@ protected:
 private:
     UPROPERTY()
     TObjectPtr<USoundPropagationManager> PropagationManager;
+
+    UPROPERTY()
+    TArray<FRoomInfo> Rooms;
+
+    UPROPERTY()
+    TArray<AActor*> DoorActors;
+    TArray<AActor*> DogHoleActors;
+
+    float CellSize = 100.f;
 };

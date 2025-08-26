@@ -9,7 +9,7 @@
 
 APropagationZoneActor::APropagationZoneActor()
 {
-	PrimaryActorTick.bCanEverTick = false;
+    PrimaryActorTick.bCanEverTick = false;
 
     PropagationBounds = CreateDefaultSubobject<UBoxComponent>(TEXT("Propagation Bounds"));
     SetRootComponent(PropagationBounds);
@@ -24,11 +24,10 @@ APropagationZoneActor::APropagationZoneActor()
 
 void APropagationZoneActor::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 
     PropagationBounds->OnComponentBeginOverlap.AddDynamic(this, &APropagationZoneActor::OnBoundsBeginOverlap);
     PropagationBounds->OnComponentEndOverlap.AddDynamic(this, &APropagationZoneActor::OnBoundsEndOverlap);
-
 
     if (UWorld* World = GetWorld())
     {
@@ -56,6 +55,10 @@ void APropagationZoneActor::BeginPlay()
         UE_LOG(LogTemp, Error, TEXT("PropagationZoneActor::BeginPlay(): No World"));
         return;
     }
+    
+
+    ComputeRooms();
+
 }
 
 void APropagationZoneActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -113,4 +116,15 @@ void APropagationZoneActor::OnBoundsEndOverlap(UPrimitiveComponent* OverlappedCo
             return;
         }
     }
+}
+
+void APropagationZoneActor::ComputeRooms()
+{
+    const FVector BoundExtent = PropagationBounds->GetScaledBoxExtent();
+    const FVector Origin = PropagationBounds->GetComponentLocation() - BoundExtent;
+
+    const FIntVector GridSize(
+        FMath::CeilToInt(BoundsExtent.X * 2 / CellSize),
+
+    )
 }
