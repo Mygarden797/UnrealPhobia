@@ -51,11 +51,13 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	void SetupTriggerMesh(); // 메시 설정
+	void SetupTriggerMesh();	 // 메시 설정
+	void SetupTriggerMaterial(); // 머티리얼 설정
 	bool CheckHighlight();
 
 	FVector TriggerLocation;
-	UMaterial *HighlightMaterial;
+	UMaterialInterface *HighlightMaterial;
+	UMaterialInterface *EmptyMaterial;
 
 public:
 	virtual void

@@ -143,7 +143,9 @@ void UTriggerInventory::PickUp()
 		}
 		// Survivor->InventoryWidget->RefreshInventory();
 		if (NetworkPlayer)
+		{
 			NetworkPlayer->InventoryWidget->RefreshInventory();
+		}
 	}
 }
 

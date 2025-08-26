@@ -29,12 +29,13 @@ void ATrigger::SetTriggerName(ETriggerName Name)
 {
 	TriggerName = Name;
 	SetupTriggerMesh();
+	SetupTriggerMaterial();
 }
 
 void ATrigger::SetupTriggerMesh()
 {
 	// enum 값에 따라 사용할 에셋 경로를 매핑
-	FString MeshPath, MaterialPath = TEXT("/Script/Engine.Material'/Game/Trigger/Materials/M_Highlight.M_Highlight'");
+	FString MeshPath;
 	switch (TriggerName)
 	{
 	case ETriggerName::Grey:
@@ -45,7 +46,7 @@ void ATrigger::SetupTriggerMesh()
 		break;
 	default:
 		UE_LOG(LogTemp, Warning, TEXT("Unknown TriggerName, skipping mesh load"));
-		return;
+		break;
 	}
 	// 메쉬 경로에 해당하는 UStaticMesh 객체 로드
 	TriggerMesh = Cast<UStaticMesh>(StaticLoadObject(
@@ -66,11 +67,16 @@ void ATrigger::SetupTriggerMesh()
 		// 에러 로그 출력
 		UE_LOG(LogTemp, Error, TEXT("Failed to load mesh at %s"), *MeshPath);
 	}
+}
 
-	HighlightMaterial = Cast<UMaterial>(StaticLoadObject(
-		UMaterial::StaticClass(), // 로드할 객체의 클래스 타입 지정 (UMaterial)
-		nullptr,				  // 패키지 지정
-		*MaterialPath			  // 로드할 에셋의 경로
+void ATrigger::SetupTriggerMaterial()
+{
+	FString MaterialPath = TEXT("/Script/Engine.Material'/Game/Trigger/Materials/M_Highlight.M_Highlight'"), EmptyMaterialPath = TEXT("/Script/Engine.Material'/Game/Trigger/Materials/M_Empty.M_Empty'");
+
+	HighlightMaterial = Cast<UMaterialInterface>(StaticLoadObject(
+		UMaterialInterface::StaticClass(), // 로드할 객체의 클래스 타입 지정 (UMaterialInterface)
+		nullptr,						   // 패키지 지정
+		*MaterialPath					   // 로드할 에셋의 경로
 		));
 
 	if (HighlightMaterial)
@@ -82,6 +88,23 @@ void ATrigger::SetupTriggerMesh()
 	{
 		// 에러 로그 출력
 		UE_LOG(LogTemp, Error, TEXT("Failed to load material at %s"), *MaterialPath);
+	}
+
+	EmptyMaterial = Cast<UMaterialInterface>(StaticLoadObject(
+		UMaterialInterface::StaticClass(), // 로드할 객체의 클래스 타입 지정 (UMaterialInterface)
+		nullptr,						   // 패키지 지정
+		*EmptyMaterialPath				   // 로드할 에셋의 경로
+		));
+
+	if (EmptyMaterial)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Loaded material from %s"), // 머티리얼 경로를 포함한 로드 성공 로그 출력,
+			   *EmptyMaterialPath);
+	}
+	else
+	{
+		// 에러 로그 출력
+		UE_LOG(LogTemp, Error, TEXT("Failed to load material at %s"), *EmptyMaterialPath);
 	}
 }
 
@@ -96,42 +119,86 @@ void ATrigger::BeginPlay()
 void ATrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (CheckHighlight())
+
+	if (!IsValid(BaseMeshComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("BaseMeshComponent is null or invalid on %s"), *GetNameSafe(this));
+		return;
+	}
+
+	if (!HighlightMaterial || !EmptyMaterial)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Trigger Overlay Material is nullptr"));
+		return;
+	}
+
+	if (!IsValid(HighlightMaterial) || !IsValid(EmptyMaterial) || !HighlightMaterial->IsValidLowLevel() || !EmptyMaterial->IsValidLowLevel())
+	{
+		SetupTriggerMaterial();
+		UE_LOG(LogTemp, Warning, TEXT("Trigger Material is invalid,. Resetting.."));
+		return;
+	}
+
+	bool bShouldHighlight = false;
+	bShouldHighlight = CheckHighlight();
+
+	if (bShouldHighlight)
 	{
 		if (!bIsHighlighting)
 		{
+			UE_LOG(LogTemp, Log, TEXT("Turning highlight ON for %s"), *GetNameSafe(this));
+			if (HighlightMaterial && HighlightMaterial->IsValidLowLevel())
+			{
+				BaseMeshComponent->SetOverlayMaterial(HighlightMaterial);
+			}
+			if (!HighlightMaterial->IsValidLowLevel())
+			{
+				if (GEngine)
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Highlight Material Is Invalid!"));
+				}
+				SetupTriggerMesh();
+			}
 			bIsHighlighting = true;
-			BaseMeshComponent->SetOverlayMaterial(HighlightMaterial);
-			UE_LOG(LogTemp, Log, TEXT("Highlighting On"));
 		}
 	}
 	else
 	{
 		if (bIsHighlighting)
 		{
+			UE_LOG(LogTemp, Log, TEXT("Turning highlight OFF for %s"), *GetNameSafe(this));
+			if (EmptyMaterial && EmptyMaterial->IsValidLowLevel())
+			{
+				BaseMeshComponent->SetOverlayMaterial(EmptyMaterial);
+				SetupTriggerMesh();
+			}
 			bIsHighlighting = false;
-			BaseMeshComponent->SetOverlayMaterial(nullptr);
-			UE_LOG(LogTemp, Log, TEXT("Highlighting Off"));
 		}
 	}
 }
 
 bool ATrigger::CheckHighlight()
 {
-	TriggerLocation = GetActorLocation();
-	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn); // 검사할 오브젝트 타입 : Pawn
+	UWorld *World = GetWorld();
+	if (!World)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CheckHighlight: GetWorld() == nullptr on %s"), *GetNameSafe(this));
+		return false;
+	}
 
-	FVector BoxHalfExtent = FVector(230.0f, 230.0f, 80.0f); // 박스 형태 충돌 범위
+	TriggerLocation = GetActorLocation();
+
+	FCollisionObjectQueryParams ObjectQueryParams;
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
+
+	FVector BoxHalfExtent(230.0f, 230.0f, 80.0f);
 	FCollisionShape CollisionShape = FCollisionShape::MakeBox(BoxHalfExtent);
 
-	// 쿼리 파라미터 : 자기 자신 무시
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
 
-	TArray<FOverlapResult> OverlapResults; // 결과 저장용
-
-	bool bOverlap = GetWorld()->OverlapMultiByObjectType( // Overlap 검사
+	TArray<FOverlapResult> OverlapResults;
+	bool bOverlap = World->OverlapMultiByObjectType(
 		OverlapResults,
 		TriggerLocation,
 		FQuat::Identity,
@@ -139,18 +206,17 @@ bool ATrigger::CheckHighlight()
 		CollisionShape,
 		QueryParams);
 
-	// 디버그 시각화: 박스 그리기
-	// DrawDebugBox(GetWorld(), TriggerLocation, BoxHalfExtent, FQuat::Identity, FColor::Green, false, 0.1f, 0, 2.0f);
+	DrawDebugBox(World, TriggerLocation, BoxHalfExtent, FQuat::Identity, FColor::Green, false, 0.1f, 0, 2.0f);
 
 	if (bOverlap)
 	{
 		for (const FOverlapResult &Res : OverlapResults)
 		{
 			AActor *Actor = Res.GetActor();
-			if (!Actor)
+			if (!IsValid(Actor)) // null 또는 PendingKill 검사
 				continue;
 
-			if (ANetworkPlayer *NP = Cast<ANetworkPlayer>(Actor)) // ANetworkPlayer인지 확인 — 발견 즉시 종료
+			if (ANetworkPlayer *NP = Cast<ANetworkPlayer>(Actor))
 			{
 				return true;
 			}
