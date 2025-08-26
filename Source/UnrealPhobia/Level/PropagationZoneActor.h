@@ -47,7 +47,7 @@ struct FRoomData
     UPROPERTY()
     bool bHasDoor = false;
     UPROPERTY()
-    bool hHasDogHole = false;
+    bool bHasDogHole = false;
 };
 
 UCLASS()
@@ -74,17 +74,6 @@ public:
 
     const TSet<AActor*>& GetActors() const { return RegisteredActors; };
 
-
-    /* Separate Room with Flood Fill Algorithm */
-    void ComputeRooms();
-    void FloodFillRoom(TArray<TArray<TArray<int32>>>& Grid,
-        int32 StartX, int32 StartY, int32 StartZ,
-        int32 RoomId,
-        FRoomInfo& OutRoom,
-        const FVector& Origin);
-
-    bool CheckDoorInRoom(const FRoomInfo& Room);
-    bool CheckDogHoleInRoom(const FRoomInfo& Room);
         
 protected:
     UFUNCTION()
@@ -100,12 +89,44 @@ private:
     UPROPERTY()
     TObjectPtr<USoundPropagationManager> PropagationManager;
 
-    UPROPERTY()
-    TArray<FRoomInfo> Rooms;
 
-    UPROPERTY()
+public:
+
+    UFUNCTION(BlueprintCallable, Category = "Room Build")
+    void GenerateRooms();
+
+    UFUNCTION(BlueprintCallable, Category = "Room Build")
+    bool GetRoomAtLocation(const FVector& WorldLocation, FRoomData& OutRoomData) const;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Room Build")
+    TArray<FRoomData> DiscoveredRooms;
+
+protected:
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Room Setting")
+    float VoxelSize = 100.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Room Setting")
+    TEnumAsByte<ECollisionChannel> WallCollisionChannel = ECC_WorldStatic;
+
+    void DebugDrawRooms(float Duration) const;
+
+private:
+    void VoxelizeSpace(const FBox& Room);
+    void DiscoverRooms();
+    FRoomData FloodFill(const FIntVector& StartCoord, int32 RoomID);
+
+    int32 ToIndex(const FIntVector& Coord) const;
+    int32 ToIndexSafe(const FIntVector& Coord) const;
+    FIntVector ToCoord(int32 Index) const;
+    bool IsValidCoord(const FIntVector& Coord) const;
+
+
+    TArray<FVoxel> VoxelGrid;
+    FIntVector GridDimensions;
+    FVector WorldOrigin;
+
     TArray<AActor*> DoorActors;
     TArray<AActor*> DogHoleActors;
 
-    float CellSize = 100.f;
+    static const FIntVector Directions[6];
 };
