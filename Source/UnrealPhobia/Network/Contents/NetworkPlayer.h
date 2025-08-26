@@ -377,6 +377,9 @@ public:
     // void OnNotifyEnd(FName NotifyName, const FBranchingPointNotifyPayload& Payload);
 
     // 사운드 에셋
+    UPROPERTY()
+    USoundManager* SoundManager;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
     USoundBase *WalkSound;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")

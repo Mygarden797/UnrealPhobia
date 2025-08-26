@@ -28,7 +28,7 @@ void USoundManager::Initialize(FSubsystemCollectionBase& Collection)
     if (IsValidAssets() && AudioAssets->GlobalSoundMix)
     {
         UGameplayStatics::PushSoundMixModifier(this, AudioAssets->GlobalSoundMix);
-        // UE_LOG(LogTemp, Warning, TEXT("=== Global Sound Mix Activated! ==="));
+        UE_LOG(LogTemp, Warning, TEXT("=== Global Sound Mix Activated! ==="));
     }
     else
     {
@@ -49,7 +49,7 @@ void USoundManager::Deinitialize()
 
 void USoundManager::Tick(float DeltaTime)
 {
-    /*     if (GEngine)
+        if (GEngine)
         {
             // 1. AudioAssets 데이터 에셋 자체의 유효성 검사
             if (IsValid(AudioAssets))
@@ -78,7 +78,7 @@ void USoundManager::Tick(float DeltaTime)
             {
                 GEngine->AddOnScreenDebugMessage(5, 0.f, FColor::Red, TEXT("SoundManager: BeingChaseSource is NOT Valid"));
             }
-        } */
+        } 
 }
 
 // [5] Tickable 시스템이 통계 정보를 수집하기 위해 필요한 함수입니다. 아래와 같이 그대로 작성하면 됩니다.
@@ -107,7 +107,7 @@ void USoundManager::PlayDetectedSound(AActor* Actor)
             if (UWorld* World = Actor->GetWorld()) 
             {
                 UGameplayStatics::PlaySound2D(World, AudioAssets->BeDetected);
-                // UE_LOG(LogTemp, Display, TEXT("USoundManager::PlayDetectedSound()"));
+                UE_LOG(LogTemp, Display, TEXT("USoundManager::PlayDetectedSound()"));
             }
             else
             {
@@ -135,7 +135,7 @@ void USoundManager::PlayScream()
         if (IsValid(AudioAssets->BeDetected))
         {
             UGameplayStatics::PlaySound2D(GetWorld(), AudioAssets->BeDetected);
-            // UE_LOG(LogTemp, Display, TEXT("USoundManager::PlayDetectedSound()"));
+            UE_LOG(LogTemp, Display, TEXT("USoundManager::PlayDetectedSound()"));
         }
         else
         {
@@ -150,30 +150,12 @@ void USoundManager::PlayScream()
     }
 }
 
-// 공간계에서 출력
-void USoundManager::PlaySFX3D(UObject* Object, USoundBase* SFX, FVector Location, FRotator Rotation, USoundAttenuation* AttenuationSettings)
-{
-    if (!SFX)
-        return;
-    else
-    {
-        UGameplayStatics::PlaySoundAtLocation(
-            Object,
-            SFX,
-            Location,
-            Rotation,             // Rotation
-            1.0f,                 // Volume
-            1.0f,                 // Pitch
-            0.0f,                 // Start Time
-            AttenuationSettings); // Attenuation Asset
-    }
-}
 
-void USoundManager::PlayBeingChased(EChaseState CurrentState)
+void USoundManager::PlayBeingChased(AActor* Actor, EChaseState CurrentState)
 {
     if (!IsValidAssets())
     {
-        UE_LOG(LogTemp, Error, TEXT("USoundManager::PlayingBeingChased(): No AudioAsset"));
+        UE_LOG(LogTemp, Error, TEXT("USoundManager::PlayingBeingChased(): InValid AudioAsset"));
         return;
     }
 
@@ -185,9 +167,17 @@ void USoundManager::PlayBeingChased(EChaseState CurrentState)
 
     if (!IsValid(BeingChasedSource))
     {
-        // UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayingBeingChased():  BeingChasedSource is not valid, Initalizing..."));
-        BeingChasedSource = UGameplayStatics::SpawnSound2D(GetWorld(), AudioAssets->BeingChased);
-        BeingChasedSource->bAutoDestroy = false;
+        if (UWorld* World = Actor->GetWorld())
+        {
+            // UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayingBeingChased():  BeingChasedSource is not valid, Initalizing..."));
+            BeingChasedSource = UGameplayStatics::SpawnSound2D(World, AudioAssets->BeingChased);
+            BeingChasedSource->bAutoDestroy = false;
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayDetectedSound(): Failed to get Actor's World"));
+            return;
+        }
     }
 
     switch (CurrentState)
@@ -202,13 +192,13 @@ void USoundManager::PlayBeingChased(EChaseState CurrentState)
         {
             BeingChasedSource->FadeIn(0.4f, 1.0f);
         }
-        // UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayingBeingChased(): Fade In"));
+        UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayingBeingChased(): Fade In"));
         break;
     }
     case EChaseState::Cooldown:
     {
         BeingChasedSource->FadeOut(1.0f, 0.1f);
-        // UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayingBeingChased(): Fade Out"));
+        UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayingBeingChased(): Fade Out"));
         break;
     }
     case EChaseState::Safe:
@@ -218,7 +208,7 @@ void USoundManager::PlayBeingChased(EChaseState CurrentState)
             BeingChasedSource->FadeOut(0.1f, 0.0f);
         }
         BeingChasedSource = nullptr;
-        // UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayingBeingChased(): Stop"));
+        UE_LOG(LogTemp, Warning, TEXT("USoundManager::PlayingBeingChased(): Stop"));
         break;
     }
     default:

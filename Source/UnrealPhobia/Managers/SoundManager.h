@@ -30,12 +30,10 @@ public:
     virtual bool IsTickable() const override { return true; }
 
     /* Play Audio Sources */
-    UFUNCTION(BlueprintCallable)
     void PlayDetectedSound(AActor* Actor);
-    UFUNCTION(BlueprintCallable)
-    void PlaySFX3D(UObject* Object, USoundBase* SFX, FVector Location, FRotator Rotation, USoundAttenuation* AttenuationSettings);
-    void PlayBeingChased(EChaseState CurrentState);
+    void PlayBeingChased(AActor* Actor, EChaseState CurrentState);
     void PlayScream();
+    // void PlaySurvivorSFX(AActor* Actor, int32 Num);
 
     /* Sound Mix Settings */
     UFUNCTION()
@@ -48,6 +46,7 @@ private:
     UPROPERTY()
     TObjectPtr<UGameAudioSettings> AudioSettings;
 
+    UPROPERTY()
     TObjectPtr<UAudioComponent> BeingChasedSource;
     UPROPERTY()
     TObjectPtr<AActor> AudioActor;

@@ -1,6 +1,6 @@
 ﻿#include "Settings/GameAudioSettings.h"
 #include "Kismet/GameplayStatics.h"
-// 필요할 경우 Engine/Engine, Engine/World
+#include "Engine/Engine.h"
 
 UGameAudioSettings::UGameAudioSettings()
 {
