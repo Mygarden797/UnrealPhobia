@@ -151,14 +151,6 @@ void ATrigger::Tick(float DeltaTime)
 			{
 				BaseMeshComponent->SetOverlayMaterial(HighlightMaterial);
 			}
-			if (!HighlightMaterial->IsValidLowLevel())
-			{
-				if (GEngine)
-				{
-					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Highlight Material Is Invalid!"));
-				}
-				SetupTriggerMesh();
-			}
 			bIsHighlighting = true;
 		}
 	}
@@ -206,7 +198,7 @@ bool ATrigger::CheckHighlight()
 		CollisionShape,
 		QueryParams);
 
-	DrawDebugBox(World, TriggerLocation, BoxHalfExtent, FQuat::Identity, FColor::Green, false, 0.1f, 0, 2.0f);
+	// DrawDebugBox(World, TriggerLocation, BoxHalfExtent, FQuat::Identity, FColor::Green, false, 0.1f, 0, 2.0f);
 
 	if (bOverlap)
 	{
