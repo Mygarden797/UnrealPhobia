@@ -114,9 +114,9 @@ void ACreatureBase::Tick(float DeltaTime)
         CurrentInfo->set_x(Location.X);
         CurrentInfo->set_y(Location.Y);
         CurrentInfo->set_z(Location.Z);
-        CurrentInfo->set_yaw(GetControlRotation().Yaw);
+        CurrentInfo->set_yaw(GetActorRotation().Yaw);
     }
-
+    
     if (bHaveAIController == true) // AI컨트롤러 있으면 패킷 보내고 없으면 DestInfo로 이동
     {
         // Send 판정
@@ -145,10 +145,12 @@ void ACreatureBase::Tick(float DeltaTime)
                 else if (CreatureState == ECreatureState::Chase)
                 {
                     Info->set_creature_state(Protocol::CreatureState::CREATURE_STATE_CHASE);
+                    Info->set_speed(CreatureData->RunSpeed);
                 }
                 else
                 {
                     Info->set_creature_state(Protocol::CreatureState::CREATURE_STATE_MOVE);
+                    Info->set_speed(CreatureData->WalkSpeed);
                 }
             }
 
@@ -168,10 +170,16 @@ void ACreatureBase::Tick(float DeltaTime)
             const float DistToDest = MoveDir.Length();
             MoveDir.Normalize();
 
-            if (DistToDest >= 140.0f)
+            SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
+            if (DestInfo->creature_state() == Protocol::CreatureState::CREATURE_STATE_ATTACK)
+            {
+                UCreatureAnimInstance* CreatureAnimInstance = Cast<UCreatureAnimInstance>(GetMesh()->GetAnimInstance());
+                RETURN_IF_NULL(CreatureAnimInstance)
+                CreatureAnimInstance->PlayAttackMontage();
+            }
+            else if (DistToDest >= 140.0f)
             {
                 SetActorLocation(DestLocation);
-                SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             }
             else
             {
@@ -179,9 +187,7 @@ void ACreatureBase::Tick(float DeltaTime)
                 float MoveDist = (MoveDir * speed * DeltaTime).Length();
                 MoveDist = FMath::Min(MoveDist, DistToDest);
                 FVector NextLocation = Location + MoveDir * MoveDist;
-
                 SetActorLocation(NextLocation);
-                SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             }
 
         }

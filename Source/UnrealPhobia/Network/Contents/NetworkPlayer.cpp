@@ -378,10 +378,6 @@ void ANetworkPlayer::Tick(float DeltaTime)
                 Info->set_speed(DesiredSpeed);
             }
 
-            if (DesiredSpeed > 400.f || DesiredSpeed < 400.f)
-            {
-            }
-
             SEND_PACKET(MovePkt);
         }
     }
@@ -698,6 +694,19 @@ float ANetworkPlayer::TakeDamage(float DamageAmount, FDamageEvent const &DamageE
                                  AController *EventInstigator, AActor *DamageCauser)
 {
     SetMoveState(Protocol::MoveState::MOVE_STATE_ATTACKED);
+    Protocol::C_MOVE MovePkt;
+
+    // Current position information
+    {
+        Protocol::PosInfo* Info = MovePkt.mutable_info();
+        Info->CopyFrom(*PlayerInfo);
+        Info->set_yaw(DesiredYaw);
+        Info->set_state(GetMoveState());
+        Info->set_crouch(GetCrouchState());
+        Info->set_speed(0.f);
+    }
+
+    SEND_PACKET(MovePkt);
 
     StartInvincible();
 

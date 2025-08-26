@@ -30,6 +30,8 @@ public:
     bool IsMyPlayer();
 
     uint64 MyPlayerId = 0;
+    bool bCanMove = true;
+    void SetCanMove() { bCanMove = true; };
 
     Protocol::MoveState GetMoveState() { return PlayerInfo->state(); }
     void SetMoveState(Protocol::MoveState State);
