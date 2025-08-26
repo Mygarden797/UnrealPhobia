@@ -115,15 +115,22 @@ void AProtoPlayer::Tick(float DeltaSeconds)
             //SetWalk();
         }
         
-        if (DistToDest >= 400.0f)
+        if (DistToDest >= 50.0f)
         {
             SetActorLocation(DestLocation);
+            GetCharacterMovement()->StopMovementImmediately();
         }
-
+        SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
+        if (!bCanMove)
+        {
+            GetCharacterMovement()->StopMovementImmediately();
+            GetCharacterMovement()->Velocity = FVector::ZeroVector;
+            return;
+        }
+            
 
         if (State == Protocol::MOVE_STATE_RUN)
         { 
-            SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             AddMovementInput(GetActorForwardVector());
 
             ///*FVector MoveDir = (ForwardDirection * MovementVector.Y + RightDirection * MovementVector.X).GetSafeNormal();*/
@@ -132,13 +139,10 @@ void AProtoPlayer::Tick(float DeltaSeconds)
         }
         else if (State == Protocol::MOVE_STATE_SPRINT)
         {
-            //SetSprint();
-            SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             AddMovementInput(GetActorForwardVector());
         }
         else if (State == Protocol::MOVE_STATE_ATTACKED)
         {
-            SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             SetActorLocation(FVector(DestInfo->x(), DestInfo->y(), DestInfo->z()));
         }
 
@@ -181,13 +185,30 @@ void AProtoPlayer::SetDestInfo(const Protocol::PosInfo& Info)
     {
         assert(PlayerInfo->object_id() == Info.object_id());
     }
-
+    
+    Protocol::MoveState OldState = DestInfo->state();
     // Dest에 최종 상태 복사.
     DestInfo->CopyFrom(Info);
 
     // 상태만 바로 적용하자.
     SetMoveState(Info.state());
     SetCrouchState(Info.crouch());
+    if (OldState == Protocol::MOVE_STATE_RUN && Info.state() == Protocol::MOVE_STATE_ATTACKED)
+    {
+        float speed = DestInfo->speed();
+        GetCharacterMovement()->MaxWalkSpeed = speed;
+        GetCharacterMovement()->MaxWalkSpeedCrouched = speed * 0.5f;
+        bCanMove = false;
+        SetActorLocation(FVector(DestInfo->x(), DestInfo->y(), DestInfo->z()));
+        FTimerHandle TimerHandle;
+        GetWorld()->GetTimerManager().SetTimer(//1.5초 후에 이동 가능
+            TimerHandle,
+            this,
+            &AProtoPlayer::SetCanMove, 
+            1.5f,                               
+            false);
+    }
+
 }
 
 void AProtoPlayer::SetCrouch()
