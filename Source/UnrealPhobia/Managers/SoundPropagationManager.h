@@ -7,8 +7,10 @@
 #include "SoundPropagationManager.generated.h"
 
 /**
- * 
- */
+*           Name				: SoundPropagationManager
+*           Description		: Manage Area that make sounds propagate
+*           Last Update	: 2025/09/01
+*/
 
 class PropagationZoneActor;
 
@@ -17,6 +19,7 @@ class UNREALPHOBIA_API USoundPropagationManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
+    /*
 public:
     void RegisterZone(APropagationZoneActor* Zone);
     void UnregisterZone(APropagationZoneActor* Zone);
@@ -43,5 +46,6 @@ private:
     UPROPERTY()
     TMap<AActor*, APropagationZoneActor*> ActorToZone;
 
-    TMap<APropagationZoneActor*, TSet<AActor*>> ZoneActors;
+    TMap<APropagationZoneActor*, TSet<AActor*>> ZoneActors;'
+    */
 };

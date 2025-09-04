@@ -9,6 +9,7 @@
 #include "Perception/AISense_Hearing.h"
 #include "DrawDebugHelpers.h"
 
+/*
 void USoundPropagationManager::RegisterZone(APropagationZoneActor* Zone)
 {
     if (!Zone)
@@ -29,6 +30,11 @@ void USoundPropagationManager::RegisterZone(APropagationZoneActor* Zone)
     {
         if (IsValid(Actor))
         {
+            if (Actor->IsA(APropagationZoneActor::StaticClass()))
+            {
+                UE_LOG(LogTemp, Warning, TEXT("USoundPropagationManager::RegisterZone(): PrpagationZoneActor is excepted"));
+                continue;
+            }
             ActorToZone.Add(Actor, Zone);
             UE_LOG(LogTemp, Display, TEXT("USoundPropagationManager::RegisterZone(): Add an Actor %s in ActorToZone"), *GetNameSafe(Actor));
             ZoneActors[Zone].Add(Actor);
@@ -179,3 +185,4 @@ void USoundPropagationManager::PropagateSoundFrom(AActor* Emitter, float BaseLou
         }
     }
 }
+*/
