@@ -61,12 +61,10 @@ void UTriggerInventory::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 bool UTriggerInventory::Reach(FHitResult &OutHR) const
 {
-	FVector Start, End;
-	Start = CamComp->GetComponentLocation();
-	End = Start + CamComp->GetForwardVector() * MaxReachDistance;
-	// DrawDebugSphere(GetWorld(), End, ReachRadius, 10, FColor::Red, false, 3);
+	const FVector Start = CamComp->GetComponentLocation();						// 충돌 검사 시작 위치
+	const FVector End = Start + CamComp->GetForwardVector() * MaxReachDistance; // 충돌 검사 끝 위치
 	FCollisionShape CollisionSphere = FCollisionShape::MakeSphere(ReachRadius); // 충돌에 사용되는 구체
-	return GetWorld()->SweepSingleByChannel(									// SweepSingleByChannel : 단일 충돌 검사를 수행하는 함수, 성공 여부를 Return
+	return GetWorld()->SweepSingleByChannel(
 		OutHR,
 		Start, End,
 		FQuat::Identity,

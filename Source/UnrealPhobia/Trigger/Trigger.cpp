@@ -178,19 +178,15 @@ bool ATrigger::CheckHighlight()
 		return false;
 	}
 
-	TriggerLocation = GetActorLocation();
-
-	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
-
-	FVector BoxHalfExtent(230.0f, 230.0f, 80.0f);
-	FCollisionShape CollisionShape = FCollisionShape::MakeBox(BoxHalfExtent);
-
-	FCollisionQueryParams QueryParams;
+	TriggerLocation = GetActorLocation();					 // 트리거 위치 저장
+	FCollisionObjectQueryParams ObjectQueryParams(ECC_Pawn); // 탐색할 Object 타입(Pawn) 설정
+	const FVector BoxHalfExtent(230.0f, 230.0f, 80.0f);		 // 박스 형태 충돌 범위 설정
+	const FCollisionShape CollisionShape = FCollisionShape::MakeBox(BoxHalfExtent);
+	FCollisionQueryParams QueryParams; // 자기 자신 무시하는 쿼리 파라미터 설정
 	QueryParams.AddIgnoredActor(this);
-
-	TArray<FOverlapResult> OverlapResults;
-	bool bOverlap = World->OverlapMultiByObjectType(
+	TArray<FOverlapResult> OverlapResults; // 결과 저장용 배열
+	// 오버랩 검사 수행 및 결과 저장
+	const bool bOverlap = GetWorld()->OverlapMultiByObjectType(
 		OverlapResults,
 		TriggerLocation,
 		FQuat::Identity,
@@ -198,14 +194,14 @@ bool ATrigger::CheckHighlight()
 		CollisionShape,
 		QueryParams);
 
-	// DrawDebugBox(World, TriggerLocation, BoxHalfExtent, FQuat::Identity, FColor::Green, false, 0.1f, 0, 2.0f);
+	DrawDebugBox(World, TriggerLocation, BoxHalfExtent, FQuat::Identity, FColor::Green, false, 0.1f, 0, 2.0f);
 
 	if (bOverlap)
 	{
 		for (const FOverlapResult &Res : OverlapResults)
 		{
 			AActor *Actor = Res.GetActor();
-			if (!IsValid(Actor)) // null 또는 PendingKill 검사
+			if (!IsValid(Actor))
 				continue;
 
 			if (ANetworkPlayer *NP = Cast<ANetworkPlayer>(Actor))

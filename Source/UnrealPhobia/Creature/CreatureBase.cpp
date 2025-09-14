@@ -116,7 +116,7 @@ void ACreatureBase::Tick(float DeltaTime)
         CurrentInfo->set_z(Location.Z);
         CurrentInfo->set_yaw(GetActorRotation().Yaw);
     }
-    
+
     if (bHaveAIController == true) // AI컨트롤러 있으면 패킷 보내고 없으면 DestInfo로 이동
     {
         // Send 판정
@@ -173,7 +173,7 @@ void ACreatureBase::Tick(float DeltaTime)
             SetActorRotation(FRotator(0, DestInfo->yaw(), 0));
             if (DestInfo->creature_state() == Protocol::CreatureState::CREATURE_STATE_ATTACK)
             {
-                UCreatureAnimInstance* CreatureAnimInstance = Cast<UCreatureAnimInstance>(GetMesh()->GetAnimInstance());
+                UCreatureAnimInstance *CreatureAnimInstance = Cast<UCreatureAnimInstance>(GetMesh()->GetAnimInstance());
                 RETURN_IF_NULL(CreatureAnimInstance)
                 CreatureAnimInstance->PlayAttackMontage();
             }
@@ -189,7 +189,6 @@ void ACreatureBase::Tick(float DeltaTime)
                 FVector NextLocation = Location + MoveDir * MoveDist;
                 SetActorLocation(NextLocation);
             }
-
         }
     }
 

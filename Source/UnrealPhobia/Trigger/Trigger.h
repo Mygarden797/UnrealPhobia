@@ -56,7 +56,9 @@ protected:
 	bool CheckHighlight();
 
 	FVector TriggerLocation;
+	UPROPERTY()
 	UMaterialInterface *HighlightMaterial;
+	UPROPERTY()
 	UMaterialInterface *EmptyMaterial;
 
 public:
